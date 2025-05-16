@@ -1,6 +1,6 @@
-# Ứng dụng Quản lý Điều trị HIV - Bệnh viện Bạch Mai
+# Ứng dụng Quản lý Điều trị HIV
 
-Ứng dụng web quản lý điều trị HIV giúp bệnh nhân HIV/AIDS theo dõi và quản lý việc điều trị của mình một cách hiệu quả. Ứng dụng được phát triển dựa trên mô hình trang web của Bệnh viện Bạch Mai.
+Ứng dụng web quản lý điều trị HIV giúp bệnh nhân HIV/AIDS theo dõi và quản lý việc điều trị của mình một cách hiệu quả. 
 
 ## Tính năng chính
 
