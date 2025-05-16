@@ -19,6 +19,7 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   padding: 40px;
   transition: transform 0.3s ease;
+  margin-top: 150px;
 }
 
 .login-card:hover {
@@ -81,6 +82,7 @@
   transform: translateY(-50%);
   color: #95a5a6;
   font-size: 16px;
+ 
 }
 
 .input-with-icon input {
