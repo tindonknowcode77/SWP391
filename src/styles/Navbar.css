@@ -1,0 +1,252 @@
+/* Hospital Navbar Styles */
+.hospital-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.hospital-navbar.scrolled {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.navbar-logo img {
+  height: 50px;
+  margin-right: 10px;
+}
+
+.navbar-logo span {
+  color: #005bab;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.navbar-contact {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  color: #555;
+  font-size: 14px;
+}
+
+.contact-item i {
+  margin-right: 8px;
+  color: #005bab;
+}
+
+.navbar-toggle {
+  display: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: #005bab;
+}
+
+.navbar-links ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  position: relative;
+  margin: 0 5px;
+}
+
+.navbar-links li a {
+  display: block;
+  padding: 12px 15px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 16px;
+  transition: color 0.3s;
+}
+
+.navbar-links li.active a,
+.navbar-links li a:hover {
+  color: #005bab;
+}
+
+.navbar-links li.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 3px;
+  background-color: #005bab;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+}
+
+.login-button {
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  margin-right: 15px;
+  background-color: #005bab;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.login-button:hover {
+  background-color: #004385;
+}
+
+.login-button i {
+  margin-right: 8px;
+}
+
+.search-form {
+  display: flex;
+  position: relative;
+}
+
+.search-form input {
+  padding: 8px 35px 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 180px;
+}
+
+.search-form button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: none;
+  border: none;
+  padding: 0 10px;
+  cursor: pointer;
+  color: #005bab;
+}
+
+/* Responsive Styles */
+@media (max-width: 1100px) {
+  .navbar-contact {
+    display: none;
+  }
+}
+
+@media (max-width: 991px) {
+  .navbar-toggle {
+    display: block;
+  }
+  
+  .navbar-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  
+  .navbar-links.active {
+    max-height: 500px;
+  }
+  
+  .navbar-links ul {
+    flex-direction: column;
+    padding: 10px 0;
+  }
+  
+  .navbar-links li {
+    margin: 0;
+  }
+  
+  .navbar-links li.active::after {
+    display: none;
+  }
+  
+  .navbar-links li a {
+    padding: 12px 20px;
+  }
+  
+  .navbar-actions {
+    margin-left: auto;
+  }
+  
+  .search-form {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-logo span {
+    font-size: 14px;
+  }
+  
+  .navbar-logo img {
+    height: 40px;
+  }
+  
+  .login-button {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  
+  .navbar-container {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-logo span {
+    font-size: 0;
+    display: none;
+  }
+  
+  .login-button span {
+    display: none;
+  }
+  
+  .login-button i {
+    margin-right: 0;
+  }
+}

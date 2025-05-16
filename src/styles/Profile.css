@@ -1,0 +1,862 @@
+/* Profile.css */
+.profile-container {
+  display: flex;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  background-color: #f8f9fa;
+  padding-top: 20px;
+}
+
+/* Sidebar Styles */
+.profile-sidebar {
+  width: 300px;
+  background-color: #ffffff;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  padding: 30px 20px;
+  position: sticky;
+  top: 20px;
+  height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 25px;
+  border-bottom: 1px solid #eaeaea;
+  margin-bottom: 25px;
+}
+
+.profile-avatar {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #3498db;
+}
+
+.change-avatar-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.change-avatar-btn:hover {
+  background-color: #2980b9;
+}
+
+.profile-user-info h3 {
+  margin: 0 0 5px;
+  color: #2c3e50;
+  font-size: 18px;
+  text-align: center;
+}
+
+.profile-user-info p {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 14px;
+  text-align: center;
+}
+
+.profile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: auto;
+}
+
+.profile-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border-radius: 8px;
+  background-color: transparent;
+  border: none;
+  color: #34495e;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.profile-nav-btn i {
+  width: 20px;
+  text-align: center;
+}
+
+.profile-nav-btn:hover {
+  background-color: #f8f9fa;
+}
+
+.profile-nav-btn.active {
+  background-color: #ebf5fc;
+  color: #3498db;
+  font-weight: 600;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background-color: #e74c3c;
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-actions {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  text-decoration: none;
+}
+
+.profile-action-btn.appointments {
+  background-color: #3498db;
+  color: white;
+}
+
+.profile-action-btn.appointments:hover {
+  background-color: #2980b9;
+}
+
+.profile-action-btn.logout {
+  background-color: #f8f9fa;
+  color: #e74c3c;
+}
+
+.profile-action-btn.logout:hover {
+  background-color: #ffebee;
+}
+
+/* Content Styles */
+.profile-content {
+  flex: 1;
+  padding: 0 30px 40px;
+  position: relative;
+}
+
+.profile-notification {
+  position: relative;
+  margin-bottom: 20px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.profile-notification.success {
+  background-color: #d4ffda;
+  color: #27ae60;
+}
+
+.profile-notification.error {
+  background-color: #ffeeee;
+  color: #e74c3c;
+}
+
+.profile-notification i {
+  font-size: 18px;
+}
+
+.profile-notification span {
+  flex: 1;
+  font-size: 15px;
+}
+
+.profile-notification button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+
+.profile-notification button:hover {
+  opacity: 1;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.profile-header h2 {
+  color: #2c3e50;
+  font-size: 24px;
+  margin: 0;
+}
+
+.edit-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  border: none;
+  color: #3498db;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.edit-profile-btn:hover {
+  background-color: #ebf5fc;
+}
+
+.edit-profile-btn.active {
+  background-color: #fed7d7;
+  color: #e53e3e;
+}
+
+.profile-body {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+}
+
+/* Form Styles */
+.form-section {
+  margin-bottom: 30px;
+}
+
+.form-section h3 {
+  color: #2c3e50;
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-row.vertical {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #34495e;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+  outline: none;
+}
+
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled {
+  background-color: #f8f9fa;
+  color: #7f8c8d;
+  cursor: not-allowed;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.cancel-btn {
+  padding: 12px 20px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  border: none;
+  color: #7f8c8d;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cancel-btn:hover {
+  background-color: #ecf0f1;
+}
+
+.save-btn {
+  padding: 12px 20px;
+  border-radius: 8px;
+  background-color: #3498db;
+  border: none;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.save-btn:hover {
+  background-color: #2980b9;
+}
+
+/* Medical History Styles */
+.section-info {
+  background-color: #ebf5fc;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+.section-info p {
+  margin: 0;
+  color: #3498db;
+  font-size: 14px;
+}
+
+.medical-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.medical-record {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  overflow: hidden;
+  border-left: 4px solid #3498db;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background-color: #ebf5fc;
+}
+
+.record-date {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.record-doctor {
+  color: #7f8c8d;
+}
+
+.record-body {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.record-item {
+  display: flex;
+  gap: 8px;
+}
+
+.record-item .label {
+  font-weight: 600;
+  color: #34495e;
+  min-width: 100px;
+}
+
+.record-item .value {
+  color: #2c3e50;
+}
+
+.record-item .value.highlight {
+  color: #3498db;
+  font-weight: 600;
+}
+
+.record-actions {
+  display: flex;
+  gap: 10px;
+  padding: 0 15px 15px;
+}
+
+.record-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  color: #34495e;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.record-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.view-all-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.view-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  background-color: #ebf5fc;
+  border: none;
+  color: #3498db;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.view-all-btn:hover {
+  background-color: #d6eaf8;
+}
+
+/* Medication Styles */
+.current-medications {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.medication-card {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s;
+}
+
+.medication-card:hover {
+  transform: translateY(-5px);
+}
+
+.medication-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #ebf5fc;
+}
+
+.medication-header h4 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.medication-badge {
+  background-color: #3498db;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.medication-details {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.medication-detail {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.medication-detail i {
+  color: #3498db;
+  font-size: 14px;
+  width: 18px;
+}
+
+.medication-detail .label {
+  font-weight: 600;
+  color: #34495e;
+  min-width: 100px;
+}
+
+.medication-detail .value {
+  flex: 1;
+  color: #2c3e50;
+}
+
+.medication-actions {
+  display: flex;
+  gap: 10px;
+  padding: 0 15px 15px;
+}
+
+.medication-btn {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+}
+
+.medication-btn.info {
+  background-color: #ebf5fc;
+  color: #3498db;
+}
+
+.medication-btn.info:hover {
+  background-color: #d6eaf8;
+}
+
+.medication-btn.reminder {
+  background-color: #fef5e7;
+  color: #f39c12;
+}
+
+.medication-btn.reminder:hover {
+  background-color: #fdebd0;
+}
+
+.medication-links {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.medication-link {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  color: #3498db;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.medication-link:hover {
+  background-color: #ebf5fc;
+  border-color: #3498db;
+}
+
+/* Notifications Styles */
+.notifications {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.notification-item {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  border-left: 4px solid #95a5a6;
+  transition: all 0.3s;
+}
+
+.notification-item.unread {
+  background-color: #ebf5fc;
+  border-left-color: #3498db;
+}
+
+.notification-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  color: #7f8c8d;
+  font-size: 16px;
+}
+
+.notification-item.unread .notification-icon {
+  background-color: #3498db;
+  color: white;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.notification-header h4 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 16px;
+}
+
+.notification-date {
+  color: #7f8c8d;
+  font-size: 13px;
+}
+
+.notification-content p {
+  margin: 0;
+  color: #34495e;
+  font-size: 14px;
+}
+
+.notification-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mark-read-btn, .delete-notification-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  color: #7f8c8d;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.mark-read-btn:hover {
+  background-color: #ebf5fc;
+  color: #3498db;
+  border-color: #3498db;
+}
+
+.delete-notification-btn:hover {
+  background-color: #ffeeee;
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.notification-settings {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.notification-settings-btn, .mark-all-read-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+}
+
+.notification-settings-btn {
+  background-color: #f8f9fa;
+  color: #34495e;
+}
+
+.notification-settings-btn:hover {
+  background-color: #ecf0f1;
+}
+
+.mark-all-read-btn {
+  background-color: #ebf5fc;
+  color: #3498db;
+}
+
+.mark-all-read-btn:hover {
+  background-color: #d6eaf8;
+}
+
+/* Responsive Styles */
+@media (max-width: 991px) {
+  .profile-container {
+    flex-direction: column;
+  }
+  
+  .profile-sidebar {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    position: static;
+  }
+  
+  .profile-user-info {
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+  }
+  
+  .profile-user-info h3, .profile-user-info p {
+    text-align: left;
+  }
+  
+  .profile-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  
+  .profile-nav-btn {
+    white-space: nowrap;
+  }
+  
+  .profile-actions {
+    flex-direction: row;
+  }
+  
+  .form-row {
+    flex-direction: column;
+  }
+  
+  .current-medications {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-content {
+    padding: 0 20px 30px;
+  }
+  
+  .profile-body {
+    padding: 20px;
+  }
+  
+  .profile-notification {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .profile-notification button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+  }
+  
+  .medication-links {
+    flex-direction: column;
+  }
+  
+  .notification-settings {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
