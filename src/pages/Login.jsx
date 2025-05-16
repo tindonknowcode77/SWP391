@@ -30,10 +30,17 @@ const Login = () => {
     setFormError('');
     
     try {
-      const success = await login(email, password);
-      if (success) {
-        // Chuyển về trang trước đó hoặc trang chủ
-        navigate(redirectPath, { replace: true });
+      const success = await login(email, password);      if (success) {
+        // Thêm thông báo trạng thái tài khoản
+        setFormError('');
+        // Redirect to the profile page if coming from login directly
+        const targetPath = redirectPath === '/' ? '/profile' : redirectPath;
+        // Chuyển về trang trước đó hoặc trang profile
+        navigate(targetPath, { replace: true, state: { 
+          showAccountStatus: true,
+          accountStatus: 'active',
+          accountType: 'Bệnh nhân'
+        }});
       } else {
         setFormError(error || 'Đăng nhập thất bại');
       }

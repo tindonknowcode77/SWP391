@@ -29,19 +29,21 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       setError(null);
-      // Mô phỏng gọi API
-      // Trong dự án thực tế, thay bằng gọi API đến server
+      // Mô phỏng gọi API      // Trong dự án thực tế, thay bằng gọi API đến server
       if (email && password) {
         // Giả lập user
         const user = {
           id: "user123",
           name: "Nguyễn Văn A",
           email: email,
-          role: "patient"
+          role: "patient",
+          accountStatus: "active", // Thêm trạng thái tài khoản
+          accountType: "Bệnh nhân" // Thêm loại tài khoản
         };
-        
-        // Lưu thông tin user vào localStorage
+          // Lưu thông tin user vào localStorage
         localStorage.setItem('hivAppUser', JSON.stringify(user));
+        // Lưu thêm thông tin trạng thái tài khoản để hiển thị thông báo
+        localStorage.setItem('hivAppShowAccountStatus', 'true');
         setCurrentUser(user);
         return true;
       } else {
@@ -58,13 +60,14 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       // Mô phỏng gọi API
-      if (name && email && password) {
-        // Giả lập user mới
+      if (name && email && password) {        // Giả lập user mới
         const newUser = {
           id: "user" + Math.floor(Math.random() * 1000),
           name: name,
           email: email,
-          role: "patient"
+          role: "patient",
+          accountStatus: "active", // Thêm trạng thái tài khoản
+          accountType: "Bệnh nhân" // Thêm loại tài khoản
         };
         
         // Lưu thông tin user vào localStorage
@@ -79,10 +82,10 @@ export const AuthProvider = ({ children }) => {
       return false;
     }
   };
-
   // Hàm đăng xuất
   const logout = () => {
     localStorage.removeItem('hivAppUser');
+    localStorage.removeItem('hivAppShowAccountStatus');
     setCurrentUser(null);
   };
 

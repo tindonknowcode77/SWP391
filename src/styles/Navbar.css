@@ -128,6 +128,7 @@
   cursor: pointer;
   text-decoration: none;
   transition: background-color 0.3s;
+  position: relative;
 }
 
 .login-button:hover {
@@ -136,6 +137,29 @@
 
 .login-button i {
   margin-right: 8px;
+}
+
+/* Account status indicator */
+.account-status {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.account-status.active {
+  background-color: #4CAF50; /* Green color for active accounts */
+}
+
+.account-status.inactive {
+  background-color: #FF5722; /* Orange/red color for inactive accounts */
+}
+
+.account-status i {
+  display: none; /* Hide the icon, we'll just use the colored circle */
 }
 
 .search-form {

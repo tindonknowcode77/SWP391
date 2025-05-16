@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,13 +82,28 @@ const Navbar = () => {
               <Link to="/hospital/lien-he" onClick={closeMenu}>Liên hệ</Link>
             </li>
           </ul>
-        </div>
-
-        <div className="navbar-actions">
-          <Link to="/login" className="login-button">
-            <i className="fas fa-user"></i>
-            <span>Đăng nhập</span>
-          </Link>
+        </div>        <div className="navbar-actions">
+          {currentUser ? (
+            <Link to="/profile" className="login-button">
+              <i className="fas fa-user"></i>
+              <span>{currentUser.name}</span>
+              {currentUser.accountStatus === 'active' && (
+                <span className="account-status active">
+                  <i className="fas fa-circle"></i>
+                </span>
+              )}
+              {currentUser.accountStatus !== 'active' && (
+                <span className="account-status inactive">
+                  <i className="fas fa-circle"></i>
+                </span>
+              )}
+            </Link>
+          ) : (
+            <Link to="/login" className="login-button">
+              <i className="fas fa-user"></i>
+              <span>Đăng nhập</span>
+            </Link>
+          )}
           <div className="search-form">
             <input type="text" placeholder="Tìm kiếm..." />
             <button type="submit">

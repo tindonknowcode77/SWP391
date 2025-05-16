@@ -4,18 +4,26 @@ import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import '../styles/Profile.css';
 
-const Profile = () => {
-  const { currentUser, updateProfile, logout } = useAuth();
+const Profile = () => {  const { currentUser, updateProfile, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const isNewUser = location.state?.newUser || false;
+  const showAccountStatus = location.state?.showAccountStatus || localStorage.getItem('hivAppShowAccountStatus') === 'true';
 
   const [activeTab, setActiveTab] = useState('personal');
   const [editMode, setEditMode] = useState(false);
-  const [notification, setNotification] = useState(isNewUser ? {
-    type: 'success',
-    message: 'Đăng ký thành công! Vui lòng cập nhật thông tin cá nhân của bạn.'
-  } : null);
+  const [notification, setNotification] = useState(
+    isNewUser 
+      ? {
+          type: 'success',
+          message: 'Đăng ký thành công! Vui lòng cập nhật thông tin cá nhân của bạn.'
+        }      : showAccountStatus
+        ? {
+            type: 'success',
+            message: `Đăng nhập thành công! Trạng thái tài khoản: ${formatAccountStatus(currentUser?.accountStatus)} - Loại tài khoản: ${currentUser?.accountType || 'Bệnh nhân'}`
+          }
+        : null
+  );
   
   const [formData, setFormData] = useState({
     fullName: currentUser?.name || '',
@@ -116,11 +124,12 @@ const Profile = () => {
       navigate('/login', { state: { from: location } });
     }
   }, [currentUser, navigate, location]);
-
   useEffect(() => {
     if (notification) {
       const timer = setTimeout(() => {
         setNotification(null);
+        // Clear the account status flag after showing the notification
+        localStorage.removeItem('hivAppShowAccountStatus');
       }, 5000);
       
       return () => clearTimeout(timer);
@@ -169,10 +178,27 @@ const Profile = () => {
       console.error(err);
     }
   };
-
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  // Format account status for better display
+  const formatAccountStatus = (status) => {
+    if (!status) return 'Không xác định';
+    
+    switch(status.toLowerCase()) {
+      case 'active':
+        return 'Đang hoạt động';
+      case 'inactive':
+        return 'Đã tạm khóa';
+      case 'suspended':
+        return 'Đã bị đình chỉ';
+      case 'pending':
+        return 'Đang chờ xác minh';
+      default:
+        return status;
+    }
   };
 
   return (
