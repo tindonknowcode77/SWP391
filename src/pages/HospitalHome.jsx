@@ -511,7 +511,7 @@ const HospitalHome = () => {
           <div className="footer-top">
             <div className="footer-column">
               <div className="footer-logo">
-                <img src="/hospital-logo.png" alt="Bệnh viện Logo" />
+                <img src="/src/assets/images/logo.png" alt="" />
                 <span>BỆNH VIỆN ĐIỀU TRỊ HIV</span>
               </div>
               <p className="footer-desc">
