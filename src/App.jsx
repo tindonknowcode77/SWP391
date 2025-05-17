@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
+import AboutPage from './pages/AboutPage'; 
 
 // Import các trang
 import HospitalHome from './pages/HospitalHome';
@@ -33,7 +34,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           
           {/* Các trang thuộc bệnh viện */}
-          <Route path="/hospital/gioi-thieu" element={<div>Trang Giới thiệu</div>} />
+          <Route path="/hospital/gioi-thieu" element={<AboutPage />} />
           <Route path="/hospital/chuyen-khoa" element={<div>Trang Chuyên khoa</div>} />
           <Route path="/hospital/lich-kham" element={<div>Trang Lịch khám</div>} />
           <Route path="/hospital/tin-tuc" element={<div>Trang Tin tức</div>} />
