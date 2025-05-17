@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
 import AboutPage from './pages/AboutPage'; 
+import Specialty from './pages/Specialty'; 
 
 // Import các trang
 import HospitalHome from './pages/HospitalHome';
@@ -35,7 +36,7 @@ function App() {
           
           {/* Các trang thuộc bệnh viện */}
           <Route path="/hospital/gioi-thieu" element={<AboutPage />} />
-          <Route path="/hospital/chuyen-khoa" element={<div>Trang Chuyên khoa</div>} />
+          <Route path="/hospital/chuyen-khoa" element={<Specialty />} />
           <Route path="/hospital/lich-kham" element={<div>Trang Lịch khám</div>} />
           <Route path="/hospital/tin-tuc" element={<div>Trang Tin tức</div>} />
           <Route path="/hospital/lien-he" element={<div>Trang Liên hệ</div>} />
