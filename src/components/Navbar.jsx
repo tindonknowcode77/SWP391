@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/Navbar.css';
+import hospitalLogo from '../assets/images/hospital-logo.png';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,24 +42,9 @@ const Navbar = () => {
       <div className="navbar-container">
         <div className="navbar-logo">
           <Link to="/hospital">
-            <img src="/hospital-logo.png" alt="Bệnh viện Logo" />
+            <img src={hospitalLogo} />
             <span>BỆNH VIỆN ĐIỀU TRỊ HIV</span>
           </Link>
-        </div>
-
-        <div className="navbar-contact">
-          <div className="contact-item">
-            <i className="fas fa-phone-alt"></i>
-            <span>Hotline: 1900-6889</span>
-          </div>
-          <div className="contact-item">
-            <i className="fas fa-envelope"></i>
-            <span>Email: info@hivhospital.vn</span>
-          </div>
-        </div>
-
-        <div className="navbar-toggle" onClick={handleMenuToggle}>
-          <i className={isMenuOpen ? "fas fa-times" : "fas fa-bars"}></i>
         </div>
 
         <div className={`navbar-links ${isMenuOpen ? 'active' : ''}`}>
@@ -82,7 +68,8 @@ const Navbar = () => {
               <Link to="/hospital/lien-he" onClick={closeMenu}>Liên hệ</Link>
             </li>
           </ul>
-        </div>        <div className="navbar-actions">
+        </div>
+        <div className="navbar-actions">
           {currentUser ? (
             <Link to="/profile" className="login-button">
               <i className="fas fa-user"></i>
@@ -109,6 +96,20 @@ const Navbar = () => {
             <button type="submit">
               <i className="fas fa-search"></i>
             </button>
+          </div>
+        </div>
+        <div className="navbar-toggle" onClick={handleMenuToggle}>
+          <i className={isMenuOpen ? "fas fa-times" : "fas fa-bars"}></i>
+        </div>
+
+        <div className="navbar-contact">
+          <div className="contact-item">
+            <i className="fas fa-phone-alt"></i>
+            <span>Hotline: 1900-6889</span>
+          </div>
+          <div className="contact-item">
+            <i className="fas fa-envelope"></i>
+            <span>Email: info@hivhospital.vn</span>
           </div>
         </div>
       </div>
