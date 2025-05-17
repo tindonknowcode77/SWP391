@@ -4,11 +4,29 @@ import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import '../styles/Profile.css';
 
-const Profile = () => {  const { currentUser, updateProfile, logout } = useAuth();
+const Profile = () => {  
+  const { currentUser, updateProfile, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const isNewUser = location.state?.newUser || false;
-  const showAccountStatus = location.state?.showAccountStatus || localStorage.getItem('hivAppShowAccountStatus') === 'true';
+  const isNewUser = location.state?.newUser || false;  const showAccountStatus = location.state?.showAccountStatus || localStorage.getItem('hivAppShowAccountStatus') === 'true';
+
+  // Format account status for better display
+  const formatAccountStatus = (status) => {
+    if (!status) return 'Không xác định';
+    
+    switch(status.toLowerCase()) {
+      case 'active':
+        return 'Đang hoạt động';
+      case 'inactive':
+        return 'Đã tạm khóa';
+      case 'suspended':
+        return 'Đã bị đình chỉ';
+      case 'pending':
+        return 'Đang chờ xác minh';
+      default:
+        return status;
+    }
+  };
 
   const [activeTab, setActiveTab] = useState('personal');
   const [editMode, setEditMode] = useState(false);
@@ -181,24 +199,6 @@ const Profile = () => {  const { currentUser, updateProfile, logout } = useAuth(
   const handleLogout = () => {
     logout();
     navigate('/login');
-  };
-
-  // Format account status for better display
-  const formatAccountStatus = (status) => {
-    if (!status) return 'Không xác định';
-    
-    switch(status.toLowerCase()) {
-      case 'active':
-        return 'Đang hoạt động';
-      case 'inactive':
-        return 'Đã tạm khóa';
-      case 'suspended':
-        return 'Đã bị đình chỉ';
-      case 'pending':
-        return 'Đang chờ xác minh';
-      default:
-        return status;
-    }
   };
 
   return (
