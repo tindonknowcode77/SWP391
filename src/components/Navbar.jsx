@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/Navbar.css';
-import hospitalLogo from '../assets/images/hospital-logo.png';
+import logo from '../assets/images/logo.png';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -42,7 +42,7 @@ const Navbar = () => {
       <div className="navbar-container">
         <div className="navbar-logo">
           <Link to="/hospital">
-            <img src={hospitalLogo} />
+            <img src={logo} />
             <span>BỆNH VIỆN ĐIỀU TRỊ HIV</span>
           </Link>
         </div>
