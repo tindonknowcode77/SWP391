@@ -1,0 +1,88 @@
+.about-page {
+  min-height: 100vh;
+  background: #f7fafc;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 0;
+}
+
+.about-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,91,171,0.08);
+  max-width: 700px;
+  width: 95%;
+  padding: 40px 32px 32px 32px;
+  margin: 0 auto;
+}
+
+.about-title {
+  color: #005bab;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 18px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.about-intro {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 22px;
+  text-align: center;
+}
+
+.about-section-title {
+  color: #2196f3;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 28px 0 10px 0;
+}
+
+.about-list {
+  margin: 0 0 18px 18px;
+  padding: 0;
+  color: #444;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.about-list li {
+  margin-bottom: 6px;
+  list-style: disc;
+}
+
+.about-meaning {
+  color: #444;
+  font-size: 1.05rem;
+  margin-bottom: 18px;
+  text-align: justify;
+}
+
+.about-invite {
+  background: #e3f2fd;
+  color: #005bab;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  margin-top: 18px;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 600px) {
+  .about-container {
+    padding: 18px 6px 18px 6px;
+  }
+  .about-title {
+    font-size: 1.3rem;
+  }
+  .about-section-title {
+    font-size: 1.05rem;
+  }
+  .about-invite {
+    font-size: 1rem;
+    padding: 10px;
+  }
+} 
