@@ -44,7 +44,7 @@
 - Lựa chọn, tùy chỉnh phác đồ ARV cho từng bệnh nhân.
 
 6. Manager
-Đăng nhập hệ thống với tài khoản được cấp.
+- Đăng nhập hệ thống với tài khoản được cấp.
 - Gián sát kiểm tra lịch làm, năng suất, lịch hẹn của staff.
 - Xem thống kê, xem hiệu quả của phác đồ ARV,
 - Tạo và xóa tài khoản của staff, doctor.
