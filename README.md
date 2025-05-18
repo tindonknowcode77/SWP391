@@ -6,7 +6,7 @@
 
 - **Quản lý tài khoản và xác thực**: Đăng nhập, đăng ký, quên mật khẩu
 - **Hồ sơ người dùng**: Thông tin cá nhân, hồ sơ bệnh án, thiết lập cá nhân
-- **Kế hoạch điều trị**: Xem kế hoạch, theo dõi xét nghiệm, quản lý thuốc
+- **Kế hoạch điều trị**: Xem kế hoạch, theo dõi xét nghiệm, quản lý cách dùng thuốc theo phác đồ ARV tùy theo nhóm bệnh nhân
 - **Quản lý thuốc**: Lịch uống thuốc, nhắc nhở, ghi nhận tuân thủ điều trị
 - **Đặt lịch hẹn**: Đặt và quản lý lịch hẹn khám với bác sĩ
 - **Tài nguyên**: Thông tin và tài liệu về HIV/AIDS
