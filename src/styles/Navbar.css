@@ -16,23 +16,19 @@
 }
 
 .navbar-container {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
   align-items: center;
-  justify-content: space-between;
   gap: 18px;
   padding: 12px 24px;
-  max-width: 1280px;
-  margin: 0 auto;
-  flex-wrap: nowrap;
+  width: 100%;
+  margin: 0;
   min-width: 0;
+  box-sizing: border-box;
 }
 
 .navbar-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-right: 18px;
-  
+  justify-self: start;
 }
 
 .navbar-logo img {
@@ -45,11 +41,26 @@
 
 .navbar-logo span,
 .hospital-title,
-.navbar-links li a,
-.login-button {
+.navbar-links li a {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.login-button {
+  width: 150px;             
+  height: 40px;
+  border-radius: 100%;
+  background-color: #007bff;  
+  color: white;             
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border: none;             
+  cursor: pointer;
 }
 
 .contact-item {
@@ -61,7 +72,6 @@
   white-space: nowrap;
 }
 
-
 .navbar-logo span {
   color: #00ab03;
   font-size: 20px;
@@ -70,24 +80,25 @@
 }
 
 .navbar-contact {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-  margin-left: 18px;
-  flex-shrink: 0;
+  justify-self: end;
 }
 
 .contact-item i {
   color: #ff5a36;
 }
 
+.navbar-links {
+  justify-self: center;
+}
+
 .navbar-links ul {
   display: flex;
-  gap: 8px;
+  gap: 32px;
   list-style: none;
   margin: 0;
   padding: 0;
+  justify-content: center;
+  align-items: center;
 }
 
 .navbar-links li {
@@ -95,12 +106,12 @@
 }
 
 .navbar-links li a {
-  padding: 8px 12px;
-  font-size: 15px;
+  padding: 12px 22px;
+  font-size: 20px;
   color: #333;
   text-decoration: none;
-  font-weight: 500;
-  border-radius: 6px;
+  font-weight: 600;
+  border-radius: 8px;
   transition: background 0.2s, color 0.2s;
 }
 
@@ -126,28 +137,37 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-direction: row-reverse;
 }
 
 .login-button {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 0 18px;
+  height: 48px;
+  min-width: 48px;
   background: linear-gradient(90deg, #2196f3 0%, #005bab 100%);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 50%;
   cursor: pointer;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 17px;
   transition: background 0.2s, box-shadow 0.2s;
   box-shadow: 0 2px 8px rgba(0,91,171,0.08);
   position: relative;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.login-button:hover {
-  background: linear-gradient(90deg, #005bab 0%, #2196f3 100%);
-  box-shadow: 0 4px 16px rgba(0,91,171,0.12);
+.login-button span {
+  display: none;
+}
+
+.login-button i {
+  font-size: 22px;
 }
 
 .account-status {
@@ -213,12 +233,11 @@
 
 /* Responsive Styles */
 @media (max-width: 1100px) {
+  .navbar-container {
+    grid-template-columns: auto 1fr auto;
+  }
   .navbar-contact {
     display: none;
-  }
-  .navbar-container {
-    padding: 10px 16px;
-    gap: 16px;
   }
 }
 
@@ -291,5 +310,18 @@
   }
   .navbar-container {
     padding: 6px 2px;
+  }
+}
+
+@media (min-width: 600px) {
+  .login-button {
+    min-width: 48px;
+    max-width: 180px;
+    border-radius: 24px;
+    padding: 0 22px;
+  }
+  .login-button span {
+    display: inline;
+    margin-left: 8px;
   }
 }
