@@ -58,8 +58,6 @@
 
 ## Đóng góp
 
-Mọi đóng góp đều được hoan nghênh. Vui lòng mở issue hoặc pull request để cải thiện dự án.
-
-## Giấy phép
+Mọi đóng góp đều được hoan nghênh. 
 
 MIT
