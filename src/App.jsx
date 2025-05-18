@@ -7,6 +7,7 @@ import Specialty from './pages/Specialty';
 import Contact from './pages/Contact';
 import News from './pages/News';
 import NewsDetail from './pages/NewsDetail';
+import ExaminationSchedule from './pages/ExaminationSchedule'; 
 
 // Import các trang
 import HospitalHome from './pages/HospitalHome';
@@ -39,7 +40,7 @@ function App() {
             {/* Các trang thuộc bệnh viện */}          
           <Route path="/hospital/gioi-thieu" element={<AboutPage />} />
           <Route path="/hospital/chuyen-khoa" element={<Specialty />} />
-          <Route path="/hospital/lich-kham" element={<div>Trang Lịch khám</div>} />
+          <Route path="/hospital/lich-kham" element={<ExaminationSchedule/>} />
           <Route path="/hospital/tin-tuc" element={<News />} />
           <Route path="/hospital/lien-he" element={<Contact />} />
           <Route path="/contact" element={<Contact />} />
