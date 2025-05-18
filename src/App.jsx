@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import './App.css';
 import AboutPage from './pages/AboutPage'; 
 import Specialty from './pages/Specialty'; 
+import Contact from './pages/Contact';
 
 // Import các trang
 import HospitalHome from './pages/HospitalHome';
@@ -34,13 +35,12 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           
-          {/* Các trang thuộc bệnh viện */}
-          <Route path="/hospital/gioi-thieu" element={<AboutPage />} />
+          {/* Các trang thuộc bệnh viện */}          <Route path="/hospital/gioi-thieu" element={<AboutPage />} />
           <Route path="/hospital/chuyen-khoa" element={<Specialty />} />
           <Route path="/hospital/lich-kham" element={<div>Trang Lịch khám</div>} />
           <Route path="/hospital/tin-tuc" element={<div>Trang Tin tức</div>} />
-          <Route path="/hospital/lien-he" element={<div>Trang Liên hệ</div>} />
-          
+          <Route path="/hospital/lien-he" element={<Contact />} />
+          <Route path="/contact" element={<Contact />} />
           {/* Các trang chức năng của ứng dụng */}
           <Route path="/profile" element={<Profile />} />
           <Route path="/hiv-department" element={<HIVDepartment />} />
