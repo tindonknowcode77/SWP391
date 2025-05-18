@@ -1,88 +1,103 @@
 .about-page {
-  min-height: 100vh;
-  background: #f7fafc;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 40px 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(rgba(245,250,253,0.4), rgba(245,250,253,0.4)), 
+            url('../assets/images/hospital-background.png') center/cover no-repeat fixed;
+  padding: 40px 16px;
+  line-height: 1.7;
+  color: #333;
 }
 
-.about-container {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0,91,171,0.08);
-  max-width: 700px;
-  width: 95%;
-  padding: 40px 32px 32px 32px;
+.about-hero {
+  /* background: linear-gradient(to right, #007bff, #4fc3f7); */
+  color: black;
+  border-radius: 12px;
+  padding: 40px 24px;
+  text-align: center;
+  margin-top: 130px;
+  margin-bottom: 40px;
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.1);
+}
+
+.about-hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+
+.about-hero p {
+  font-size: 1.15rem;
+  max-width: 720px;
   margin: 0 auto;
 }
 
-.about-title {
-  color: #005bab;
-  font-size: 2.2rem;
-  font-weight: 800;
-  margin-bottom: 18px;
-  text-align: center;
-  letter-spacing: 1px;
+.about-section {
+  max-width: 800px;
+  margin: 0 auto 40px auto;
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
-.about-intro {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 22px;
-  text-align: center;
-}
-
-.about-section-title {
-  color: #2196f3;
-  font-size: 1.3rem;
+.about-section h2 {
+  color: #007bff;
+  font-size: 1.5rem;
   font-weight: 700;
-  margin: 28px 0 10px 0;
+  margin-bottom: 16px;
+  position: relative;
 }
 
-.about-list {
-  margin: 0 0 18px 18px;
-  padding: 0;
-  color: #444;
-  font-size: 1rem;
-  line-height: 1.7;
+.about-section h2::before {
+  content: '';
+  width: 6px;
+  height: 100%;
+  background: #007bff;
+  position: absolute;
+  left: -16px;
+  top: 0;
+  border-radius: 4px;
 }
 
-.about-list li {
-  margin-bottom: 6px;
+.about-section ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.about-section ul li {
+  margin-bottom: 10px;
   list-style: disc;
 }
 
-.about-meaning {
-  color: #444;
+.about-section p {
   font-size: 1.05rem;
-  margin-bottom: 18px;
   text-align: justify;
 }
 
-.about-invite {
-  background: #e3f2fd;
-  color: #005bab;
-  font-weight: 700;
-  border-radius: 8px;
-  padding: 16px;
+.about-cta {
   text-align: center;
-  margin-top: 18px;
-  font-size: 1.1rem;
+  /* background: #e3f2fd; */
+  padding: 24px 16px;
+  margin-top: 40px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #000a06;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 91, 171, 0.1);
 }
 
-@media (max-width: 600px) {
-  .about-container {
-    padding: 18px 6px 18px 6px;
+@media (max-width: 768px) {
+  .about-hero h1 {
+    font-size: 1.8rem;
   }
-  .about-title {
-    font-size: 1.3rem;
-  }
-  .about-section-title {
-    font-size: 1.05rem;
-  }
-  .about-invite {
+
+  .about-hero p,
+  .about-section p,
+  .about-cta {
     font-size: 1rem;
-    padding: 10px;
   }
-} 
+
+  .about-section {
+    padding: 20px;
+  }
+}
