@@ -37,6 +37,21 @@ export default function ExaminationSchedule() {
     setSubmitted(true);
     setShowForm(false);
     setShowSuccessPopup(true);
+    // Lưu vào localStorage ở đây nè
+    const newAppointment = {
+      name: form.name,
+      age: form.age,
+      address: form.address,
+      phone: form.phone,
+      datetime: form.datetime,
+      doctorId: form.doctorId,
+      createdAt: new Date().toISOString(),
+    };
+    const stored = localStorage.getItem('appointments');
+    const appointments = stored ? JSON.parse(stored) : [];
+    appointments.push(newAppointment);
+    localStorage.setItem('appointments', JSON.stringify(appointments));
+    // localStorage.clear(); // để xóa localstorage trong lúc demo
   };
 
   return (

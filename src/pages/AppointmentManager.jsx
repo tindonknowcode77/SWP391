@@ -28,6 +28,7 @@ const AppointmentManager = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const { isMobile } = useResponsive();
+  const [localAppointments, setLocalAppointments] = useState([]);
 
   // Fetch appointments and doctors on component mount
   useEffect(() => {
@@ -49,6 +50,12 @@ const AppointmentManager = () => {
     };
 
     fetchData();
+
+    // Lấy lịch khám từ localStorage
+    const stored = localStorage.getItem('appointments');
+    if (stored) {
+      setLocalAppointments(JSON.parse(stored));
+    }
   }, [currentUser]);
 
   // Filter appointments based on active tab
@@ -386,27 +393,64 @@ const AppointmentManager = () => {
           ) : (
             <>
               {filteredAppointments.length === 0 ? (
-                <div className="no-appointments">
-                  <div className="no-data-icon">
-                    <i className="far fa-calendar-times"></i>
+                <>
+                  <div className="no-appointments">
+                    <div className="no-data-icon">
+                      <i className="far fa-calendar-times"></i>
+                    </div>
+                    <h3>Không có lịch khám {activeTab === 'upcoming' ? 'sắp tới' : activeTab === 'past' ? 'trong quá khứ' : 'đã hủy'}</h3>
+                    <p>
+                      {activeTab === 'upcoming' 
+                        ? 'Bạn chưa có lịch khám nào sắp tới. Đặt lịch ngay để gặp bác sĩ!' 
+                        : activeTab === 'past'
+                          ? 'Bạn chưa có lịch sử khám bệnh nào.'
+                          : 'Bạn chưa có lịch khám nào bị hủy.'}
+                    </p>
+                    {activeTab === 'upcoming' && (
+                      <button 
+                        className="schedule-now-btn"
+                        onClick={() => setShowAppointmentForm(true)}
+                      >
+                        Đặt lịch ngay
+                      </button>
+                    )}
                   </div>
-                  <h3>Không có lịch khám {activeTab === 'upcoming' ? 'sắp tới' : activeTab === 'past' ? 'trong quá khứ' : 'đã hủy'}</h3>
-                  <p>
-                    {activeTab === 'upcoming' 
-                      ? 'Bạn chưa có lịch khám nào sắp tới. Đặt lịch ngay để gặp bác sĩ!' 
-                      : activeTab === 'past'
-                        ? 'Bạn chưa có lịch sử khám bệnh nào.'
-                        : 'Bạn chưa có lịch khám nào bị hủy.'}
-                  </p>
-                  {activeTab === 'upcoming' && (
-                    <button 
-                      className="schedule-now-btn"
-                      onClick={() => setShowAppointmentForm(true)}
-                    >
-                      Đặt lịch ngay
-                    </button>
+                  {/* Lịch khám từ localstorage để demo thôi */}
+                  {activeTab === 'upcoming' && localAppointments.length > 0 && (
+                    <div style={{marginTop: 32}}>
+                      <h3>Lịch khám đã đặt (Demo Flow)</h3>
+                      <ul style={{marginBottom: '32px'}}>
+                        {localAppointments.map((a, idx) => (
+                          <li
+                          key={idx}
+                          style={{
+                            marginBottom: '20px',
+                            background: '#f8fafc',
+                            borderRadius: '12px',
+                            padding: '20px',
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.05)',
+                            fontFamily: 'Arial, sans-serif',
+                            fontSize: '25px',
+                            color: '#1e293b',
+                          }}
+                        >
+                          <div style={{ fontSize: '30px', fontWeight: 'bold', marginBottom: '12px' }}>
+                            {a.name}
+                          </div>
+                        
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', rowGap: '10px', columnGap: '20px' }}>
+                            <div><strong>Tuổi:</strong> {a.age}</div>
+                            <div><strong>Địa chỉ:</strong> {a.address}</div>
+                            <div><strong>SĐT:</strong> {a.phone}</div>
+                            <div><strong>Ngày giờ:</strong> {a.datetime}</div>
+                            <div><strong>Bác sĩ:</strong> {a.doctorId}</div>
+                          </div>
+                        </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
-                </div>
+                </>
               ) : (
                 <>
                   {viewMode === 'calendar' ? (
