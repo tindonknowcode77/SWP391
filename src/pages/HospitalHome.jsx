@@ -144,7 +144,7 @@ const HospitalHome = () => {
               <div className="slide-content">
                 <h2>{slide.title}</h2>
                 <p>{slide.description}</p>
-                <Link to={slide.link} className="slide-btn">Tìm hiểu thêm</Link>
+                <Link to={slide.link} className="slide-btn">Đặt lịch ngay</Link>
               </div>
             </div>
           ))}
