@@ -236,10 +236,11 @@ const Home = () => {
           </div>
         </section>
         
-        {/* Footer */}        <footer className="home-footer">
+        {/* Footer */}
+        <footer className="home-footer">
           <div className="footer-content">
             <div className="footer-logo">
-              <img src="/assets/images/logo.png" alt="HIV Treatment App Logo" />
+              <img src="/src/assets/images/logo.png" alt="" />
               <h3>HIV Treatment App</h3>
             </div>
             

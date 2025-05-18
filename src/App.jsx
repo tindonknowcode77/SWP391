@@ -5,6 +5,8 @@ import './App.css';
 import AboutPage from './pages/AboutPage'; 
 import Specialty from './pages/Specialty'; 
 import Contact from './pages/Contact';
+import News from './pages/News';
+import NewsDetail from './pages/NewsDetail';
 
 // Import các trang
 import HospitalHome from './pages/HospitalHome';
@@ -34,13 +36,15 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          
-          {/* Các trang thuộc bệnh viện */}          <Route path="/hospital/gioi-thieu" element={<AboutPage />} />
+            {/* Các trang thuộc bệnh viện */}          
+          <Route path="/hospital/gioi-thieu" element={<AboutPage />} />
           <Route path="/hospital/chuyen-khoa" element={<Specialty />} />
           <Route path="/hospital/lich-kham" element={<div>Trang Lịch khám</div>} />
-          <Route path="/hospital/tin-tuc" element={<div>Trang Tin tức</div>} />
+          <Route path="/hospital/tin-tuc" element={<News />} />
           <Route path="/hospital/lien-he" element={<Contact />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/news/:id" element={<NewsDetail />} />
           {/* Các trang chức năng của ứng dụng */}
           <Route path="/profile" element={<Profile />} />
           <Route path="/hiv-department" element={<HIVDepartment />} />
