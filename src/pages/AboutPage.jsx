@@ -8,7 +8,7 @@ const AboutPage = () => (
     <main className="about-page">
       <section className="about-hero">
         <div className="about-hero-content">
-          <h1>Giới thiệu về WebApp Hỗ Trợ Điều Trị HIV</h1>
+          <h1>Giới thiệu về WebSite Hỗ Trợ Điều Trị HIV</h1>
           <p>
             WebApp Hỗ Trợ Điều Trị HIV là nền tảng số hiện đại được phát triển để hỗ trợ bệnh nhân, bác sĩ và cộng đồng trong việc phòng ngừa, điều trị và quản lý HIV/AIDS một cách an toàn, hiệu quả và bảo mật.
           </p>
@@ -16,7 +16,7 @@ const AboutPage = () => (
       </section>
 
       <section className="about-section">
-        <h2>Mục tiêu của WebApp</h2>
+        <h2>Mục tiêu của chúng tôi </h2>
         <ul>
           <li>Quản lý lịch khám, nhắc uống thuốc và theo dõi sức khỏe cá nhân.</li>
           <li>Kết nối bảo mật giữa bệnh nhân và bác sĩ qua tư vấn trực tuyến.</li>
@@ -43,7 +43,7 @@ const AboutPage = () => (
       </section>
 
       <section className="about-cta">
-        <p><strong>Hãy bắt đầu hành trình chăm sóc sức khỏe của bạn với WebApp ngay hôm nay!</strong></p>
+        <p><strong>Hãy bắt đầu hành trình chăm sóc sức khỏe của bạn với chúng tôi ngay hôm nay!</strong></p>
       </section>
     </main>
   </>
