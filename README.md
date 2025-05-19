@@ -17,8 +17,8 @@
 | Guest    | Xem trang chủ, blog, tài liệu giáo dục                                |
 | Customer | Đăng ký lịch khám, tra cứu kết quả, đặt hẹn, nhắc lịch, hồ sơ cá nhân |
 | Staff    | Quản lý lịch khám, hỗ trợ bác sĩ và bệnh nhân                         |
-| Doctor   | Khám bệnh, kê đơn, điều chỉnh phác đồ, quản lý hồ sơ điều trị         |
-| Manager  | Theo dõi hoạt động tổng thể, thống kê, báo cáo                        |
+| Doctor   | Khám bệnh, kê đơn, điều chỉnh phác đồ ARV, quản lý hồ sơ điều trị bệnh nhân     |
+| Manager  | Quản lý Customer, Staff and Doctor, thống kê, báo cáo                 |
 | Admin    | Quản lý toàn bộ hệ thống, phân quyền, người dùng, dữ liệu hệ thống    |
 
 
@@ -32,19 +32,19 @@
 - Đăng ký tài khoản.
 - Đăng nhập, cập nhật thông tin cá nhân.
 - Đăng ký lịch khám, điều trị HIV, chọn bác sĩ.
-- Tra cứu kết quả xét nghiệm (ARV, CD4, tải lượng HIV). ===
+- Tra cứu kết quả xét nghiệm (ARV, CD4, tải lượng HIV). 
 - Xem lịch sử khám bệnh, điều trị, lịch sử đặt hẹn.
 - Nhận nhắc nhở lịch tái khám, lịch uống thuốc.
 - Đặt lịch hẹn tư vấn trực tuyến với bác sĩ (có thể ẩn danh).
 - Đọc tài liệu giáo dục, blog chia sẻ kinh nghiệm.
-- Gửi câu hỏi, phản hồi cho cơ sở y tế. ===
+- Gửi câu hỏi, phản hồi cho cơ sở y tế.
 
 3. Staff (Nhân viên y tế)
 - Đăng nhập hệ thống với tài khoản được cấp.
 - Xem danh sách bệnh nhân, lịch hẹn, lịch khám.
 - Xem và cập nhật hồ sơ bệnh nhân, kết quả xét nghiệm, lịch sử điều trị.
-- Tư vấn, trả lời câu hỏi, hỗ trợ bệnh nhân qua hệ thống.  ===
-- Quản lý lịch làm việc cá nhân.   ====
+- Tư vấn, trả lời câu hỏi, hỗ trợ bệnh nhân qua hệ thống. 
+- Quản lý lịch làm việc cá nhân.
 - Viết bài chia sẻ, tài liệu giáo dục (nếu được phân quyền).
 - Gửi nhắc nhở cho bệnh nhân (nếu cần).
 
@@ -52,6 +52,7 @@
 - Đăng nhập hệ thống với tài khoản được cấp.
 - Xem danh sách bệnh nhân, lịch hẹn, lịch khám.
 - Lựa chọn, tùy chỉnh phác đồ ARV cho từng bệnh nhân.
+- Tham gia lịch khám trực tuyến.
 
 6. Manager
 - Đăng nhập hệ thống với tài khoản được cấp.
@@ -69,34 +70,35 @@
 
  **Functional Requirements**
 1. Trang chủ và Nội dung công khai
- Hiển thị thông tin cơ sở y tế.
- Cung cấp tài liệu giáo dục HIV.
- Blog chia sẻ kinh nghiệm, câu chuyện tích cực.
+- Hiển thị thông tin cơ sở y tế.
+- Cung cấp tài liệu giáo dục HIV.
+- Blog chia sẻ kinh nghiệm, câu chuyện tích cực.
+- Xem thông tin chi tiết bác sĩ.
 
 2. Đăng ký & Đặt lịch khám
- Customer có thể đăng ký tài khoản hoặc sử dụng ẩn danh.
- Customer có thể đặt lịch khám và chỉ định bác sĩ cụ thể.
- Staff có thể xác nhận lịch và điều phối khám.
+- Customer có thể đăng ký tài khoản.
+- Customer có thể đặt lịch khám trực tuyến và chỉ định bác sĩ cụ thể(có thể ẩn danh khi đặt lịch).
+- Staff có thể xác nhận lịch và điều phối khám.
 
 3. Tra cứu và Theo dõi điều trị
- Người dùng có thể xem lịch sử khám bệnh, xét nghiệm CD4, tải lượng HIV, phác đồ ARV đang sử dụng.
- Hệ thống nhắc nhở người dùng lịch tái khám và lịch uống thuốc.
+- Người dùng có thể xem lịch sử khám bệnh, xét nghiệm CD4, tải lượng HIV, phác đồ ARV đang sử dụng.
+- Hệ thống nhắc nhở người dùng lịch tái khám và lịch uống thuốc.
 
-4.4. Tư vấn & hỗ trợ
- Người dùng có thể đặt hẹn tư vấn trực tuyến với bác sĩ.
- Hỗ trợ ẩn danh khi đặt hẹn để giảm kỳ thị.
+4. Tư vấn & hỗ trợ
+- Người dùng có thể đặt hẹn tư vấn trực tuyến với bác sĩ.
+- Hỗ trợ ẩn danh khi đặt hẹn để giảm kỳ thị.
 
-4.5. Hỗ trợ Bác sĩ
- Bác sĩ có thể xem phác đồ ARV có sẵn và tùy chỉnh theo từng bệnh nhân.
- Bác sĩ cập nhật thông tin điều trị, theo dõi tiến triển.
+5. Hỗ trợ Bác sĩ
+- Bác sĩ có thể xem phác đồ ARV có sẵn và tùy chỉnh theo từng bệnh nhân.
+- Bác sĩ cập nhật thông tin điều trị, theo dõi tiến triển.
 
-4.6. Quản lý hồ sơ & người dùng
- Quản lý hồ sơ người dùng: thông tin cá nhân, lịch sử điều trị, lịch sử tư vấn.
- Quản lý thông tin bác sĩ: tên, bằng cấp, chuyên môn, lịch làm việc.
+6. Quản lý hồ sơ & người dùng
+- Quản lý hồ sơ người dùng: thông tin cá nhân, lịch sử điều trị, lịch sử tư vấn.
+- Quản lý thông tin bác sĩ: tên, bằng cấp, chuyên môn.
 
-4.7. Dashboard & Báo cáo
- Dashboard hiển thị số liệu tổng hợp: số bệnh nhân, lịch hẹn, phác đồ sử dụng,...
- Hệ thống xuất báo cáo (PDF/Excel): theo ngày, bác sĩ, loại thuốc,...
+7. Dashboard & Báo cáo
+- Dashboard hiển thị số liệu tổng hợp: số bệnh nhân, lịch hẹn, phác đồ sử dụng,...
+- Hệ thống xuất báo cáo (PDF/Excel): theo ngày, bác sĩ, loại thuốc,...
 
 ## Công nghệ sử dụng
 
