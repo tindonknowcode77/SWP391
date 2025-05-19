@@ -12,6 +12,16 @@
 - **Tài nguyên**: Thông tin và tài liệu về HIV/AIDS
 - **Thông tin bệnh viện**: Giới thiệu, dịch vụ, đội ngũ y tế
 
+| Vai trò  | Quyền và chức năng                                                    |
+| -------- | --------------------------------------------------------------------- |
+| Guest    | Xem trang chủ, blog, tài liệu giáo dục                                |
+| Customer | Đăng ký lịch khám, tra cứu kết quả, đặt hẹn, nhắc lịch, hồ sơ cá nhân |
+| Staff    | Quản lý lịch khám, hỗ trợ bác sĩ và bệnh nhân                         |
+| Doctor   | Khám bệnh, kê đơn, điều chỉnh phác đồ, quản lý hồ sơ điều trị         |
+| Manager  | Theo dõi hoạt động tổng thể, thống kê, báo cáo                        |
+| Admin    | Quản lý toàn bộ hệ thống, phân quyền, người dùng, dữ liệu hệ thống    |
+
+
 1. Guest
 - Truy cập trang chủ và giao diện của web.
 - Xem thông tin giới thiệu về bệnh viện và bác sĩ.
@@ -56,6 +66,37 @@
 - Quản lý hồ sơ bệnh nhân, lịch sử điều trị, kết quả xét nghiệm.
 - Xem dashboard, báo cáo thống kê toàn hệ thống.
 - Quản lý, xử lý các phản hồi, khiếu nại từ người dùng.  ===
+
+ **Functional Requirements**
+1. Trang chủ và Nội dung công khai
+ Hiển thị thông tin cơ sở y tế.
+ Cung cấp tài liệu giáo dục HIV.
+ Blog chia sẻ kinh nghiệm, câu chuyện tích cực.
+
+2. Đăng ký & Đặt lịch khám
+ Customer có thể đăng ký tài khoản hoặc sử dụng ẩn danh.
+ Customer có thể đặt lịch khám và chỉ định bác sĩ cụ thể.
+ Staff có thể xác nhận lịch và điều phối khám.
+
+3. Tra cứu và Theo dõi điều trị
+ Người dùng có thể xem lịch sử khám bệnh, xét nghiệm CD4, tải lượng HIV, phác đồ ARV đang sử dụng.
+ Hệ thống nhắc nhở người dùng lịch tái khám và lịch uống thuốc.
+
+4.4. Tư vấn & hỗ trợ
+ Người dùng có thể đặt hẹn tư vấn trực tuyến với bác sĩ.
+ Hỗ trợ ẩn danh khi đặt hẹn để giảm kỳ thị.
+
+4.5. Hỗ trợ Bác sĩ
+ Bác sĩ có thể xem phác đồ ARV có sẵn và tùy chỉnh theo từng bệnh nhân.
+ Bác sĩ cập nhật thông tin điều trị, theo dõi tiến triển.
+
+4.6. Quản lý hồ sơ & người dùng
+ Quản lý hồ sơ người dùng: thông tin cá nhân, lịch sử điều trị, lịch sử tư vấn.
+ Quản lý thông tin bác sĩ: tên, bằng cấp, chuyên môn, lịch làm việc.
+
+4.7. Dashboard & Báo cáo
+ Dashboard hiển thị số liệu tổng hợp: số bệnh nhân, lịch hẹn, phác đồ sử dụng,...
+ Hệ thống xuất báo cáo (PDF/Excel): theo ngày, bác sĩ, loại thuốc,...
 
 ## Công nghệ sử dụng
 
