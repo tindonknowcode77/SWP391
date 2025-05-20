@@ -5,6 +5,11 @@
     background: linear-gradient(rgba(48, 61, 69, 0.4), rgba(245,250,253,0.4)), 
             url('../assets/images/hospital-background.png') center/cover no-repeat fixed;
   }
+
+  .section-header p {
+    font-size: 18px;
+    color: black;
+  }
   
   .services-grid {
     display: grid;
