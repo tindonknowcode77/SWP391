@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import '../styles/HospitalHome.css';
+//HÌnh của Carousel nha
+import CarouselPeopleHIV1 from '../assets/images/Carousel_People HIV.png';
+import CarouselPeopleHIV2 from '../assets/images/Carousel_People HIV2.png';
+import CarouselPeopleHIV3 from '../assets/images/Carousel_People HIV3.png';
 
 const HospitalHome = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -86,21 +90,21 @@ const HospitalHome = () => {
   const slides = [
     {
       id: 1,
-      image: '/slide-1.jpg',
+      image: CarouselPeopleHIV1,
       title: 'Chăm sóc toàn diện cho người nhiễm HIV',
       description: 'Hệ thống y tế chất lượng cao với đội ngũ bác sĩ giàu kinh nghiệm',
       link: '/hospital/dich-vu'
     },
     {
       id: 2,
-      image: '/slide-2.jpg',
+      image: CarouselPeopleHIV2,
       title: 'Phác đồ điều trị HIV hiện đại',
       description: 'Áp dụng các phương pháp tiên tiến nhất trong điều trị HIV/AIDS',
       link: '/hospital/chuyen-khoa'
     },
     {
       id: 3,
-      image: '/slide-3.jpg',
+      image: CarouselPeopleHIV3,
       title: 'Đặt lịch khám trực tuyến',
       description: 'Dễ dàng đặt lịch khám chỉ trong vài phút, không cần chờ đợi',
       link: '/hospital/lich-kham'

@@ -43,7 +43,7 @@ const Navbar = () => {
         <div className="navbar-logo">
           <Link to="/hospital">
             <img src={logo} />
-            <span>BỆNH VIỆN ĐIỀU TRỊ HIV</span>
+            <span></span>
           </Link>
         </div>
 
