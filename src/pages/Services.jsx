@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar';
 const Services = () => (
     <>
     <Navbar />
-  <section className="services-section">
+  <section className="services-sections">
     <div className="container">
       <div className="section-header">
         <h2>Dịch vụ của chúng tôi</h2>

@@ -56,13 +56,13 @@ const Navbar = () => {
               <Link to="/hospital/gioi-thieu" onClick={closeMenu}>Giới thiệu</Link>
             </li>
             <li className={isActive('/hospital/dich-vu') ? 'active' : ''}>
-              <Link to="/hospital/dich-vu" onClick={closeMenu}>Dịch Vụ</Link>
+              <Link to="/hospital/dich-vu" onClick={closeMenu}>Dịch vụ</Link>
             </li>
             <li className={isActive('/hospital/chuyen-khoa') ? 'active' : ''}>
               <Link to="/hospital/chuyen-khoa" onClick={closeMenu}>Chuyên khoa</Link>
             </li>
             <li className={isActive('/hospital/lich-kham') ? 'active' : ''}>
-              <Link to="/hospital/lich-kham" onClick={closeMenu}>Lịch khám</Link>
+              <Link to="/hospital/lich-kham" onClick={closeMenu}>Đặt lịch khám</Link>
             </li>
             <li className={isActive('/hospital/tin-tuc') ? 'active' : ''}>
               <Link to="/hospital/tin-tuc" onClick={closeMenu}>Tin tức</Link>
