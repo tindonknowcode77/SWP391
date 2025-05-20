@@ -1,6 +1,6 @@
 .about-page {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(rgba(245,250,253,0.4), rgba(245,250,253,0.4)), 
+  background: linear-gradient(rgba(61, 74, 82, 0.4), rgba(245,250,253,0.4)), 
             url('../assets/images/hospital-background.png') center/cover no-repeat fixed;
   padding: 40px 16px;
   line-height: 1.7;
