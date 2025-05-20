@@ -55,6 +55,9 @@ const Navbar = () => {
             <li className={isActive('/hospital/gioi-thieu') ? 'active' : ''}>
               <Link to="/hospital/gioi-thieu" onClick={closeMenu}>Giới thiệu</Link>
             </li>
+            <li className={isActive('/hospital/dich-vu') ? 'active' : ''}>
+              <Link to="/hospital/dich-vu" onClick={closeMenu}>Dịch Vụ</Link>
+            </li>
             <li className={isActive('/hospital/chuyen-khoa') ? 'active' : ''}>
               <Link to="/hospital/chuyen-khoa" onClick={closeMenu}>Chuyên khoa</Link>
             </li>
