@@ -93,14 +93,14 @@ const HospitalHome = () => {
       image: CarouselPeopleHIV1,
       title: 'Chăm sóc toàn diện cho người nhiễm HIV',
       description: 'Hệ thống y tế chất lượng cao với đội ngũ bác sĩ giàu kinh nghiệm',
-      link: '/hospital/dich-vu'
+      link: '/hospital/lich-kham'
     },
     {
       id: 2,
       image: CarouselPeopleHIV2,
       title: 'Phác đồ điều trị HIV hiện đại',
       description: 'Áp dụng các phương pháp tiên tiến nhất trong điều trị HIV/AIDS',
-      link: '/hospital/chuyen-khoa'
+      link: '/hospital/lich-kham'
     },
     {
       id: 3,
