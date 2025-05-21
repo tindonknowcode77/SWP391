@@ -22,11 +22,11 @@
 | Admin    | Quản lý toàn bộ hệ thống, phân quyền, người dùng, dữ liệu hệ thống    |
 
 
-1. Guest
+1. Guest (Khách)
 - Truy cập trang chủ và giao diện của web.
 - Xem thông tin giới thiệu về bệnh viện và bác sĩ.
 - Đọc các blog chia sẻ kinh nghiệm và các tài liệu giáo dục.
-- Guest có thể chuyển hướng đến đăng kí và đăng nhập.
+- Guest muốn đặt lịch khám hoặc nhận tư vấn thì phải đăng kí hoặc đăng nhập (chuyển hướng).
 
 2. Customer (Người dùng/Bệnh nhân)
 - Đăng ký tài khoản.
@@ -51,6 +51,8 @@
 5. Doctor
 - Đăng nhập hệ thống với tài khoản được cấp.
 - Xem danh sách bệnh nhân, lịch hẹn, lịch khám.
+- Xem và cập nhật hồ sơ bệnh nhân, kết quả xét nghiệm, lịch sử điều trị.
+- Tư vấn, trả lời câu hỏi, hỗ trợ bệnh nhân qua hệ thống. 
 - Lựa chọn, tùy chỉnh phác đồ ARV cho từng bệnh nhân.
 - Tham gia lịch khám trực tuyến.
 
@@ -58,13 +60,13 @@
 - Đăng nhập hệ thống với tài khoản được cấp.
 - Gián sát kiểm tra lịch làm, năng suất, lịch hẹn của staff.
 - Xem thống kê, xem hiệu quả của phác đồ ARV,
+- Quản lý danh sách bác sĩ, lịch làm việc, chuyên môn, bằng cấp.
+- Quản lý hồ sơ bệnh nhân, lịch sử điều trị, kết quả xét nghiệm.
 - Tạo và xóa tài khoản của staff, doctor.
 
 7. Admin
 - Quản lý toàn bộ hệ thống, phân quyền tài khoản staff, customer, doctor and manager.
 - Quản lý thông tin cơ sở y tế, tài liệu giáo dục, blog.
-- Quản lý danh sách bác sĩ, lịch làm việc, chuyên môn, bằng cấp.
-- Quản lý hồ sơ bệnh nhân, lịch sử điều trị, kết quả xét nghiệm.
 - Xem dashboard, báo cáo thống kê toàn hệ thống.
 - Quản lý, xử lý các phản hồi, khiếu nại từ người dùng.  ===
 
