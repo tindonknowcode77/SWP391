@@ -24,6 +24,7 @@ import TreatmentPlan from './pages/TreatmentPlan';
 import MedicationManager from './pages/MedicationManager';
 import AppointmentManager from './pages/AppointmentManager';
 import Services from './pages/Services';
+import Consulting from './pages/Consulting';
 
 function App() {
   return (
@@ -40,9 +41,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-            {/* Các trang thuộc bệnh viện */}          
-          <Route path="/hospital/gioi-thieu" element={<AboutPage />} />
+            {/* Các trang thuộc bệnh viện */}            <Route path="/hospital/gioi-thieu" element={<AboutPage />} />
           <Route path="/hospital/chuyen-khoa" element={<Specialty />} />          <Route path="/hospital/dich-vu" element={<Services />} />
+          <Route path="/hospital/dich-vu/tu-van" element={<Consulting />} />
           <Route path="/hospital/lich-kham" element={<ExaminationSchedule/>} />
           <Route path="/hospital/tin-tuc" element={<News />} />
           <Route path="/hospital/lien-he" element={<Contact />} />

@@ -1,0 +1,189 @@
+.consulting-page {
+  padding: 60px 0;
+}
+
+.consulting-header {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../assets/images/hospital-background.png');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  text-align: center;
+  padding: 80px 20px;
+  margin-bottom: 40px;
+}
+
+.consulting-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.consulting-header p {
+  font-size: 1.2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.consulting-content {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section {
+  margin-bottom: 40px;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: 600;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e74c3c;
+}
+
+.consulting-types {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.consulting-type-card {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.consulting-type-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.consulting-type-card h3 {
+  color: #e74c3c;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.consulting-type-card .icon {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #3498db;
+}
+
+.benefits-list, .process-steps {
+  padding-left: 20px;
+  margin-top: 20px;
+}
+
+.benefits-list li, .process-steps li {
+  margin-bottom: 10px;
+  position: relative;
+  padding-left: 25px;
+}
+
+.benefits-list li:before {
+  content: "✓";
+  color: #27ae60;
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+}
+
+.process-steps li {
+  counter-increment: step-counter;
+}
+
+.process-steps li:before {
+  content: counter(step-counter);
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+  padding: 3px 9px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.faq-item {
+  margin-bottom: 20px;
+}
+
+.faq-question {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.faq-question:hover {
+  background-color: #e9ecef;
+}
+
+.faq-answer {
+  padding: 15px;
+  background-color: #f1f1f1;
+  border-radius: 0 0 8px 8px;
+  margin-top: -8px;
+}
+
+.cta-box {
+  background-color: #3498db;
+  color: white;
+  text-align: center;
+  padding: 40px;
+  border-radius: 8px;
+  margin-top: 40px;
+}
+
+.cta-box h3 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+}
+
+.cta-btn {
+  display: inline-block;
+  background-color: white;
+  color: #3498db;
+  padding: 12px 25px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+}
+
+.cta-btn:hover {
+  background-color: #2980b9;
+  color: white;
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .consulting-types {
+    grid-template-columns: 1fr;
+  }
+  
+  .consulting-header h1 {
+    font-size: 2rem;
+  }
+  
+  .section {
+    padding: 20px;
+  }
+}
