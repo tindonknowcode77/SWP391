@@ -26,6 +26,7 @@ import AppointmentManager from './pages/AppointmentManager';
 import Services from './pages/Services';
 import Consulting from './pages/Consulting';
 import ARVTreatment from './pages/ARVTreatment';
+import HIVTesting from './pages/HIVTesting';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
             {/* Các trang thuộc bệnh viện */}            <Route path="/hospital/gioi-thieu" element={<AboutPage />} />          <Route path="/hospital/chuyen-khoa" element={<Specialty />} />          <Route path="/hospital/dich-vu" element={<Services />} />
           <Route path="/hospital/dich-vu/tu-van" element={<Consulting />} />
           <Route path="/hospital/dich-vu/dieu-tri-arv" element={<ARVTreatment />} />
+          <Route path="/hospital/dich-vu/xet-nghiem" element={<HIVTesting />} />
           <Route path="/hospital/lich-kham" element={<ExaminationSchedule/>} />
           <Route path="/hospital/tin-tuc" element={<News />} />
           <Route path="/hospital/lien-he" element={<Contact />} />
