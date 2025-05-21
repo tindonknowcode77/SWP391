@@ -17,7 +17,7 @@
 | Guest    | Xem trang chủ, blog, tài liệu giáo dục                                |
 | Customer | Đăng ký lịch khám, tra cứu kết quả, đặt hẹn, nhắc lịch, hồ sơ cá nhân |
 | Staff    | Quản lý lịch khám, hỗ trợ bác sĩ và bệnh nhân                         |
-| Doctor   | Khám bệnh, kê đơn, điều chỉnh phác đồ ARV, quản lý hồ sơ điều trị bệnh nhân     |
+| Doctor   | Khám bệnh, xem kết quả xét nghiệm, lựa chọn phác đồ ARV, kê đơn, quản lý hồ sơ điều trị bệnh nhân     |
 | Manager  | Quản lý Customer, Staff and Doctor, thống kê, báo cáo                 |
 | Admin    | Quản lý toàn bộ hệ thống, phân quyền, người dùng, dữ liệu hệ thống    |
 
