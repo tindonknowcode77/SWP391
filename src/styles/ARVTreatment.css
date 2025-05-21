@@ -1,0 +1,282 @@
+.arv-page {
+  padding-bottom: 60px;
+}
+
+.arv-header {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../assets/images/hospital-background.png');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  text-align: center;
+  padding: 80px 20px;
+  margin-bottom: 40px;
+}
+
+.arv-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.arv-header p {
+  font-size: 1.2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.arv-content {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section {
+  margin-bottom: 40px;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: 600;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e74c3c;
+}
+
+.important-note {
+  background-color: #fdf2e9;
+  border-left: 4px solid #e67e22;
+  padding: 15px 20px;
+  margin: 20px 0;
+  border-radius: 4px;
+}
+
+.important-note h4 {
+  color: #d35400;
+  margin-bottom: 10px;
+}
+
+.treatment-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.treatment-card {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.treatment-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.treatment-card h3 {
+  color: #3498db;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.treatment-card .icon {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #e74c3c;
+}
+
+.regimen-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 25px 0;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.regimen-table thead tr {
+  background-color: #3498db;
+  color: #ffffff;
+  text-align: left;
+}
+
+.regimen-table th,
+.regimen-table td {
+  padding: 15px;
+  border-bottom: 1px solid #dddddd;
+}
+
+.regimen-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.regimen-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.regimen-table tbody tr:last-of-type {
+  border-bottom: 2px solid #3498db;
+}
+
+.faq-item {
+  margin-bottom: 20px;
+}
+
+.faq-question {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.faq-question:hover {
+  background-color: #e9ecef;
+}
+
+.faq-answer {
+  padding: 15px;
+  background-color: #f1f1f1;
+  border-radius: 0 0 8px 8px;
+  margin-top: -8px;
+}
+
+.step-list {
+  counter-reset: step-counter;
+  padding-left: 20px;
+  margin-top: 20px;
+}
+
+.step-list li {
+  counter-increment: step-counter;
+  margin-bottom: 20px;
+  position: relative;
+  padding-left: 35px;
+  padding-bottom: 20px;
+  border-left: 2px dashed #3498db;
+}
+
+.step-list li::before {
+  content: counter(step-counter);
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  position: absolute;
+  left: -15px;
+  top: -5px;
+}
+
+.step-list li:last-child {
+  border-left: none;
+  padding-bottom: 0;
+}
+
+.benefits-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.benefit-item {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #2ecc71;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.benefit-item h4 {
+  color: #27ae60;
+  margin-bottom: 10px;
+}
+
+.cta-box {
+  background-color: #3498db;
+  color: white;
+  text-align: center;
+  padding: 40px;
+  border-radius: 8px;
+  margin-top: 40px;
+}
+
+.cta-box h3 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+}
+
+.cta-btn {
+  display: inline-block;
+  background-color: white;
+  color: #3498db;
+  padding: 12px 25px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+}
+
+.cta-btn:hover {
+  background-color: #2980b9;
+  color: white;
+  transform: scale(1.05);
+}
+
+.side-effects {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.side-effect-item {
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.side-effect-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.side-effect-item h4 {
+  color: #e74c3c;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .treatment-cards,
+  .benefits-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .arv-header h1 {
+    font-size: 2rem;
+  }
+  
+  .section {
+    padding: 20px;
+  }
+  
+  .regimen-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
