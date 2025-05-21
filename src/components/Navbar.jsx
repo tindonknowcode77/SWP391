@@ -57,9 +57,11 @@ const Navbar = () => {
             </li>
             <li className={isActive('/hospital/dich-vu') ? 'active' : ''}>
               <Link to="/hospital/dich-vu" onClick={closeMenu}>Dịch vụ</Link>
-            </li>
-            <li className={isActive('/hospital/chuyen-khoa') ? 'active' : ''}>
+            </li>            <li className={isActive('/hospital/chuyen-khoa') ? 'active' : ''}>
               <Link to="/hospital/chuyen-khoa" onClick={closeMenu}>Chuyên khoa</Link>
+            </li>
+            <li className={isActive('/hospital/bac-si') ? 'active' : ''}>
+              <Link to="/hospital/bac-si" onClick={closeMenu}>Đội ngũ bác sĩ</Link>
             </li>
             <li className={isActive('/hospital/lich-kham') ? 'active' : ''}>
               <Link to="/hospital/lich-kham" onClick={closeMenu}>Đặt lịch khám</Link>
@@ -105,16 +107,7 @@ const Navbar = () => {
           <i className={isMenuOpen ? "fas fa-times" : "fas fa-bars"}></i>
         </div>
 
-        <div className="navbar-contact">
-          <div className="contact-item">
-            <i className="fas fa-phone-alt"></i>
-            <span>Hotline: 1900-6889</span>
-          </div>
-          <div className="contact-item">
-            <i className="fas fa-envelope"></i>
-            <span>Email: info@hivhospital.vn</span>
-          </div>
-        </div>
+        
       </div>
     </nav>
   );

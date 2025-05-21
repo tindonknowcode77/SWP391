@@ -1,0 +1,402 @@
+/* DoctorDetail.css */
+.doctor-detail-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.doctor-detail-container {
+  padding: 40px 0 60px;
+}
+
+.back-link {
+  margin-bottom: 30px;
+}
+
+.back-link button {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.back-link button i {
+  margin-right: 8px;
+}
+
+.doctor-profile {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.doctor-profile-header {
+  display: flex;
+  padding: 30px;
+  border-bottom: 1px solid #eee;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.doctor-image {
+  flex: 0 0 200px;
+  height: 200px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.doctor-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.doctor-info {
+  flex: 1;
+  min-width: 300px;
+}
+
+.doctor-info h1 {
+  margin: 0 0 10px;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.doctor-info .specialty {
+  color: #007bff;
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.doctor-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+}
+
+.meta-item i {
+  margin-right: 10px;
+  color: #6c757d;
+}
+
+.doctor-actions {
+  margin-top: 25px;
+}
+
+.appointment-btn {
+  display: inline-block;
+  background-color: #007bff;
+  color: #fff;
+  padding: 12px 25px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.appointment-btn i {
+  margin-right: 8px;
+}
+
+.appointment-btn:hover {
+  background-color: #0056b3;
+}
+
+.doctor-profile-content {
+  padding: 30px;
+}
+
+.profile-section {
+  margin-bottom: 40px;
+}
+
+.profile-section:last-child {
+  margin-bottom: 0;
+}
+
+.profile-section h2 {
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-section p {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.certificate-list, .research-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.certificate-list li, .research-list li {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.certificate-list li i, .research-list li i {
+  color: #007bff;
+  margin-right: 10px;
+  margin-top: 5px;
+}
+
+.additional-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.info-item h3 {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.info-item ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-item ul li {
+  margin-bottom: 5px;
+}
+
+.related-doctors {
+  padding: 60px 0;
+}
+
+.related-doctors h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #333;
+}
+
+.doctors-slider {
+  display: flex;
+  gap: 30px;
+  overflow-x: auto;
+  padding-bottom: 20px;
+}
+
+.doctors-slider .doctor-card {
+  flex: 0 0 300px;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s;
+}
+
+.doctors-slider .doctor-card:hover {
+  transform: translateY(-5px);
+}
+
+.doctors-slider .doctor-image {
+  height: 180px;
+}
+
+.doctors-slider .doctor-info {
+  padding: 20px;
+  text-align: center;
+}
+
+.doctors-slider .doctor-info h3 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+}
+
+.doctors-slider .doctor-info p {
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+.doctors-slider .view-profile {
+  display: inline-block;
+  color: #007bff;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.doctors-slider .view-profile:hover {
+  color: #0056b3;
+}
+
+.cta-section {
+  background-color: #007bff;
+  color: #fff;
+  padding: 60px 0;
+  text-align: center;
+}
+
+.cta-content h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.cta-content p {
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-button {
+  display: inline-block;
+  background-color: #fff;
+  color: #007bff;
+  padding: 12px 30px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.cta-button:hover {
+  background-color: #f8f9fa;
+  transform: translateY(-3px);
+}
+
+/* Loading and error styles */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  text-align: center;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 123, 255, 0.1);
+  border-left-color: #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-container, .not-found-container {
+  text-align: center;
+  padding: 80px 0;
+}
+
+.error-content, .not-found-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.error-content i, .not-found-content i {
+  font-size: 4rem;
+  color: #dc3545;
+  margin-bottom: 20px;
+}
+
+.not-found-content i {
+  color: #6c757d;
+}
+
+.error-content h2, .not-found-content h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.error-content p, .not-found-content p {
+  color: #6c757d;
+  margin-bottom: 30px;
+  max-width: 600px;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.back-button i {
+  margin-right: 8px;
+}
+
+.back-button:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .doctor-profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .doctor-image {
+    margin: 0 auto;
+  }
+  
+  .doctor-meta {
+    justify-content: center;
+  }
+  
+  .additional-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .cta-content h2 {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .doctor-image {
+    flex: 0 0 150px;
+    height: 150px;
+  }
+  
+  .doctor-info h1 {
+    font-size: 1.5rem;
+  }
+  
+  .cta-content h2 {
+    font-size: 1.5rem;
+  }
+  
+  .cta-button {
+    padding: 10px 25px;
+  }
+}

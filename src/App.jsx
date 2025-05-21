@@ -7,7 +7,9 @@ import Specialty from './pages/Specialty';
 import Contact from './pages/Contact';
 import News from './pages/News';
 import NewsDetail from './pages/NewsDetail';
-import ExaminationSchedule from './pages/ExaminationSchedule'; 
+import ExaminationSchedule from './pages/ExaminationSchedule';
+import DoctorsList from './pages/DoctorsList';
+import DoctorDetail from './pages/DoctorDetail';
 
 // Import các trang
 import HospitalHome from './pages/HospitalHome';
@@ -40,11 +42,12 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
             {/* Các trang thuộc bệnh viện */}          
           <Route path="/hospital/gioi-thieu" element={<AboutPage />} />
-          <Route path="/hospital/chuyen-khoa" element={<Specialty />} />
-          <Route path="/hospital/dich-vu" element={<Services />} />
+          <Route path="/hospital/chuyen-khoa" element={<Specialty />} />          <Route path="/hospital/dich-vu" element={<Services />} />
           <Route path="/hospital/lich-kham" element={<ExaminationSchedule/>} />
           <Route path="/hospital/tin-tuc" element={<News />} />
           <Route path="/hospital/lien-he" element={<Contact />} />
+          <Route path="/hospital/bac-si" element={<DoctorsList />} />
+          <Route path="/hospital/bac-si/:id" element={<DoctorDetail />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/news" element={<News />} />
           <Route path="/news/:id" element={<NewsDetail />} />
