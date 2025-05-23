@@ -153,10 +153,10 @@
 }
 
 .faq-answer {
-  padding: 15px;
-  background-color: #f1f1f1;
-  border-radius: 0 0 8px 8px;
-  margin-top: -8px;
+  display: block !important;
+  height: auto !important;
+  overflow: visible !important;
+  max-height: none !important;
 }
 
 .step-list {

@@ -306,9 +306,9 @@ const HospitalHome = () => {
               <Link to="/hospital/lich-kham" className="appointment-btn">Đặt lịch ngay</Link>
             </div>
             
-            <div className="appointment-image">
+            {/* <div className="appointment-image">
               <img src="/appointment-banner.jpg" alt="Đặt lịch khám" />
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
