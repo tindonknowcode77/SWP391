@@ -78,17 +78,7 @@ const Navbar = () => {
           {currentUser ? (
             <Link to="/profile" className="login-button">
               <i className="fas fa-user"></i>
-              <span>{currentUser.name}</span>
-              {currentUser.accountStatus === 'active' && (
-                <span className="account-status active">
-                  <i className="fas fa-circle"></i>
-                </span>
-              )}
-              {currentUser.accountStatus !== 'active' && (
-                <span className="account-status inactive">
-                  <i className="fas fa-circle"></i>
-                </span>
-              )}
+              <span>{currentUser.name}</span>             
             </Link>
           ) : (
             <Link to="/login" className="login-button">

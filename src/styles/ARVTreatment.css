@@ -126,6 +126,12 @@
 
 .faq-item {
   margin-bottom: 20px;
+  display: block;         
+  color: #000;           
+  font-size: 16px;        
+  visibility: visible;    
+  overflow: visible;     
+
 }
 
 .faq-question {
