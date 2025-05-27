@@ -50,7 +50,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div style={{ padding: 20 }}>
+        <div>
           {/* Phần Upload ảnh Firebase */}
           <h2>Upload ảnh Firebase</h2>
           <input type="file" onChange={handleFileChange} />
