@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { storage } from './utils/firebase-config';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+// import { storage } from './utils/firebase-config';
+// import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
@@ -31,37 +31,26 @@ import ARVTreatment from './pages/ARVTreatment';
 import HIVTesting from './pages/HIVTesting';
 
 function App() {
-  const [file, setFile] = useState(null);
-  const [imageURL, setImageURL] = useState("");
+  // const [file, setFile] = useState(null);
+  // const [imageURL, setImageURL] = useState("");
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
+  // const handleFileChange = (e) => {
+  //   setFile(e.target.files[0]);
+  // };
 
-  const handleUpload = async () => {
-    if (!file) return alert("Vui lòng chọn ảnh!");
-    const storageRef = ref(storage, `images/${file.name}`);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
-    setImageURL(url);
-    console.log("Uploaded:", url);
-  };
+  // const handleUpload = async () => {
+  //   if (!file) return alert("Vui lòng chọn ảnh!");
+  //   const storageRef = ref(storage, `images/${file.name}`);
+  //   await uploadBytes(storageRef, file);
+  //   const url = await getDownloadURL(storageRef);
+  //   setImageURL(url);
+  //   console.log("Uploaded:", url);
+  // };
 
   return (
     <AuthProvider>
       <Router>
-        <div>
-          {/* Phần Upload ảnh Firebase */}
-          <h2>Upload ảnh Firebase</h2>
-          <input type="file" onChange={handleFileChange} />
-          <button onClick={handleUpload}>Upload</button>
-
-          {imageURL && (
-            <div>
-              <p>Ảnh đã upload:</p>
-              <img src={imageURL} alt="Uploaded" width="200" />
-            </div>
-          )}
+        
 
           {/* Phần định tuyến các trang */}
           <Routes>
@@ -104,7 +93,7 @@ function App() {
             {/* Chuyển hướng cho các URL không hợp lệ */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </div>
+        
       </Router>
     </AuthProvider>
   );
