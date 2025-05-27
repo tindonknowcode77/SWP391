@@ -3,7 +3,7 @@
 Ứng dụng web quản lý điều trị HIV giúp bệnh nhân HIV/AIDS theo dõi và quản lý việc điều trị của mình một cách hiệu quả. 
 
 ## Tính năng chính
-
+https://docs.google.com/document/d/1TG2hssFB6AFW3CmZzN3omwqr5pgyyiq_QIJby_TDml8/edit?usp=sharing 
 - **Quản lý tài khoản và xác thực**: Đăng nhập, đăng ký, quên mật khẩu
 - **Hồ sơ người dùng**: Thông tin cá nhân, hồ sơ bệnh án, thiết lập cá nhân
 - **Kế hoạch điều trị**: Xem kế hoạch, theo dõi xét nghiệm, quản lý cách dùng thuốc theo phác đồ ARV tùy theo nhóm bệnh nhân
