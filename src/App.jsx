@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { storage } from './utils/firebase-config';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
+
 import AboutPage from './pages/AboutPage'; 
 import Specialty from './pages/Specialty'; 
 import Contact from './pages/Contact';
@@ -11,7 +14,6 @@ import ExaminationSchedule from './pages/ExaminationSchedule';
 import DoctorsList from './pages/DoctorsList';
 import DoctorDetail from './pages/DoctorDetail';
 
-// Import các trang
 import HospitalHome from './pages/HospitalHome';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -29,43 +31,80 @@ import ARVTreatment from './pages/ARVTreatment';
 import HIVTesting from './pages/HIVTesting';
 
 function App() {
+  const [file, setFile] = useState(null);
+  const [imageURL, setImageURL] = useState("");
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (!file) return alert("Vui lòng chọn ảnh!");
+    const storageRef = ref(storage, `images/${file.name}`);
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
+    setImageURL(url);
+    console.log("Uploaded:", url);
+  };
+
   return (
     <AuthProvider>
       <Router>
-        <Routes>
-          {/* Trang chủ chính của ứng dụng */}
-          <Route path="/" element={<Home />} />
-          
-          {/* Trang chủ bệnh viện */}
-          <Route path="/hospital" element={<HospitalHome />} />
-          
-          {/* Các trang xác thực */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-            {/* Các trang thuộc bệnh viện */}            <Route path="/hospital/gioi-thieu" element={<AboutPage />} />          <Route path="/hospital/chuyen-khoa" element={<Specialty />} />          <Route path="/hospital/dich-vu" element={<Services />} />
-          <Route path="/hospital/dich-vu/tu-van" element={<Consulting />} />
-          <Route path="/hospital/dich-vu/dieu-tri-arv" element={<ARVTreatment />} />
-          <Route path="/hospital/dich-vu/xet-nghiem" element={<HIVTesting />} />
-          <Route path="/hospital/lich-kham" element={<ExaminationSchedule/>} />
-          <Route path="/hospital/tin-tuc" element={<News />} />
-          <Route path="/hospital/lien-he" element={<Contact />} />
-          <Route path="/hospital/bac-si" element={<DoctorsList />} />
-          <Route path="/hospital/bac-si/:id" element={<DoctorDetail />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/news" element={<News />} />
-          <Route path="/news/:id" element={<NewsDetail />} />
-          {/* Các trang chức năng của ứng dụng */}
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/hiv-department" element={<HIVDepartment />} />
-          <Route path="/resources" element={<Resources />} />
-          <Route path="/treatment-plan" element={<TreatmentPlan />} />
-          <Route path="/medication" element={<MedicationManager />} />
-          <Route path="/appointments" element={<AppointmentManager />} />
-          
-          {/* Chuyển hướng cho các URL không hợp lệ */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <div style={{ padding: 20 }}>
+          {/* Phần Upload ảnh Firebase */}
+          <h2>Upload ảnh Firebase</h2>
+          <input type="file" onChange={handleFileChange} />
+          <button onClick={handleUpload}>Upload</button>
+
+          {imageURL && (
+            <div>
+              <p>Ảnh đã upload:</p>
+              <img src={imageURL} alt="Uploaded" width="200" />
+            </div>
+          )}
+
+          {/* Phần định tuyến các trang */}
+          <Routes>
+            {/* Trang chủ chính của ứng dụng */}
+            <Route path="/" element={<Home />} />
+
+            {/* Trang chủ bệnh viện */}
+            <Route path="/hospital" element={<HospitalHome />} />
+
+            {/* Các trang xác thực */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+
+            {/* Các trang thuộc bệnh viện */}
+            <Route path="/hospital/gioi-thieu" element={<AboutPage />} />
+            <Route path="/hospital/chuyen-khoa" element={<Specialty />} />
+            <Route path="/hospital/dich-vu" element={<Services />} />
+            <Route path="/hospital/dich-vu/tu-van" element={<Consulting />} />
+            <Route path="/hospital/dich-vu/dieu-tri-arv" element={<ARVTreatment />} />
+            <Route path="/hospital/dich-vu/xet-nghiem" element={<HIVTesting />} />
+            <Route path="/hospital/lich-kham" element={<ExaminationSchedule />} />
+            <Route path="/hospital/tin-tuc" element={<News />} />
+            <Route path="/hospital/lien-he" element={<Contact />} />
+            <Route path="/hospital/bac-si" element={<DoctorsList />} />
+            <Route path="/hospital/bac-si/:id" element={<DoctorDetail />} />
+
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/news/:id" element={<NewsDetail />} />
+
+            {/* Các trang chức năng của ứng dụng */}
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/hiv-department" element={<HIVDepartment />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="/treatment-plan" element={<TreatmentPlan />} />
+            <Route path="/medication" element={<MedicationManager />} />
+            <Route path="/appointments" element={<AppointmentManager />} />
+
+            {/* Chuyển hướng cho các URL không hợp lệ */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
       </Router>
     </AuthProvider>
   );
