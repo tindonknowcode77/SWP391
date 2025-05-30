@@ -130,6 +130,37 @@ const doctors = [
       'Theo dõi CD4 và tải lượng virus'
     ]
   },
+  { 
+    id: 5, 
+    name: 'BS. Đỗ Văn E',
+    workDays: {
+      3: true, // Thứ 4
+      4: true, // Thứ 5
+      6: true, // Thứ 7
+      0: false, 1: false, 2: false, 5: false // Những ngày không làm việc
+    },
+    schedule: 'Thứ 4, 5, 7', 
+    hours: '14:00 - 17:00',
+    workHours: {
+      start: 14,
+      end: 17
+    },
+    avatar: 'https://randomuser.me/api/portraits/men/1.jpg', 
+    specialty: 'Chuyên khoa HIV/AIDS & Miễn dịch',
+    experience: '9 năm kinh nghiệm',
+    rating: 4.6,
+    education: 'Đại học Y Dược TP.HCM',
+    description: 'Bác sĩ Đỗ Văn E là chuyên gia về dinh dưỡng cho người nhiễm HIV/AIDS.',
+    certifications: ['Chuyên gia dinh dưỡng lâm sàng', 'Thạc sĩ Y học'],
+    researchAreas: ['Miễn dịch trong bệnh HIV/AIDS', 'Liệu pháp điều trị mới'],
+    services: [
+      'Tư vấn HIV/AIDS',
+      'Điều trị ARV',
+      'Liệu pháp tăng cường miễn dịch',
+      'Tư vấn phòng ngừa lây nhiễm',
+      'Theo dõi CD4 và tải lượng virus'
+    ]
+  },
 ];
 
 export default function ExaminationSchedule() {
