@@ -78,19 +78,19 @@ const NewsDetail = () => {
         {
           id: 3,
           title: 'Chính sách mới về bảo hiểm y tế cho bệnh nhân HIV',
-          image: '/assets/images/news/insurance.jpg',
+          image: 'https://images.pexels.com/photos/305568/pexels-photo-305568.jpeg?auto=compress&w=600&q=80',
           date: '10/05/2025'
         },
         {
           id: 6,
           title: 'Thử nghiệm lâm sàng vaccine HIV giai đoạn 2',
-          image: '/assets/images/news/vaccine.jpg',
+          image: 'https://images.pexels.com/photos/3652098/pexels-photo-3652098.jpeg?auto=compress&w=600&q=80',
           date: '03/05/2025'
         },
         {
           id: 7,
           title: 'Ứng dụng trí tuệ nhân tạo trong điều trị HIV',
-          image: '/assets/images/news/ai-treatment.jpg',
+          image: 'https://images.pexels.com/photos/386148/pexels-photo-386148.jpeg?auto=compress&w=600&q=80',
           date: '01/05/2025'
         }
       ];
