@@ -55,7 +55,7 @@ https://docs.google.com/document/d/1TG2hssFB6AFW3CmZzN3omwqr5pgyyiq_QIJby_TDml8/
 - Xem và cập nhật hồ sơ bệnh nhân, kết quả xét nghiệm, lịch sử điều trị.
 - Tư vấn, trả lời câu hỏi, hỗ trợ bệnh nhân qua hệ thống.
 - Lựa chọn, tùy chỉnh phác đồ ARV cho từng bệnh nhân.
-- Tham gia lịch khám trực tuyến.
+- Tham gia lịch tư vấn trực tuyến.
 
 6. Manager(Quản lý)
 - Đăng nhập hệ thống với tài khoản được cấp.
