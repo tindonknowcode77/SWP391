@@ -59,17 +59,16 @@ https://docs.google.com/document/d/1TG2hssFB6AFW3CmZzN3omwqr5pgyyiq_QIJby_TDml8/
 
 6. Manager(Quản lý)
 - Đăng nhập hệ thống với tài khoản được cấp.
-- Gián sát kiểm tra lịch làm, năng suất, lịch hẹn của staff.
+- Gián sát kiểm tra lịch làm việc, hiệu suất, lịch hẹn của staff, bác sĩ.
 - Quản lý danh sách bác sĩ, nhân viên (lịch làm việc, chuyên môn, bằng cấp).
 - Quản lý hồ sơ bệnh nhân, lịch sử điều trị, kết quả xét nghiệm.
 - Xem thống kê, xem hiệu quả của phác đồ ARV,
-- Tạo và xóa tài khoản của staff, doctor.
 
 7. Admin
 - Tạo, xóa và chỉnh sửa tài khoản của manager, staff, doctor, customer (phân quyền).
 - Quản lý thông tin cơ sở y tế, tài liệu giáo dục, blog.
 - Xem dashboard, báo cáo thống kê toàn hệ thống.
-- Quản lý, xử lý các phản hồi, khiếu nại từ người dùng.  ===
+- Quản lý, xử lý các phản hồi, khiếu nại từ người dùng.
 
  **Functional Requirements**
 1. Trang chủ và Nội dung công khai
@@ -80,7 +79,7 @@ https://docs.google.com/document/d/1TG2hssFB6AFW3CmZzN3omwqr5pgyyiq_QIJby_TDml8/
 
 2. Đăng ký & Đặt lịch khám
 - Customer có thể đăng ký tài khoản.
-- Customer có thể đặt lịch khám trực tuyến và chỉ định bác sĩ cụ thể(có thể ẩn danh khi đặt lịch).
+- Customer có thể đặt lịch tư vấn trực tuyến và chỉ định bác sĩ cụ thể(có thể ẩn danh khi đặt lịch).
 - Staff có thể xác nhận lịch và điều phối khám.
 
 3. Tra cứu và Theo dõi điều trị
