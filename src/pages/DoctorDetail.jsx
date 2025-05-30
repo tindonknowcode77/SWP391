@@ -93,7 +93,7 @@ const DoctorDetail = () => {
               id: 5,
               name: 'BS. Đỗ Văn E',
               specialty: 'Chuyên gia dinh dưỡng HIV/AIDS',
-              image: '/doctor-5.jpg',
+              image: 'https://randomuser.me/api/portraits/men/1.jpg',
               experience: '9 năm kinh nghiệm',
               education: 'Đại học Y Dược TP.HCM',
               description: 'Bác sĩ Đỗ Văn E là chuyên gia về dinh dưỡng cho người nhiễm HIV/AIDS. Bác sĩ giúp bệnh nhân xây dựng chế độ dinh dưỡng phù hợp để tăng cường hệ miễn dịch và cải thiện chất lượng cuộc sống.',
