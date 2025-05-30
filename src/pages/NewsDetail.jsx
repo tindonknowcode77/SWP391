@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import '../styles/News.css';
+import logo from '../assets/images/icon.png';
 
 const NewsDetail = () => {
   const { id } = useParams();
@@ -261,7 +262,7 @@ const NewsDetail = () => {
       <footer className="home-footer">
         <div className="footer-content">
           <div className="footer-logo">
-            <img src="/assets/images/logo.png" alt="HIV Treatment App Logo" />
+            <img src ={logo}  />
             <h3>HIV Treatment App</h3>
           </div>
           

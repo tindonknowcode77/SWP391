@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import '../styles/News.css';
+import logo from '../assets/images/icon.png';
 
 const News = () => {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -273,7 +274,7 @@ const News = () => {
       <footer className="home-footer">
         <div className="footer-content">
           <div className="footer-logo">
-            <img src="/assets/images/logo.png" alt="HIV Treatment App Logo" />
+            <img src={logo} alt="HIV Treatment App Logo" />
             <h3>HIV Treatment App</h3>
           </div>
           
