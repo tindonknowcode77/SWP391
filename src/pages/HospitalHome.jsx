@@ -42,29 +42,33 @@ const HospitalHome = () => {
               date: '05/09/2024',
               summary: 'Bệnh viện triển khai chương trình tư vấn dinh dưỡng miễn phí cho bệnh nhân HIV...'
             },
-          ]);
-
-          setDoctors([
+          ]);          setDoctors([
             {
               id: 1,
-              name: 'BS. Nguyễn Văn A',
-              specialty: 'Trưởng khoa HIV/AIDS',
-              image: '/doctor-1.jpg',
-              experience: '15 năm kinh nghiệm'
+              name: 'GS.TS. Nguyễn Văn Kinh',
+              specialty: 'Giáo sư, Tiến sĩ - Trưởng khoa HIV/AIDS',
+              image: 'https://randomuser.me/api/portraits/men/76.jpg',
+              experience: '25+ năm kinh nghiệm',
+              education: 'Đại học Y Hà Nội, Harvard Medical School',
+              description: 'Chuyên gia đầu ngành về HIV/AIDS với hơn 50 công trình nghiên cứu khoa học.'
             },
             {
               id: 2,
-              name: 'BS. Phạm Thị B',
-              specialty: 'Bác sĩ điều trị HIV',
-              image: '/doctor-2.jpg',
-              experience: '10 năm kinh nghiệm'
+              name: 'TS.BS. Phạm Thị Hương',
+              specialty: 'Tiến sĩ Y khoa - Chuyên gia điều trị HIV',
+              image: 'https://randomuser.me/api/portraits/women/55.jpg',
+              experience: '18 năm kinh nghiệm',
+              education: 'Đại học Y Dược TP.HCM, Johns Hopkins University',
+              description: 'Chuyên gia về phác đồ điều trị HIV tiên tiến và quản lý kháng thuốc.'
             },
             {
               id: 3,
-              name: 'BS. Trần Văn C',
-              specialty: 'Chuyên gia tư vấn HIV',
-              image: '/doctor-3.jpg',
-              experience: '12 năm kinh nghiệm'
+              name: 'PGS.TS. Trần Văn Lộc',
+              specialty: 'Phó Giáo sư - Chuyên gia nghiên cứu HIV',
+              image: 'https://randomuser.me/api/portraits/men/32.jpg',
+              experience: '20+ năm kinh nghiệm',
+              education: 'Đại học Y Hà Nội, University of California',
+              description: 'Chuyên gia về các liệu pháp mới và nghiên cứu vắc xin phòng HIV.'
             },
           ]);
           
@@ -220,17 +224,16 @@ const HospitalHome = () => {
         </div>
       </section>
       
-      {/* Doctor Section */}
-      <section className="doctors-section">
+      {/* Doctor Section */}      <section className="doctors-section">
         <div className="container">
           <div className="section-header">
-            <h2>Đội ngũ bác sĩ</h2>
-            <p>Các chuyên gia y tế giàu kinh nghiệm trong lĩnh vực HIV/AIDS</p>
+            <h2>Đội ngũ bác sĩ chuyên khoa</h2>
+            <p>Các chuyên gia y tế hàng đầu với nhiều năm kinh nghiệm trong lĩnh vực HIV/AIDS</p>
           </div>
           
-          <div className="doctors-grid">
-            {doctors.map(doctor => (
+          <div className="doctors-grid">            {doctors.map(doctor => (
               <div className="doctor-card" key={doctor.id}>
+                {doctor.id === 1 && <span className="doctor-featured-badge">Chuyên gia hàng đầu</span>}
                 <div className="doctor-image">
                   <img src={doctor.image} alt={doctor.name} />
                 </div>
@@ -238,12 +241,26 @@ const HospitalHome = () => {
                   <h3>{doctor.name}</h3>
                   <p className="specialty">{doctor.specialty}</p>
                   <p className="experience">{doctor.experience}</p>
+                  <div className="doctor-social">
+                    <a href="#" className="doctor-social-icon">
+                      <i className="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" className="doctor-social-icon">
+                      <i className="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" className="doctor-social-icon">
+                      <i className="fas fa-envelope"></i>
+                    </a>
+                  </div>
                   <div className="doctor-contact">
                     <Link to={`/hospital/bac-si/${doctor.id}`} className="doctor-btn">Xem hồ sơ</Link>
                   </div>
                 </div>
               </div>
             ))}
+          </div>
+          <div className="view-all-news" style={{marginTop: '50px'}}>
+            <Link to="/hospital/bac-si" className="view-all-btn">Xem tất cả bác sĩ</Link>
           </div>
         </div>
       </section>
