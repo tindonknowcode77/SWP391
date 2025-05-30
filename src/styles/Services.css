@@ -1,37 +1,45 @@
 .services-sections {
-    padding: 80px 0;
-    background-color: #f8f9fa;
-    margin-top: 80px;
-    background: linear-gradient(rgba(48, 61, 69, 0.4), rgba(245,250,253,0.4)), 
-            url('../assets/images/hospital-background.png') center/cover no-repeat fixed;
-  }
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    background: linear-gradient(rgba(48, 61, 69, 0.4), rgba(245,250,253,0.4)), url('../assets/images/hospital-background.png') center center / cover no-repeat fixed;
+}
 
-  .section-header p {
+.section-header p {
     font-size: 18px;
     color: black;
-  }
-  
-  .services-grid {
+}
+
+.services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: center;
+    align-items: center;
     gap: 30px;
-  }
-  
-  .service-card {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.service-card {
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     padding: 30px;
     transition: transform 0.3s, box-shadow 0.3s;
     text-align: center;
-  }
-  
-  .service-card:hover {
+}
+
+.service-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-  }
-  
-  .service-icon {
+}
+
+.service-icon {
     width: 80px;
     height: 80px;
     background-color: rgba(0, 91, 171, 0.1);
@@ -40,47 +48,47 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto 20px;
-  }
-  
-  .service-icon i {
+}
+
+.service-icon i {
     font-size: 36px;
     color: #005bab;
-  }
-  
-  .service-card h3 {
+}
+
+.service-card h3 {
     font-size: 1.5rem;
     color: #333;
     margin-bottom: 15px;
-  }
-  
-  .service-card p {
+}
+
+.service-card p {
     color: #666;
     margin-bottom: 20px;
     line-height: 1.6;
-  }
-  
-  .read-more {
+}
+
+.read-more {
     color: #005bab;
     text-decoration: none;
     font-weight: 600;
     position: relative;
     transition: padding 0.3s;
-  }
-  
-  .read-more::after {
+}
+
+.read-more::after {
     content: '→';
     position: absolute;
     right: -20px;
     top: 0;
     opacity: 0;
     transition: opacity 0.3s, right 0.3s;
-  }
-  
-  .read-more:hover {
+}
+
+.read-more:hover {
     padding-right: 25px;
-  }
-  
-  .read-more:hover::after {
+}
+
+.read-more:hover::after {
     opacity: 1;
     right: 0;
-  }
+}

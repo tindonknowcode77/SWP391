@@ -52,7 +52,7 @@ const News = () => {
         title: 'Kỹ thuật xét nghiệm HIV mới có độ chính xác cao hơn',
         summary: 'Kỹ thuật xét nghiệm mới giúp phát hiện sớm nhiễm HIV chỉ sau 7 ngày tiếp xúc.',
         content: 'Bệnh viện Điều trị HIV vừa triển khai kỹ thuật xét nghiệm HIV thế hệ mới với độ nhạy và độ đặc hiệu cao hơn. Kỹ thuật này có thể phát hiện nhiễm HIV chỉ sau 7 ngày tiếp xúc với virus, sớm hơn so với các phương pháp trước đây. Điều này giúp rút ngắn thời gian cửa sổ và tăng hiệu quả trong phát hiện sớm và điều trị kịp thời.',
-        image: 'https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&w=600&q=80',
+        image: 'https://images.pexels.com/photos/2280549/pexels-photo-2280549.jpeg?auto=compress&w=600&q=80',
         category: 'technology',
         author: 'TS. Phạm Thị Lan',
         date: '08/05/2025',

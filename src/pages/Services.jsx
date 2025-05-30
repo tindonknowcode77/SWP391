@@ -37,14 +37,6 @@ const Services = () => (
           <p>Xét nghiệm nhanh, chính xác và bảo mật với công nghệ tiên tiến.</p>
           <Link to="/hospital/dich-vu/xet-nghiem" className="read-more">Xem thêm</Link>
         </div>
-        <div className="service-card">
-          <div className="service-icon">
-            <i className="fas fa-heartbeat"></i>
-          </div>
-          <h3>Điều trị bệnh đồng nhiễm</h3>
-          <p>Điều trị toàn diện các bệnh đồng nhiễm như viêm gan, lao, STIs...</p>
-          <Link to="/hospital/dich-vu/benh-dong-nhiem" className="read-more">Xem thêm</Link>
-        </div>
       </div>
     </div>
   </section>
