@@ -23,7 +23,7 @@ const DoctorDetail = () => {
               id: 1,
               name: 'BS. Nguyễn Văn A',
               specialty: 'Trưởng khoa HIV/AIDS',
-              image: '/doctor-1.jpg',
+              image: 'https://randomuser.me/api/portraits/men/1.jpg',
               experience: '15 năm kinh nghiệm',
               education: 'Đại học Y Hà Nội',
               description: 'Bác sĩ Nguyễn Văn A là chuyên gia hàng đầu trong lĩnh vực điều trị HIV/AIDS với hơn 15 năm kinh nghiệm. Bác sĩ đã tham gia nhiều nghiên cứu quốc tế và có nhiều công trình nghiên cứu được công bố.',
