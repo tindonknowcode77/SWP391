@@ -46,7 +46,7 @@ const NewsDetail = () => {
           
           <p>Bộ Y tế đang xem xét kết quả nghiên cứu này và có thể sẽ cập nhật hướng dẫn điều trị HIV trong thời gian tới.</p>
         `,
-        image: '/assets/images/news/treatment-research.jpg',
+        image: 'https://images.pexels.com/photos/2280549/pexels-photo-2280549.jpeg?auto=compress&w=600&q=80',
         category: 'research',
         author: 'TS. Nguyễn Văn Minh',
         date: '15/05/2025',
