@@ -26,14 +26,20 @@ const doctors = [
     education: 'Đại học Y Hà Nội',
     description: 'Bác sĩ chuyên khoa II về HIV/AIDS với hơn 15 năm kinh nghiệm điều trị các bệnh nhiễm trùng và quản lý HIV.',
     certifications: ['Chuyên khoa II - ĐH Y Hà Nội', 'Chứng chỉ quốc tế về HIV/AIDS'],
-    researchAreas: ['Thuốc kháng virus thế hệ mới', 'Miễn dịch trong điều trị HIV'],
-    services: [
+    researchAreas: ['Thuốc kháng virus thế hệ mới', 'Miễn dịch trong điều trị HIV'],    services: [
       'Tư vấn HIV/AIDS',
       'Điều trị ARV',
       'Xét nghiệm định kỳ', 
       'Theo dõi tải lượng virus',
       'Tư vấn dinh dưỡng cho bệnh nhân HIV'
-    ]
+    ],
+    fees: {
+      'Xét nghiệm HIV': 250000,
+      'Điều trị ARV': 350000,
+      'Tư vấn HIV': 150000,
+      'Tái khám định kỳ': 200000,
+      'Khám tổng quát': 300000
+    }
   },
   { 
     id: 2, 
@@ -57,14 +63,20 @@ const doctors = [
     education: 'Đại học Y Dược TP.HCM',
     description: 'Bác sĩ chuyên điều trị các bệnh truyền nhiễm và đồng nhiễm HIV/AIDS, có kinh nghiệm điều trị ARV.',
     certifications: ['Chuyên khoa I Truyền nhiễm', 'Nghiên cứu sinh tại Pháp'],
-    researchAreas: ['Đồng nhiễm HIV và bệnh truyền nhiễm', 'Kháng thuốc trong điều trị HIV'],
-    services: [
+    researchAreas: ['Đồng nhiễm HIV và bệnh truyền nhiễm', 'Kháng thuốc trong điều trị HIV'],    services: [
       'Tư vấn HIV/AIDS',
       'Điều trị ARV',
       'Điều trị các bệnh truyền nhiễm cơ hội',
       'Quản lý tác dụng phụ thuốc',
       'Theo dõi bệnh nhân đồng nhiễm'
-    ]
+    ],
+    fees: {
+      'Xét nghiệm HIV': 270000,
+      'Điều trị ARV': 380000,
+      'Tư vấn HIV': 170000,
+      'Tái khám định kỳ': 220000,
+      'Khám tổng quát': 320000
+    }
   },
   { 
     id: 3, 
@@ -90,16 +102,21 @@ const doctors = [
     education: 'Đại học Y Hà Nội',
     description: 'Bác sĩ chuyên sâu về các bệnh nhiễm trùng cơ hội liên quan đến HIV và điều trị ARV hiện đại.',
     certifications: ['Tiến sĩ Y khoa', 'Thành viên Hiệp hội Truyền nhiễm Châu Á'],
-    researchAreas: ['Phác đồ ARV thế hệ mới', 'Điều trị lao đa kháng thuốc ở bệnh nhân HIV'],
-    services: [
+    researchAreas: ['Phác đồ ARV thế hệ mới', 'Điều trị lao đa kháng thuốc ở bệnh nhân HIV'],    services: [
       'Tư vấn HIV/AIDS',
       'Điều trị ARV',
       'Quản lý nhiễm trùng cơ hội',
       'Chăm sóc bệnh nhân HIV giai đoạn cuối',
       'Điều trị dự phòng sau phơi nhiễm'
-    ]
-  },
-  { 
+    ],
+    fees: {
+      'Xét nghiệm HIV': 280000,
+      'Điều trị ARV': 400000,
+      'Tư vấn HIV': 180000,
+      'Tái khám định kỳ': 230000,
+      'Khám tổng quát': 350000
+    }
+  },  { 
     id: 4, 
     name: 'BS. Phạm Thị D',
     workDays: {
@@ -128,9 +145,15 @@ const doctors = [
       'Liệu pháp tăng cường miễn dịch',
       'Tư vấn phòng ngừa lây nhiễm',
       'Theo dõi CD4 và tải lượng virus'
-    ]
-  },
-  { 
+    ],
+    fees: {
+      'Xét nghiệm HIV': 260000,
+      'Điều trị ARV': 370000,
+      'Tư vấn HIV': 160000,
+      'Tái khám định kỳ': 210000,
+      'Khám tổng quát': 310000
+    }
+  },  { 
     id: 5, 
     name: 'BS. Đỗ Văn E',
     workDays: {
@@ -159,7 +182,14 @@ const doctors = [
       'Liệu pháp tăng cường miễn dịch',
       'Tư vấn phòng ngừa lây nhiễm',
       'Theo dõi CD4 và tải lượng virus'
-    ]
+    ],
+    fees: {
+      'Xét nghiệm HIV': 255000,
+      'Điều trị ARV': 365000,
+      'Tư vấn HIV': 155000,
+      'Tái khám định kỳ': 205000,
+      'Khám tổng quát': 305000
+    }
   },
 ];
 
@@ -169,8 +199,7 @@ export default function ExaminationSchedule() {
   const [showForm, setShowForm] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([]);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [form, setForm] = useState({
+  const [selectedDate, setSelectedDate] = useState('');  const [form, setForm] = useState({
     phone: '',
     reason: '',
     appointmentDate: '',
@@ -178,6 +207,9 @@ export default function ExaminationSchedule() {
     doctorId: '',
     requestedServices: [],
     notes: '',
+    totalFee: 0,
+    isOnlineConsultation: false,
+    onlineConsultationFee: 100000, // Phí tư vấn trực tuyến cố định: 100,000 VND
   });
   const [submitted, setSubmitted] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
@@ -247,12 +279,14 @@ export default function ExaminationSchedule() {
     const days = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
     return days[dayIndex];
   };
-    const handleDoctorSelect = (doctor) => {
+  const handleDoctorSelect = (doctor) => {
     setSelectedDoctor(doctor);
     setSelectedDoctorInfo(doctor);
     setForm(prev => ({
       ...prev,
-      doctorId: doctor.id.toString()
+      doctorId: doctor.id.toString(),
+      requestedServices: [], // Reset requested services
+      totalFee: 0 // Reset fee when changing doctors
     }));
     setShowDetails(true);
     
@@ -285,21 +319,28 @@ export default function ExaminationSchedule() {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
   };
-  
-  const handleServiceChange = (e) => {
+    const handleServiceChange = (e) => {
     const { value, checked } = e.target;
+    const selectedDoctor = doctors.find(doc => doc.id.toString() === form.doctorId);
+    
     if (checked) {
+      // Add service to the list and update total fee
+      const serviceFee = selectedDoctor?.fees[value] || 0;
       setForm(prev => ({
         ...prev,
-        requestedServices: [...prev.requestedServices, value]
+        requestedServices: [...prev.requestedServices, value],
+        totalFee: prev.totalFee + serviceFee
       }));
     } else {
+      // Remove service from the list and update total fee
+      const serviceFee = selectedDoctor?.fees[value] || 0;
       setForm(prev => ({
         ...prev,
-        requestedServices: prev.requestedServices.filter(service => service !== value)
+        requestedServices: prev.requestedServices.filter(service => service !== value),
+        totalFee: prev.totalFee - serviceFee
       }));
     }
-  };  const nextStep = () => {
+  };const nextStep = () => {
     // Validate current step before moving to the next
     if (currentStep === 1) {
       if (!form.doctorId) {
@@ -354,8 +395,7 @@ export default function ExaminationSchedule() {
     const generatedCode = Math.random().toString(36).substring(2, 5).toUpperCase() + 
                           Math.random().toString(10).substring(2, 5);
     setAppointmentCode(generatedCode);
-    
-    // Lưu chi tiết cuộc hẹn vào localStorage
+      // Lưu chi tiết cuộc hẹn vào localStorage
     const selectedDoctor = doctors.find(doc => doc.id.toString() === form.doctorId);
     const newAppointment = {
       id: Date.now(),
@@ -370,6 +410,9 @@ export default function ExaminationSchedule() {
       requestedServices: form.requestedServices,
       notes: form.notes,
       status: 'pending',
+      isOnlineConsultation: form.isOnlineConsultation,
+      onlineConsultationFee: form.isOnlineConsultation ? form.onlineConsultationFee : 0,
+      totalFee: form.totalFee,
       createdAt: new Date().toISOString(),
     };
     
@@ -382,8 +425,7 @@ export default function ExaminationSchedule() {
     // Hiển thị popup thành công
     setShowSuccessPopup(true);
     setCurrentStep(4);
-    
-    // Đặt lại form
+      // Đặt lại form
     setForm({
       phone: '',
       reason: '',
@@ -392,6 +434,9 @@ export default function ExaminationSchedule() {
       doctorId: '',
       requestedServices: [],
       notes: '',
+      totalFee: 0,
+      isOnlineConsultation: false,
+      onlineConsultationFee: 100000,
     });
   };
   return (
@@ -653,8 +698,7 @@ export default function ExaminationSchedule() {
                       </div>
                     </div>
                   </div>
-                  
-                  <div className="form-group">
+                    <div className="form-group">
                     <label htmlFor="notes">Ghi chú bổ sung:</label>
                     <textarea 
                       id="notes" 
@@ -663,6 +707,55 @@ export default function ExaminationSchedule() {
                       onChange={handleChange} 
                       placeholder="Thông tin bổ sung (nếu có)"
                     ></textarea>
+                  </div>
+                  
+                  <div className="form-group online-consultation">
+                    <div className="checkbox-item">
+                      <input 
+                        type="checkbox" 
+                        id="isOnlineConsultation" 
+                        checked={form.isOnlineConsultation} 
+                        onChange={(e) => {
+                          const isChecked = e.target.checked;
+                          setForm(prev => ({
+                            ...prev,
+                            isOnlineConsultation: isChecked,
+                            totalFee: isChecked 
+                              ? prev.totalFee + prev.onlineConsultationFee 
+                              : prev.totalFee - prev.onlineConsultationFee
+                          }));
+                        }} 
+                      />
+                      <label htmlFor="isOnlineConsultation">Tư vấn trực tuyến (Phí: {new Intl.NumberFormat('vi-VN').format(form.onlineConsultationFee)} VNĐ)</label>
+                    </div>
+                    <p className="note">Bác sĩ sẽ tư vấn trực tuyến trước cuộc hẹn khám thực tế</p>
+                  </div>                </div>
+                
+                <div className="form-section fee-summary">
+                  <h3><i className="fas fa-money-bill"></i> Chi phí dự kiến</h3>
+                  <div className="fee-details">
+                    {form.requestedServices.map(service => {
+                      const serviceFee = doctors.find(doc => doc.id.toString() === form.doctorId)?.fees[service] || 0;
+                      return (
+                        <div key={service} className="fee-item">
+                          <span className="fee-service">{service}</span>
+                          <span className="fee-amount">{new Intl.NumberFormat('vi-VN').format(serviceFee)} VNĐ</span>
+                        </div>
+                      );
+                    })}
+                    
+                    {form.isOnlineConsultation && (
+                      <div className="fee-item">
+                        <span className="fee-service">Tư vấn trực tuyến</span>
+                        <span className="fee-amount">{new Intl.NumberFormat('vi-VN').format(form.onlineConsultationFee)} VNĐ</span>
+                      </div>
+                    )}
+                    
+                    <div className="fee-item total">
+                      <span className="fee-service">Tổng chi phí</span>
+                      <span className="fee-amount">{new Intl.NumberFormat('vi-VN').format(form.totalFee)} VNĐ</span>
+                    </div>
+                    <p className="note">Chi phí có thể thay đổi sau khi bác sĩ thăm khám và kê đơn thuốc</p>
                   </div>
                 </div>
                 
@@ -698,11 +791,20 @@ export default function ExaminationSchedule() {
                 <div className="appointment-detail-item">
                   <i className="fas fa-user-md"></i>
                   <span>Bác sĩ: {appointments[appointments.length - 1]?.doctorName}</span>
-                </div>
-                <div className="appointment-detail-item">
+                </div>                <div className="appointment-detail-item">
                   <i className="fas fa-hashtag"></i>
                   <span>Mã đặt lịch: {appointments[appointments.length - 1]?.appointmentCode}</span>
                 </div>
+                <div className="appointment-detail-item">
+                  <i className="fas fa-money-bill"></i>
+                  <span>Tổng chi phí: {new Intl.NumberFormat('vi-VN').format(appointments[appointments.length - 1]?.totalFee || 0)} VNĐ</span>
+                </div>
+                {appointments[appointments.length - 1]?.isOnlineConsultation && (
+                  <div className="appointment-detail-item">
+                    <i className="fas fa-laptop-medical"></i>
+                    <span>Tư vấn trực tuyến: Có</span>
+                  </div>
+                )}
               </div>
               <div className="success-actions">
                 <button onClick={() => setShowSuccessPopup(false)} className="done-btn">Đóng</button>

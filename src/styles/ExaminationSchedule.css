@@ -1124,6 +1124,68 @@ h1 {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* Fee summary styling */
+.fee-summary {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 15px;
+}
+
+.fee-summary h3 {
+  margin-bottom: 15px;
+}
+
+.fee-details {
+  border-top: 1px solid #dee2e6;
+  padding-top: 15px;
+}
+
+.fee-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 5px 0;
+}
+
+.fee-service {
+  color: #495057;
+}
+
+.fee-amount {
+  font-weight: bold;
+  color: #40916c;
+}
+
+.fee-item.total {
+  border-top: 1px dashed #dee2e6;
+  margin-top: 10px;
+  padding-top: 10px;
+  font-weight: bold;
+}
+
+.fee-item.total .fee-service {
+  color: #212529;
+}
+
+.fee-item.total .fee-amount {
+  color: #2d6a4f;
+  font-size: 1.1em;
+}
+
+.online-consultation {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px dashed #dee2e6;
+}
+
+.online-consultation .note {
+  color: #6c757d;
+  font-size: 14px;
+  margin-top: 5px;
+  margin-left: 24px;
+}
+
 /* Responsive styles */
 @media (max-width: 1200px) {
   .examination-schedule-container {
