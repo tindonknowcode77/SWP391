@@ -10,8 +10,13 @@
 }
 
 .section-header p {
-    font-size: 18px;
+    font-size: 20px;
     color: black;
+}
+
+.section-header h2 {
+    margin-top: -160px;
+    font-size: 50px;
 }
 
 .services-grid {
