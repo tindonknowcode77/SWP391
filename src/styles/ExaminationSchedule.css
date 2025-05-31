@@ -1186,6 +1186,228 @@ h1 {
   margin-left: 24px;
 }
 
+/* Community Feedback Section Styling */
+.community-feedback {
+  margin-top: 30px;
+  padding: 30px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.community-feedback h3 {
+  display: flex;
+  align-items: center;
+  color: #2d6a4f;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.community-feedback h3 i {
+  margin-right: 10px;
+  color: #40916c;
+}
+
+.feedback-stats {
+  display: flex;
+  margin-bottom: 30px;
+  padding-bottom: 25px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.average-rating {
+  flex: 0 0 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-right: 20px;
+  border-right: 1px solid #dee2e6;
+}
+
+.rating-number {
+  font-size: 48px;
+  font-weight: bold;
+  color: #2d6a4f;
+  line-height: 1;
+}
+
+.rating-stars {
+  margin: 10px 0;
+}
+
+.rating-stars i {
+  color: #ffc107;
+  font-size: 18px;
+  margin-right: 3px;
+}
+
+.rating-stars i.empty {
+  color: #e0e0e0;
+}
+
+.rating-count {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.rating-bars {
+  flex: 1;
+  padding-left: 30px;
+}
+
+.rating-bar-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.rating-label {
+  flex: 0 0 50px;
+  color: #495057;
+}
+
+.rating-bar {
+  flex: 1;
+  height: 10px;
+  background-color: #e9ecef;
+  border-radius: 5px;
+  margin: 0 10px;
+  overflow: hidden;
+}
+
+.rating-bar-fill {
+  height: 100%;
+  background-color: #40916c;
+  border-radius: 5px;
+}
+
+.rating-percent {
+  flex: 0 0 40px;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.feedback-comments {
+  margin-bottom: 30px;
+}
+
+.feedback-item {
+  padding: 20px 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.feedback-item:last-child {
+  border-bottom: none;
+}
+
+.feedback-user {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.feedback-user img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.feedback-user h4 {
+  margin: 0;
+  color: #212529;
+  font-size: 16px;
+}
+
+.feedback-date {
+  color: #6c757d;
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+.feedback-rating {
+  margin-bottom: 10px;
+}
+
+.feedback-rating i {
+  color: #ffc107;
+  font-size: 14px;
+  margin-right: 2px;
+}
+
+.feedback-rating i.empty {
+  color: #e0e0e0;
+}
+
+.feedback-content p {
+  margin: 0;
+  color: #495057;
+  line-height: 1.5;
+}
+
+.add-feedback-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.add-feedback-btn {
+  background-color: #40916c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.add-feedback-btn i {
+  margin-right: 8px;
+}
+
+.add-feedback-btn:hover {
+  background-color: #2d6a4f;
+}
+
+/* Feedback Form Popup */
+.feedback-form {
+  max-width: 600px;
+}
+
+.star-rating {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+}
+
+.star-rating i {
+  color: #e0e0e0;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: color 0.2s;
+}
+
+.star-rating i.filled {
+  color: #ffc107;
+}
+
+.star-rating i:hover {
+  color: #ffc107;
+}
+
+/* No feedback message styling */
+.no-feedback {
+  background-color: #e9f5ee;
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+  color: #40916c;
+  margin: 20px 0;
+}
+
 /* Responsive styles */
 @media (max-width: 1200px) {
   .examination-schedule-container {

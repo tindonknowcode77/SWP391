@@ -199,7 +199,13 @@ export default function ExaminationSchedule() {
   const [showForm, setShowForm] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([]);
-  const [selectedDate, setSelectedDate] = useState('');  const [form, setForm] = useState({
+  const [selectedDate, setSelectedDate] = useState('');  
+  // State variables for community feedback
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [newFeedback, setNewFeedback] = useState({ name: '', comment: '', rating: 5 });
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  
+  const [form, setForm] = useState({
     phone: '',
     reason: '',
     appointmentDate: '',
@@ -225,6 +231,51 @@ export default function ExaminationSchedule() {
       setAppointments(JSON.parse(stored));
     }
   }, []);
+
+  // Load feedback data when a doctor is selected
+  useEffect(() => {
+    if (selectedDoctor) {
+      // In a real application, you would fetch the feedback from an API
+      // For now, we'll simulate this with some sample data
+      const sampleFeedbacks = [
+        {
+          id: 1,
+          doctorId: selectedDoctor.id,
+          name: 'Nguyễn Thị A',
+          comment: 'Bác sĩ rất tận tâm và chuyên môn cao. Tư vấn rất chi tiết và giải thích rõ ràng cho tôi về tình trạng bệnh và phương pháp điều trị. Tôi cảm thấy rất an tâm.',
+          rating: 5,
+          date: '2025-05-17T08:30:00.000Z'
+        },
+        {
+          id: 2,
+          doctorId: selectedDoctor.id,
+          name: 'Trần Văn B',
+          comment: 'Bác sĩ chuyên nghiệp, nhiệt tình tư vấn. Thời gian chờ đợi hơi lâu nhưng chất lượng khám bệnh tốt nên tôi rất hài lòng.',
+          rating: 4,
+          date: '2025-05-12T10:15:00.000Z'
+        },
+        {
+          id: 3,
+          doctorId: selectedDoctor.id,
+          name: 'Lê Thị C',
+          comment: 'Rất hài lòng với dịch vụ. Bác sĩ tư vấn tận tình, giải thích mọi thắc mắc của tôi. Không gian phòng khám sạch sẽ và riêng tư.',
+          rating: 5,
+          date: '2025-05-05T14:45:00.000Z'
+        }
+      ];
+      
+      // Load feedback from localStorage if available
+      const storedFeedbacks = localStorage.getItem('doctorFeedbacks');
+      let allFeedbacks = storedFeedbacks ? JSON.parse(storedFeedbacks) : [];
+      
+      // Filter feedbacks for current doctor
+      const doctorFeedbacks = allFeedbacks.filter(feedback => feedback.doctorId === selectedDoctor.id);
+      
+      // If we have stored feedbacks for this doctor, use those. Otherwise, use sample data
+      setFeedbacks(doctorFeedbacks.length > 0 ? doctorFeedbacks : sampleFeedbacks);
+    }
+  }, [selectedDoctor]);
+  
   const generateTimeSlots = (date, doctorId) => {
     if (!date) return [];
     
@@ -491,8 +542,7 @@ export default function ExaminationSchedule() {
                 <h3>Thông tin bác sĩ</h3>
                 <p>{selectedDoctorInfo.description}</p>
               </div>
-              
-              <div className="doctor-services">
+                <div className="doctor-services">
                 <h3>Các dịch vụ</h3>
                 <ul>
                   <li><i className="fas fa-check-circle"></i> Tư vấn HIV/AIDS</li>
@@ -501,6 +551,195 @@ export default function ExaminationSchedule() {
                   <li><i className="fas fa-check-circle"></i> Theo dõi tải lượng virus</li>
                   <li><i className="fas fa-check-circle"></i> Tư vấn dinh dưỡng cho bệnh nhân HIV</li>
                 </ul>
+              </div>
+              
+              {/* Community Feedback Section */}
+              <div className="community-feedback">
+                <h3><i className="fas fa-comments"></i> Đóng góp ý kiến cộng đồng</h3>
+                
+                <div className="feedback-stats">
+                  <div className="average-rating">
+                    <div className="rating-number">{selectedDoctorInfo.rating}</div>
+                    <div className="rating-stars">
+                      {[...Array(5)].map((_, i) => (
+                        <i key={i} className={`fas fa-star ${i < Math.floor(selectedDoctorInfo.rating) ? 'filled' : 'empty'}`}></i>
+                      ))}
+                    </div>
+                    <div className="rating-count">Dựa trên 28 đánh giá</div>
+                  </div>
+                  
+                  <div className="rating-bars">
+                    <div className="rating-bar-item">
+                      <span className="rating-label">5 sao</span>
+                      <div className="rating-bar">
+                        <div className="rating-bar-fill" style={{width: '70%'}}></div>
+                      </div>
+                      <span className="rating-percent">70%</span>
+                    </div>
+                    <div className="rating-bar-item">
+                      <span className="rating-label">4 sao</span>
+                      <div className="rating-bar">
+                        <div className="rating-bar-fill" style={{width: '20%'}}></div>
+                      </div>
+                      <span className="rating-percent">20%</span>
+                    </div>
+                    <div className="rating-bar-item">
+                      <span className="rating-label">3 sao</span>
+                      <div className="rating-bar">
+                        <div className="rating-bar-fill" style={{width: '7%'}}></div>
+                      </div>
+                      <span className="rating-percent">7%</span>
+                    </div>
+                    <div className="rating-bar-item">
+                      <span className="rating-label">2 sao</span>
+                      <div className="rating-bar">
+                        <div className="rating-bar-fill" style={{width: '2%'}}></div>
+                      </div>
+                      <span className="rating-percent">2%</span>
+                    </div>
+                    <div className="rating-bar-item">
+                      <span className="rating-label">1 sao</span>
+                      <div className="rating-bar">
+                        <div className="rating-bar-fill" style={{width: '1%'}}></div>
+                      </div>
+                      <span className="rating-percent">1%</span>
+                    </div>
+                  </div>
+                </div>
+                  {/* Feedback Comments */}
+                <div className="feedback-comments">
+                  {feedbacks.length > 0 ? (
+                    feedbacks.map(feedback => (
+                      <div className="feedback-item" key={feedback.id}>
+                        <div className="feedback-user">
+                          <img 
+                            src={`https://randomuser.me/api/portraits/${feedback.id % 2 === 0 ? 'men' : 'women'}/${(feedback.id * 10) % 100}.jpg`}
+                            alt={feedback.name} 
+                          />
+                          <div>
+                            <h4>{feedback.name}</h4>
+                            <div className="feedback-date">
+                              {new Date(feedback.date).toLocaleDateString('vi-VN')}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="feedback-rating">
+                          {[...Array(5)].map((_, i) => (
+                            <i key={i} className={`fas fa-star ${i < feedback.rating ? 'filled' : 'empty'}`}></i>
+                          ))}
+                        </div>
+                        <div className="feedback-content">
+                          <p>{feedback.comment}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="no-feedback">
+                      <p>Chưa có đánh giá nào cho bác sĩ này. Hãy là người đầu tiên chia sẻ trải nghiệm của bạn!</p>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Add Feedback Button */}
+                <div className="add-feedback-section">
+                  <button 
+                    className="add-feedback-btn" 
+                    onClick={() => setShowFeedbackForm(true)}
+                  >
+                    <i className="fas fa-plus-circle"></i> Thêm đánh giá của bạn
+                  </button>
+                </div>
+                
+                {/* Feedback Form Popup */}
+                {showFeedbackForm && (
+                  <div className="popup-overlay">
+                    <div className="popup-form feedback-form">
+                      <div className="popup-header">
+                        <h2>Đánh giá bác sĩ {selectedDoctorInfo.name}</h2>
+                        <button className="close-btn" onClick={() => setShowFeedbackForm(false)}>
+                          <i className="fas fa-times"></i>
+                        </button>
+                      </div>
+                        <form onSubmit={(e) => {
+                        e.preventDefault();
+                        
+                        // Create new feedback
+                        const newFeedbackItem = {
+                          id: Date.now(),
+                          doctorId: selectedDoctorInfo.id,
+                          ...newFeedback,
+                          date: new Date().toISOString()
+                        };
+                        
+                        // Update state
+                        const updatedFeedbacks = [newFeedbackItem, ...feedbacks];
+                        setFeedbacks(updatedFeedbacks);
+                        
+                        // Save to localStorage
+                        const storedFeedbacks = localStorage.getItem('doctorFeedbacks');
+                        let allFeedbacks = storedFeedbacks ? JSON.parse(storedFeedbacks) : [];
+                        
+                        // Filter out feedbacks for this doctor and add the new ones
+                        const otherDoctorFeedbacks = allFeedbacks.filter(
+                          feedback => feedback.doctorId !== selectedDoctorInfo.id
+                        );
+                        
+                        localStorage.setItem(
+                          'doctorFeedbacks', 
+                          JSON.stringify([...otherDoctorFeedbacks, ...updatedFeedbacks])
+                        );
+                        
+                        setNewFeedback({ name: '', comment: '', rating: 5 });
+                        setShowFeedbackForm(false);
+                        alert('Cảm ơn bạn đã đóng góp ý kiến!');
+                      }}>
+                        <div className="form-group">
+                          <label htmlFor="feedback-name">Họ tên:</label>
+                          <input
+                            type="text"
+                            id="feedback-name"
+                            value={newFeedback.name}
+                            onChange={(e) => setNewFeedback({...newFeedback, name: e.target.value})}
+                            placeholder="Nhập họ tên của bạn"
+                            required
+                          />
+                        </div>
+                        
+                        <div className="form-group">
+                          <label>Đánh giá:</label>
+                          <div className="star-rating">
+                            {[...Array(5)].map((_, index) => {
+                              const ratingValue = index + 1;
+                              return (
+                                <i
+                                  key={index}
+                                  className={`fas fa-star ${ratingValue <= newFeedback.rating ? 'filled' : 'empty'}`}
+                                  onClick={() => setNewFeedback({...newFeedback, rating: ratingValue})}
+                                ></i>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        
+                        <div className="form-group">
+                          <label htmlFor="feedback-comment">Nhận xét của bạn:</label>
+                          <textarea
+                            id="feedback-comment"
+                            value={newFeedback.comment}
+                            onChange={(e) => setNewFeedback({...newFeedback, comment: e.target.value})}
+                            placeholder="Chia sẻ trải nghiệm của bạn về bác sĩ..."
+                            required
+                          ></textarea>
+                        </div>
+                        
+                        <div className="form-actions">
+                          <button type="button" onClick={() => setShowFeedbackForm(false)} className="cancel-btn">Hủy bỏ</button>
+                          <button type="submit" className="submit-btn">Gửi đánh giá</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
