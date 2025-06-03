@@ -10,14 +10,16 @@
     margin-top: 100px;
 }
 
-.section-header p {
-    font-size: 20px;
+.section-header-services p {
+    font-size: 28px;
     color: black;
+    text-align: center;
 }
 
-.section-header h2 {
+.section-header-services h2 {
     margin-top: -155px;
-    font-size: 60px;
+    font-size: 70px;
+    text-align: center;
 }
 
 .services-grid {

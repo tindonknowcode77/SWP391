@@ -8,7 +8,7 @@ const Services = () => (
     <Navbar />
   <section className="services-sections">
     <div className="container">
-      <div className="section-header">
+      <div className="section-header-services">
         <h2>Dịch vụ của chúng tôi</h2>
         <p>Cung cấp các dịch vụ y tế chất lượng cao cho bệnh nhân HIV/AIDS</p>
       </div>
