@@ -86,7 +86,7 @@ const TreatmentPlan = () => {
           <i className="fas fa-clipboard-list fa-4x"></i>
           <h2>Chưa có kế hoạch điều trị</h2>
           <p>Bạn chưa có kế hoạch điều trị nào. Vui lòng liên hệ với bác sĩ để được tư vấn.</p>
-          <Link to="/appointment" className="btn btn-primary">Đặt lịch hẹn</Link>
+          <Link to="/hospital/lich-kham" className="btn btn-primary">Đặt lịch hẹn</Link>
         </div>
       </div>
     );
