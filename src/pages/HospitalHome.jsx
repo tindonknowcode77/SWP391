@@ -179,7 +179,7 @@ const HospitalHome = () => {
       {/* Services Section */}
       <section className="services-section">
         <div className="container">
-          <div className="section-header">
+          <div className="section-header-home">
             <h2>Dịch vụ của chúng tôi</h2>
             <p>Cung cấp các dịch vụ y tế chất lượng cao cho bệnh nhân HIV/AIDS</p>
           </div>
@@ -226,7 +226,7 @@ const HospitalHome = () => {
       
       {/* Doctor Section */}      <section className="doctors-section">
         <div className="container">
-          <div className="section-header">
+          <div className="section-header-home">
             <h2>Đội ngũ bác sĩ chuyên khoa</h2>
             <p>Các chuyên gia y tế hàng đầu với nhiều năm kinh nghiệm trong lĩnh vực HIV/AIDS</p>
           </div>
@@ -268,7 +268,7 @@ const HospitalHome = () => {
       {/* News Section */}
       <section className="news-section">
         <div className="container">
-          <div className="section-header">
+          <div className="section-header-home">
             <h2>Tin tức - Sự kiện</h2>
             <p>Cập nhật thông tin mới nhất về HIV/AIDS và hoạt động của bệnh viện</p>
           </div>
@@ -372,7 +372,7 @@ const HospitalHome = () => {
       {/* Testimonials Section */}
       <section className="testimonials-section">
         <div className="container">
-          <div className="section-header">
+          <div className="section-header-home">
             <h2>Ý kiến bệnh nhân</h2>
             <p>Những chia sẻ từ bệnh nhân đã điều trị tại bệnh viện</p>
           </div>

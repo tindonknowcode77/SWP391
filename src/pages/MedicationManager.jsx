@@ -216,7 +216,7 @@ const MedicationManager = () => {
 
   return (
     <div className="medication-manager">
-      <Navbar />
+      <Navbar />  
       {/* Header Section */}
       <section className="medication-header">
         <div className="container">
@@ -314,7 +314,7 @@ const MedicationManager = () => {
             {/* Current Medications View */}
             {activeView === 'current' && (
               <>
-                <div className="section-header">
+                <div className="section-headerr">
                   <h2>Lịch uống thuốc hàng ngày</h2>
                   <p>Danh sách tất cả các thuốc ARV hiện tại của bạn, sắp xếp theo thời gian trong ngày</p>
                 </div>

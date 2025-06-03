@@ -236,18 +236,18 @@
 }
 
 /* Section Header */
-.section-header {
+.section-headerr {
   margin-bottom: 30px;
   margin-top: 180px;
 }
 
-.section-header h2 {
+.section-headerr h2 {
   font-size: 1.6rem;
   margin-bottom: 10px;
   color: #333;
 }
 
-.section-header p {
+.section-headerr p {
   font-size: 1rem;
   color: #666;
 }

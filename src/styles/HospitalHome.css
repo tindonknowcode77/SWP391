@@ -35,12 +35,12 @@
 }
 
 /* Section header styles */
-.section-header {
+.section-header-home {
   text-align: center;
   margin-bottom: 50px;
 }
 
-.section-header h2 {
+.section-header-home h2 {
   font-size: 2.5rem;
   color: #333;
   margin-bottom: 15px;
@@ -48,7 +48,7 @@
   padding-bottom: 15px;
 }
 
-.section-header h2::after {
+.section-header-home  h2::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -59,7 +59,7 @@
   background-color: #005bab;
 }
 
-.section-header p {
+.section-header-home p {
   color: #666666;
   font-size: 1.1rem;
   max-width: 700px;
