@@ -335,20 +335,20 @@
   z-index: 1;
 }
 
-.doctors-section .section-header h2 {
+.doctors-section .section-header-home h2 {
   margin-bottom: 20px;
   color: #2C3E50;
   font-weight: 700;
   font-size: 2.5rem;
 }
 
-.doctors-section .section-header h2::after {
+.doctors-section .section-header-home h2::after {
   background: linear-gradient(to right, #3498DB, #005bab);
   height: 4px;
   width: 80px;
 }
 
-.doctors-section .section-header p {
+.doctors-section .section-header-home p {
   max-width: 700px;
   margin-bottom: 50px;
 }
@@ -1129,7 +1129,7 @@
     font-size: 2.5rem;
   }
   
-  .section-header h2 {
+  .section-header-home h2 {
     font-size: 2rem;
   }
   
@@ -1160,7 +1160,7 @@
     grid-template-columns: 1fr;
   }
   
-  .section-header {
+  .section-header-home {
     margin-bottom: 30px;
   }
   
@@ -1250,7 +1250,7 @@
 }
 
 @media (max-width: 576px) {
-  .doctors-section .section-header h2 {
+  .doctors-section .section-header-home h2 {
     font-size: 2rem;
   }
   

@@ -238,18 +238,20 @@
 /* Section Header */
 .section-headerr {
   margin-bottom: 30px;
-  margin-top: 180px;
+  margin-top: 0px;
 }
 
 .section-headerr h2 {
-  font-size: 1.6rem;
+  font-size: 2.5rem;
   margin-bottom: 10px;
   color: #333;
+  text-align: center;
 }
 
 .section-headerr p {
-  font-size: 1rem;
+  font-size: 1.5rem;
   color: #666;
+  text-align: center;
 }
 
 /* Daily Schedule */

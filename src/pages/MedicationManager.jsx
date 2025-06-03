@@ -375,7 +375,7 @@ const MedicationManager = () => {
                 )}
 
                 <div className="medications-section">
-                  <div className="section-header">
+                  <div className="section-headerr">
                     <h2>Chi tiết thuốc điều trị</h2>
                     <p>Thông tin chi tiết về tất cả các thuốc ARV trong phác đồ điều trị của bạn</p>
                   </div>
@@ -475,7 +475,7 @@ const MedicationManager = () => {
             {/* Medication History View */}
             {activeView === 'history' && (
               <>
-                <div className="section-header">
+                <div className="section-headerr">
                   <h2>Lịch sử uống thuốc</h2>
                   <p>Theo dõi việc uống thuốc của bạn trong 30 ngày qua</p>
                 </div>
@@ -556,7 +556,7 @@ const MedicationManager = () => {
             {/* Settings View */}
             {activeView === 'settings' && (
               <>
-                <div className="section-header">
+                <div className="section-headerr">
                   <h2>Cài đặt quản lý thuốc</h2>
                   <p>Tùy chỉnh các thiết lập cho việc quản lý thuốc của bạn</p>
                 </div>
