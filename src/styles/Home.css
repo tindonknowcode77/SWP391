@@ -228,6 +228,7 @@ section {
   background-color: #f8f9fa;
   position: relative;
   overflow: hidden;
+  margin-top: 100px;
 }
 
 .how-it-works-section:before {
@@ -242,6 +243,7 @@ section {
   opacity: 0.7;
   z-index: 0;
   transform: translate(50%, 50%);
+  margin-top: 100px;
 }
 
 .steps-container {
