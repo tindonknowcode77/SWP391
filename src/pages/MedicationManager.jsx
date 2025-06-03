@@ -5,6 +5,7 @@ import { apiService } from '../services/apiService';
 import { formatDate, getTimeOfDay } from '../utils/helpers';
 import useResponsive from '../hooks/useResponsive';
 import '../styles/MedicationManager.css';
+import Navbar from '../components/Navbar';
 
 const MedicationManager = () => {
   const { currentUser } = useContext(AuthContext);
@@ -215,6 +216,7 @@ const MedicationManager = () => {
 
   return (
     <div className="medication-manager">
+      <Navbar />
       {/* Header Section */}
       <section className="medication-header">
         <div className="container">
