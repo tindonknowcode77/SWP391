@@ -32,11 +32,23 @@
 }
 
 .navbar-logo img {
-  height: 100px;
+  height: 80px; /* Giảm nhẹ chiều cao cho hài hòa */
   width: auto;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,91,171,0.08);
   display: block;
+  border-radius: 12px;
+  padding: 6px;
+  background-color: white; /* Nền trắng làm nổi bật ảnh PNG trong suốt */
+  /* box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 8px 16px rgba(0, 91, 171, 0.12); */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.navbar-logo img:hover {
+  transform: scale(1.05);
+  /* box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.08),
+    0 12px 24px rgba(0, 91, 171, 0.18); */
 }
 
 .navbar-logo span,
@@ -284,9 +296,6 @@
 @media (max-width: 768px) {
   .navbar-logo span {
     font-size: 15px;
-  }
-  .navbar-logo img {
-    height: 38px;
   }
   .login-button {
     padding: 7px 12px;
