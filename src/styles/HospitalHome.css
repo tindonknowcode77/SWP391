@@ -306,7 +306,7 @@
 .doctors-section {
   padding: 100px 0 80px;
   position: relative;
-  background: linear-gradient(to bottom, #f8f9fa 50%, #fff 50%);
+  /* background: linear-gradient(to bottom, #f8f9fa 50%, #fff 50%); */
 }
 
 .doctors-section::before {
@@ -321,6 +321,7 @@
   background-size: 15px 15px;
   opacity: 0.3;
   z-index: 1;
+  background-color: transparent;
 }
 
 .doctors-section::after {
@@ -330,7 +331,7 @@
   left: 5%;
   width: 150px;
   height: 150px;
-  border: 25px solid rgba(0, 91, 171, 0.03);
+  /* border: 25px solid rgba(0, 91, 171, 0.03); */
   border-radius: 50%;
   z-index: 1;
 }

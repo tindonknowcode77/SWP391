@@ -212,26 +212,28 @@ const HospitalHome = () => {
               <Link to="/hospital/dich-vu/xet-nghiem" className="read-more">Xem thêm</Link>
             </div>
             
-            <div className="service-card">
+            {/* <div className="service-card">
               <div className="service-icon">
                 <i className="fas fa-heartbeat"></i>
               </div>
               <h3>Điều trị bệnh đồng nhiễm</h3>
               <p>Điều trị toàn diện các bệnh đồng nhiễm như viêm gan, lao, STIs...</p>
               <Link to="/hospital/dich-vu/benh-dong-nhiem" className="read-more">Xem thêm</Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
       
-      {/* Doctor Section */}      <section className="doctors-section">
+      {/* Doctor Section */}      
+      <section className="doctors-section">
         <div className="container">
           <div className="section-header-home">
             <h2>Đội ngũ bác sĩ chuyên khoa</h2>
             <p>Các chuyên gia y tế hàng đầu với nhiều năm kinh nghiệm trong lĩnh vực HIV/AIDS</p>
           </div>
           
-          <div className="doctors-grid">            {doctors.map(doctor => (
+          <div className="doctors-grid">            
+            {doctors.map(doctor => (
               <div className="doctor-card" key={doctor.id}>
                 {doctor.id === 1 && <span className="doctor-featured-badge"></span>}
                 <div className="doctor-image">
