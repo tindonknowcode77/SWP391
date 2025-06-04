@@ -86,12 +86,7 @@ const Navbar = () => {
               <span>Đăng nhập</span>
             </Link>
           )}
-          <div className="search-form">
-            <input type="text" placeholder="Tìm kiếm..." />
-            <button type="submit">
-              <i className="fas fa-search"></i>
-            </button>
-          </div>
+          
         </div>
         <div className="navbar-toggle" onClick={handleMenuToggle}>
           <i className={isMenuOpen ? "fas fa-times" : "fas fa-bars"}></i>
