@@ -36,11 +36,16 @@
 
 .service-card {
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    padding: 48px 32px;
     transition: transform 0.3s, box-shadow 0.3s;
     text-align: center;
+    min-width: 380px;
+    min-height: 400px;
+    font-size: 1.15rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .service-card:hover {
