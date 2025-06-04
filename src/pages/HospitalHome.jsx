@@ -233,7 +233,7 @@ const HospitalHome = () => {
           
           <div className="doctors-grid">            {doctors.map(doctor => (
               <div className="doctor-card" key={doctor.id}>
-                {doctor.id === 1 && <span className="doctor-featured-badge">Chuyên gia hàng đầu</span>}
+                {doctor.id === 1 && <span className="doctor-featured-badge"></span>}
                 <div className="doctor-image">
                   <img src={doctor.image} alt={doctor.name} />
                 </div>

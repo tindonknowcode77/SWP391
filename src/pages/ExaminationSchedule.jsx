@@ -809,10 +809,12 @@ export default function ExaminationSchedule() {
         
         {showForm && (
           <div className="popup-overlay">
-            <div className="popup-form appointment-form">
+            <div className="popup-form">
+              <button className="popup-close-absolute" onClick={() => setShowForm(false)}>
+                <i className="fas fa-times"></i>
+              </button>
               <div className="popup-header">
                 <h2>Đặt lịch khám</h2>
-                <button className="close-btn" onClick={() => setShowForm(false)}><i className="fas fa-times"></i></button>
               </div>
               
               <form onSubmit={handleSubmit}>
