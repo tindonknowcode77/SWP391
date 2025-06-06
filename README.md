@@ -63,12 +63,13 @@ https://docs.google.com/document/d/1TG2hssFB6AFW3CmZzN3omwqr5pgyyiq_QIJby_TDml8/
 - Quản lý danh sách bác sĩ, nhân viên (lịch làm việc, chuyên môn, bằng cấp).
 - Quản lý hồ sơ bệnh nhân, lịch sử điều trị, kết quả xét nghiệm.
 - Xem thống kê, xem hiệu quả của phác đồ ARV,
+- Quản lý, xử lý các phản hồi, khiếu nại từ người dùng.
 
 7. Admin
 - Tạo, xóa và chỉnh sửa tài khoản của manager, staff, doctor, customer (phân quyền).
 - Quản lý thông tin cơ sở y tế, tài liệu giáo dục, blog.
 - Xem dashboard, báo cáo thống kê toàn hệ thống.
-- Quản lý, xử lý các phản hồi, khiếu nại từ người dùng.
+
 
  **Functional Requirements**
 1. Trang chủ và Nội dung công khai
