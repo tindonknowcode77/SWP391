@@ -65,11 +65,12 @@ https://docs.google.com/document/d/1TG2hssFB6AFW3CmZzN3omwqr5pgyyiq_QIJby_TDml8/
 - Xem thống kê, xem hiệu quả của phác đồ ARV,
 - Quản lý, xử lý các phản hồi, khiếu nại từ người dùng.
 - Xem dashboard, báo cáo thống kê toàn hệ thống.
+- Quản lý thông tin cơ sở y tế, tài liệu giáo dục, blog.
+
 
 
 7. Admin
 - Tạo, xóa và chỉnh sửa tài khoản của manager, staff, doctor, customer (phân quyền).
-- Quản lý thông tin cơ sở y tế, tài liệu giáo dục, blog.
 
 
  **Functional Requirements**
