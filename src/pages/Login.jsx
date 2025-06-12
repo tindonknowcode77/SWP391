@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
 import {Link, useNavigate, useLocation} from 'react-router-dom';
+import { useEffect } from 'react';
 import {useAuth} from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import '../styles/Login.css';
 import {login} from '../api/auth';
+import {session} from '../api/auth';
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -19,6 +21,17 @@ const Login = () => {
 
   // Lấy đường dẫn redirect từ state (nếu có), mặc định là "/"
   const redirectPath = location.state?.from?.pathname || "/";
+
+  useEffect(() => {
+    session()
+      .then(res => {
+        console.log("Session tồn tại với userId:", res.userId);
+        navigate('/hospital', { replace: true });
+      })
+      .catch(err => {
+        console.log("Không tìm thấy session hoặc đã hết hạn.");
+      });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -4,6 +4,10 @@ export const login = (request) => {
   return axiosClient.post('/Login/login', {...request});
 };
 
+export const session = () => {
+  return axiosClient.get('/Login/check-session', { withCredentials: true });
+};
+
 export const dangky = (request) => {
   return axiosClient.post('/Register/register', {...request});
 };

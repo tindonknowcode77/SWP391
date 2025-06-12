@@ -116,9 +116,6 @@ const Register = () => {
       setIsSubmitting(false);
     }
   };
-  
-
-
   return (
     <>
       <Navbar />

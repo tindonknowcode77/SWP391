@@ -7,7 +7,7 @@ const axiosClient = axios.create({
     'Content-Type': 'application/json',
     'Accept': '*/*'
   },
-  withCredentials: false,
+  withCredentials: true,
 });
 
 axiosClient.interceptors.request.use(
