@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import '../styles/Register.css';
+import {dangky} from '../api/auth';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -111,6 +112,7 @@ const Register = () => {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <>
