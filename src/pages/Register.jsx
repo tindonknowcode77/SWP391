@@ -85,25 +85,29 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     if (!validateStep2()) {
       return;
     }
-    
+  
     setIsSubmitting(true);
     setFormError('');
-    
+  
     try {
-      const success = await register(
-        formData.fullName,
-        formData.email, 
-        formData.password
-      );
-      
+      const payload = {
+        Fullname: formData.fullName, 
+        Email: formData.email,
+        Password: formData.password,
+      };
+  
+      console.log("Sending payload:", payload); // debug
+  
+      const success = await dangky(payload); 
+  
       if (success) {
-        navigate('/profile', { state: { newUser: true } });
+        navigate('/login', { state: { newUser: true } });
       } else {
-        setFormError(error || 'Đăng ký thất bại');
+        setFormError('Đăng ký thất bại');
       }
     } catch (err) {
       setFormError('Đã xảy ra lỗi khi đăng ký');
@@ -112,6 +116,7 @@ const Register = () => {
       setIsSubmitting(false);
     }
   };
+  
 
 
   return (
