@@ -9,6 +9,12 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const { currentUser } = useAuth();
+  
+  // Debug: Kiểm tra thông tin người dùng
+  useEffect(() => {
+    console.log("Navbar - currentUser:", currentUser);
+    console.log("localStorage user:", localStorage.getItem('hivAppUser'));
+  }, [currentUser]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,7 +84,7 @@ const Navbar = () => {
           {currentUser ? (
             <Link to="/profile" className="login-button">
               <i className="fas fa-user"></i>
-              <span>{currentUser.name}</span>             
+              <span>{currentUser.name || 'Người dùng'}</span>             
             </Link>
           ) : (
             <Link to="/login" className="login-button">

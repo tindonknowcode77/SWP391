@@ -15,7 +15,7 @@ const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
 
-  const {error} = useAuth();
+  const {error, setCurrentUser} = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -25,11 +25,26 @@ const Login = () => {
   useEffect(() => {
     session()
       .then(res => {
-        console.log("Session tồn tại với userId:", res.userId);
+        console.log("Session response:", res);
+        // Lưu thông tin người dùng vào context nếu có session
+        if (res && res.user) {
+          const userData = res.user;
+          const user = {
+            id: userData.userId || '',
+            name: userData.fullname || userData.email,
+            email: userData.email,
+            role: userData.roleId || "patient",
+            accountStatus: "active",
+            accountType: userData.roleId === "R001" ? "Quản trị viên" : "Bệnh nhân"
+          };
+          console.log("Saving session user data:", user);
+          setCurrentUser(user);
+          localStorage.setItem('hivAppUser', JSON.stringify(user));
+        }
         navigate('/hospital', { replace: true });
       })
       .catch(err => {
-        console.log("Không tìm thấy session hoặc đã hết hạn.");
+        console.log("Không tìm thấy session hoặc đã hết hạn:", err);
       });
   }, []);
 
@@ -49,14 +64,32 @@ const Login = () => {
 
     try {
       const result = await login(request);
+      console.log('Login result:', result);
+      
       if (!result) {
         setFormError('Đăng nhập không thành công. Vui lòng kiểm tra lại thông tin đăng nhập.');
         return;
       }
       setFormError('');
+      
+      // Lưu thông tin người dùng vào context từ cấu trúc API thực tế
+      if (result.user) {
+        const userData = result.user;
+        const user = {
+          id: userData.userId || '',
+          name: userData.fullname || email,
+          email: userData.email || email,
+          role: userData.roleId || "patient",
+          accountStatus: "active",
+          accountType: userData.roleId === "R001" ? "Quản trị viên" : "Bệnh nhân"
+        };
+        
+        console.log('Saving user data:', user);
+        setCurrentUser(user);
+        localStorage.setItem('hivAppUser', JSON.stringify(user));
+      }
      
-      // const targetPath = redirectPath === '/' ? '/profile' : redirectPath;
-      navigate("/hospital", {
+      navigate("/profile", {
         replace: true,
         state: {
           showAccountStatus: true,
@@ -65,9 +98,7 @@ const Login = () => {
         }
       });
 
-
       console.log('Login success:', result);
-
     } catch (error) {
       // Nếu API trả lỗi 400/401 từ BE
       if (error.response && error.response.status === 401) {
