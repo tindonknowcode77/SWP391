@@ -3,17 +3,29 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/Navbar.css';
 import logo from '../assets/images/icon.png';
+import { getUserFromLocalStorage } from '../utils/helpers';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [localUser, setLocalUser] = useState(null);
   const location = useLocation();
   const { currentUser } = useAuth();
   
-  // Debug: Kiểm tra thông tin người dùng
+  // Đọc thông tin người dùng từ localStorage nếu context không có
   useEffect(() => {
     console.log("Navbar - currentUser:", currentUser);
-    console.log("localStorage user:", localStorage.getItem('hivAppUser'));
+    
+    // Nếu không có currentUser từ context, thử đọc từ localStorage
+    if (!currentUser) {
+      const userData = getUserFromLocalStorage();
+      console.log("localStorage user:", userData);
+      if (userData) {
+        setLocalUser(userData);
+      }
+    } else {
+      setLocalUser(null); // Reset localUser nếu có currentUser từ context
+    }
   }, [currentUser]);
 
   useEffect(() => {
@@ -81,10 +93,10 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="navbar-actions">
-          {currentUser ? (
+          {currentUser || localUser ? (
             <Link to="/profile" className="login-button">
               <i className="fas fa-user"></i>
-              <span>{currentUser.name || 'Người dùng'}</span>             
+              <span>{currentUser?.name || localUser?.name || 'Người dùng'}</span>             
             </Link>
           ) : (
             <Link to="/login" className="login-button">

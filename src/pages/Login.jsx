@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar';
 import '../styles/Login.css';
 import {login} from '../api/auth';
 import {session} from '../api/auth';
+import { saveUserToLocalStorage } from '../utils/helpers';
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -72,24 +73,28 @@ const Login = () => {
       }
       setFormError('');
       
-      // Lưu thông tin người dùng vào context từ cấu trúc API thực tế
-      if (result.user) {
-        const userData = result.user;
-        const user = {
-          id: userData.userId || '',
-          name: userData.fullname || email,
-          email: userData.email || email,
-          role: userData.roleId || "patient",
-          accountStatus: "active",
-          accountType: userData.roleId === "R001" ? "Quản trị viên" : "Bệnh nhân"
-        };
-        
-        console.log('Saving user data:', user);
-        setCurrentUser(user);
-        localStorage.setItem('hivAppUser', JSON.stringify(user));
-      }
-     
-      navigate("/profile", {
+      // Dựa vào hình ảnh đã cung cấp, API login trả về cấu trúc như sau:
+      // { userId: "UID000027", roleId: "R005", fullname: "ngoctin", email: "tinnguyyen244@gmail.com", token: "..." }
+      
+      // Tạo đối tượng user từ dữ liệu API
+      const user = {
+        id: result.userId || '',
+        name: result.fullname || email,  // Đảm bảo có tên hiển thị
+        email: result.email || email,
+        role: result.roleId || 'patient',
+        accountStatus: 'active',
+        accountType: result.roleId === 'R001' ? 'Quản trị viên' : 'Bệnh nhân',
+        token: result.token || ''
+      };
+      
+      console.log('User object created:', user);
+      
+      // Lưu vào localStorage và context
+      localStorage.setItem('hivAppUser', JSON.stringify(user));
+      setCurrentUser(user);
+      
+      // Chuyển hướng người dùng
+      navigate("/hospital", {
         replace: true,
         state: {
           showAccountStatus: true,
@@ -97,8 +102,6 @@ const Login = () => {
           accountType: 'Bệnh nhân'
         }
       });
-
-      console.log('Login success:', result);
     } catch (error) {
       // Nếu API trả lỗi 400/401 từ BE
       if (error.response && error.response.status === 401) {

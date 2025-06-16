@@ -35,6 +35,7 @@ export const AuthProvider = ({ children }) => {
         const response = await apiLogin({ email, password });
         console.log("API login response:", response);
         
+        // Trường hợp 1: Response có trường user
         if (response && response.user) {
           const userData = response.user;
           // Xây dựng đối tượng user từ response API
@@ -44,7 +45,26 @@ export const AuthProvider = ({ children }) => {
             email: userData.email || email,
             role: userData.roleId || "patient",
             accountStatus: "active",
-            accountType: userData.roleId === "R001" ? "Quản trị viên" : "Bệnh nhân"
+            accountType: userData.roleId === "R001" ? "Quản trị viên" : "Bệnh nhân",
+            token: userData.token || response.token // Lưu token nếu có
+          };
+          
+          // Lưu thông tin user vào localStorage
+          localStorage.setItem('hivAppUser', JSON.stringify(user));
+          localStorage.setItem('hivAppShowAccountStatus', 'true');
+          setCurrentUser(user);
+          return response;
+        }
+        // Trường hợp 2: Thông tin user nằm trực tiếp trong response
+        else if (response && (response.userId || response.fullname || response.email)) {
+          const user = {
+            id: response.userId || '',
+            name: response.fullname || email,
+            email: response.email || email,
+            role: response.roleId || "patient",
+            accountStatus: "active",
+            accountType: response.roleId === "R001" ? "Quản trị viên" : "Bệnh nhân",
+            token: response.token || '' // Lưu token nếu có
           };
           
           // Lưu thông tin user vào localStorage
@@ -53,7 +73,7 @@ export const AuthProvider = ({ children }) => {
           setCurrentUser(user);
           return response;
         } else {
-          throw new Error("Đăng nhập không thành công");
+          throw new Error("Đăng nhập không thành công: Phản hồi không đúng định dạng");
         }
       } else {
         throw new Error("Thông tin đăng nhập không đúng");

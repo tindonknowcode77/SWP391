@@ -522,6 +522,55 @@ export const getTimeOfDay = (timeString) => {
   }
 };
 
+/**
+ * Lưu thông tin người dùng vào localStorage
+ * @param {Object} userData - Dữ liệu người dùng từ API
+ */
+export const saveUserToLocalStorage = (userData) => {
+  if (!userData) return;
+  
+  try {
+    console.log('Raw user data before saving:', userData);
+    
+    // Chuẩn hóa dữ liệu người dùng
+    const user = {
+      id: userData.userId || userData.id || '',
+      // Đảm bảo lấy tên người dùng từ cấu trúc API trả về
+      name: userData.fullname || userData.name || userData.email || 'Người dùng',
+      email: userData.email || '',
+      role: userData.roleId || userData.role || "patient",
+      accountStatus: "active",
+      accountType: (userData.roleId === "R001" || userData.role === "admin") ? "Quản trị viên" : "Bệnh nhân",
+      token: userData.token || ''
+    };
+    
+    // In thông tin debug
+    console.log('Saving user to localStorage:', user);
+    
+    // Lưu vào localStorage
+    localStorage.setItem('hivAppUser', JSON.stringify(user));
+    return user;
+  } catch (err) {
+    console.error('Error saving user to localStorage:', err);
+    return null;
+  }
+};
+
+/**
+ * Lấy thông tin người dùng từ localStorage
+ * @returns {Object|null} Dữ liệu người dùng hoặc null nếu không có
+ */
+export const getUserFromLocalStorage = () => {
+  try {
+    const userStr = localStorage.getItem('hivAppUser');
+    return userStr ? JSON.parse(userStr) : null;
+  } catch (err) {
+    console.error('Error getting user from localStorage:', err);
+    localStorage.removeItem('hivAppUser'); // Xóa dữ liệu lỗi
+    return null;
+  }
+};
+
 export default {
   formatDate,
   getRelativeTime,
@@ -543,5 +592,7 @@ export default {
   formatFileSize,
   isDateInPast,
   getFullName,
-  getTimeOfDay
+  getTimeOfDay,
+  saveUserToLocalStorage,
+  getUserFromLocalStorage
 };
