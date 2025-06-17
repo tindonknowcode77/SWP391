@@ -73,15 +73,11 @@ const Login = () => {
       }
       setFormError('');
       
-      // Dựa vào hình ảnh đã cung cấp, API login trả về cấu trúc như sau:
-      // { userId: "UID000027", roleId: "R005", fullname: "ngoctin", email: "tinnguyyen244@gmail.com", token: "..." }
-      
-      // Tạo đối tượng user từ dữ liệu API
       const user = {
-        id: result.userId || '',
-        name: result.fullname || email,  // Đảm bảo có tên hiển thị
-        email: result.email || email,
-        role: result.roleId || 'patient',
+        id: result.UserId || '',
+        name: result.Fullname || '', 
+        email: result.Email || '',
+        role: result.RoleId || 'patient',
         accountStatus: 'active',
         accountType: result.roleId === 'R001' ? 'Quản trị viên' : 'Bệnh nhân',
         token: result.token || ''

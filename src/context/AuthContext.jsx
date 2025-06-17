@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { login as apiLogin, session, dangky } from '../api/auth';
+import { loginInfor as apiLogin, session, dangky } from '../api/auth';
 import axiosClient from '../api/http';
 
 // Tạo Context
