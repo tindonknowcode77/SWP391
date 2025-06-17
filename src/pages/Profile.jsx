@@ -208,7 +208,7 @@ const Profile = () => {
         <div className="profile-sidebar">
           <div className="profile-user-info">
             <div className="profile-avatar">
-              <img src="/avatar-placeholder.jpg" alt="Avatar" />
+              <i className="fas fa-user profile-avatar-icon"></i>
               {editMode && (
                 <button className="change-avatar-btn">
                   <i className="fas fa-camera"></i>

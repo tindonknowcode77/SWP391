@@ -96,7 +96,7 @@ const Navbar = () => {
           {currentUser || localUser ? (
             <Link to="/profile" className="login-button">
               <i className="fas fa-user"></i>
-              <span>{currentUser?.name || localUser?.name || 'Người dùng'}</span>             
+              <span>Hồ Sơ</span>             
             </Link>
           ) : (
             <Link to="/login" className="login-button">
