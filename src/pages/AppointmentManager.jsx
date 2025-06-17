@@ -6,6 +6,7 @@ import { formatDate, getDaysUntilAppointment, groupAppointmentsByMonth } from '.
 import useResponsive from '../hooks/useResponsive';
 import Navbar from '../components/Navbar';
 import '../styles/AppointmentManager.css';
+import {Laylichhen} from '../api/auth';
 
 const AppointmentManager = () => {
   const { currentUser } = useContext(AuthContext);
@@ -19,7 +20,6 @@ const AppointmentManager = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const { isMobile } = useResponsive();
-  const [localAppointments, setLocalAppointments] = useState([]);
 
   // Fetch appointments and doctors on component mount
   useEffect(() => {
@@ -27,7 +27,7 @@ const AppointmentManager = () => {
       try {
         setLoading(true);
         const [appointmentsData, doctorsData] = await Promise.all([
-          apiService.getUserAppointments(currentUser.id),
+          Laylichhen(),
           apiService.getDoctors()
         ]);
         
@@ -40,12 +40,8 @@ const AppointmentManager = () => {
       }
     };
 
-    fetchData();
-
-    // Lấy lịch khám từ localStorage
-    const stored = localStorage.getItem('appointments');
-    if (stored) {
-      setLocalAppointments(JSON.parse(stored));
+    if (currentUser?.id) {
+        fetchData();
     }
   }, [currentUser]);
 

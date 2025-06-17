@@ -12,6 +12,10 @@ export const session = () => {
   return axiosClient.get('/Login/check-session', { withCredentials: true });
 };
 
+export const Laylichhen = () => {
+  return axiosClient.get('/Appointment');
+};
+
 export const dangky = (request) => {
   return axiosClient.post('/Register/register', {...request});
 };
