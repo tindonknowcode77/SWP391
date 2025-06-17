@@ -3,9 +3,10 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import '../styles/Profile.css';
+import {capnhatprofile} from '../api/auth';
 
 const Profile = () => {  
-  const { currentUser, loading, updateProfile, logout } = useAuth();
+  const { currentUser, loading, updateProfile, logout, setCurrentUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const isNewUser = location.state?.newUser || false;  const showAccountStatus = location.state?.showAccountStatus || localStorage.getItem('hivAppShowAccountStatus') === 'true';
@@ -44,8 +45,8 @@ const Profile = () => {
   );
   
   const [formData, setFormData] = useState({
-    fullName: currentUser?.name || '',
-    email: currentUser?.email || '',
+    fullName: currentUser?.name || currentUser?.Fullname || '',
+    email: currentUser?.email || currentUser?.Email || '',
     phoneNumber: currentUser?.phoneNumber || '',
     dateOfBirth: currentUser?.dateOfBirth || '',
     gender: currentUser?.gender || '',
@@ -158,8 +159,8 @@ const Profile = () => {
   useEffect(() => {
     if (currentUser) {
       setFormData({
-        fullName: currentUser.name || '',
-        email: currentUser.email || '',
+        fullName: currentUser.name || currentUser.Fullname || '',
+        email: currentUser.email || currentUser.Email || '',
         phoneNumber: currentUser.phoneNumber || '',
         dateOfBirth: currentUser.dateOfBirth || '',
         gender: currentUser.gender || '',
@@ -192,9 +193,40 @@ const Profile = () => {
     e.preventDefault();
     
     try {
-      const success = await updateProfile(formData);
+      // Prepare data for capnhatprofile API
+      const profileData = {
+        UserId: currentUser?.id, // Get UserId from currentUser
+        Fullname: formData.fullName,
+        DateOfBirth: formData.dateOfBirth ? `${formData.dateOfBirth}T00:00:00.000Z` : '',
+        Email: formData.email,
+        DayOfBirth: formData.dateOfBirth ? `${formData.dateOfBirth}T00:00:00.000Z` : '',
+        Gender: formData.gender,
+        Phone: formData.phoneNumber,
+        BloodType: formData.bloodType,
+        Allergy: formData.allergies,
+      };
+
       
-      if (success) {
+      console.log('Sending profileData:', profileData);
+      const response = await capnhatprofile(profileData);
+      
+      if (response && response.message === "Cập nhật hồ sơ thành công") {
+        
+        const updatedUser = {
+          ...currentUser,
+          name: formData.fullName,
+          phoneNumber: formData.phoneNumber,
+          dateOfBirth: formData.dateOfBirth,
+          gender: formData.gender,
+          address: formData.address, // Address is not in capnhatprofile but update locally
+          bloodType: formData.bloodType,
+          emergencyContact: formData.emergencyContact, 
+          allergies: formData.allergies,
+          currentMedications: formData.currentMedications, 
+        };
+        localStorage.setItem('hivAppUser', JSON.stringify(updatedUser));
+        setCurrentUser(updatedUser); 
+
         setNotification({
           type: 'success',
           message: 'Cập nhật thông tin thành công!'
@@ -203,7 +235,7 @@ const Profile = () => {
       } else {
         setNotification({
           type: 'error',
-          message: 'Không thể cập nhật thông tin'
+          message: response?.message || 'Không thể cập nhật thông tin'
         });
       }
     } catch (err) {

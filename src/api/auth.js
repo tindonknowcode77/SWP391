@@ -19,3 +19,15 @@ export const Laylichhen = () => {
 export const dangky = (request) => {
   return axiosClient.post('/Register/register', {...request});
 };
+
+export const capnhatprofile = (data) => {
+  return axiosClient.put(
+    'EditProfileUser/edit-profile',
+    data, // Gửi object gốc
+    {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+};
