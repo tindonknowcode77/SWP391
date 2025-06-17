@@ -23,31 +23,31 @@ const Login = () => {
   // Lấy đường dẫn redirect từ state (nếu có), mặc định là "/"
   const redirectPath = location.state?.from?.pathname || "/";
 
-  useEffect(() => {
-    session()
-      .then(res => {
-        console.log("Session response:", res);
-        // Lưu thông tin người dùng vào context nếu có session
-        if (res && res.user) {
-          const userData = res.user;
-          const user = {
-            id: userData.userId || '',
-            name: userData.fullname || userData.email,
-            email: userData.email,
-            role: userData.roleId || "patient",
-            accountStatus: "active",
-            accountType: userData.roleId === "R001" ? "Quản trị viên" : "Bệnh nhân"
-          };
-          console.log("Saving session user data:", user);
-          setCurrentUser(user);
-          localStorage.setItem('hivAppUser', JSON.stringify(user));
-        }
-        navigate('/hospital', { replace: true });
-      })
-      .catch(err => {
-        console.log("Không tìm thấy session hoặc đã hết hạn:", err);
-      });
-  }, []);
+  // useEffect(() => {
+  //   session()
+  //     .then(res => {
+  //       console.log("Session response:", res);
+  //       // Lưu thông tin người dùng vào context nếu có session
+  //       if (res && res.user) {
+  //         const userData = res.user;
+  //         const user = {
+  //           id: userData.userId || '',
+  //           name: userData.fullname || userData.email,
+  //           email: userData.email,
+  //           role: userData.roleId || "patient",
+  //           accountStatus: "active",
+  //           accountType: userData.roleId === "R001" ? "Quản trị viên" : "Bệnh nhân"
+  //         };
+  //         console.log("Saving session user data:", user);
+  //         setCurrentUser(user);
+  //         localStorage.setItem('hivAppUser', JSON.stringify(user));
+  //       }
+  //       navigate('/hospital', { replace: true });
+  //     })
+  //     .catch(err => {
+  //       console.log("Không tìm thấy session hoặc đã hết hạn:", err);
+  //     });
+  // }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

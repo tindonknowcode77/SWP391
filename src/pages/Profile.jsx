@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import '../styles/Profile.css';
 
 const Profile = () => {  
-  const { currentUser, updateProfile, logout } = useAuth();
+  const { currentUser, loading, updateProfile, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const isNewUser = location.state?.newUser || false;  const showAccountStatus = location.state?.showAccountStatus || localStorage.getItem('hivAppShowAccountStatus') === 'true';
@@ -138,10 +138,11 @@ const Profile = () => {
   ]);
 
   useEffect(() => {
-    if (!currentUser) {
+    if (!loading && !currentUser) {
       navigate('/login', { state: { from: location } });
     }
-  }, [currentUser, navigate, location]);
+  }, [currentUser, loading, navigate, location]);
+
   useEffect(() => {
     if (notification) {
       const timer = setTimeout(() => {
@@ -153,6 +154,23 @@ const Profile = () => {
       return () => clearTimeout(timer);
     }
   }, [notification]);
+
+  useEffect(() => {
+    if (currentUser) {
+      setFormData({
+        fullName: currentUser.name || '',
+        email: currentUser.email || '',
+        phoneNumber: currentUser.phoneNumber || '',
+        dateOfBirth: currentUser.dateOfBirth || '',
+        gender: currentUser.gender || '',
+        address: currentUser.address || '',
+        bloodType: currentUser.bloodType || '',
+        emergencyContact: currentUser.emergencyContact || '',
+        allergies: currentUser.allergies || '',
+        currentMedications: currentUser.currentMedications || '',
+      });
+    }
+  }, [currentUser]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -200,6 +218,10 @@ const Profile = () => {
     logout();
     navigate('/login');
   };
+
+  if (loading) {
+    return <div>Đang tải...</div>;
+  }
 
   return (
     <>
