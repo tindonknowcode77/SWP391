@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/Navbar.css';
 import logo from '../assets/images/icon.png';
@@ -10,7 +10,8 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [localUser, setLocalUser] = useState(null);
   const location = useLocation();
-  const { currentUser } = useAuth();
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
   
   // Đọc thông tin người dùng từ localStorage nếu context không có
   useEffect(() => {
@@ -55,6 +56,11 @@ const Navbar = () => {
     return location.pathname === path;
   };
 
+  const handleLogout = async () => {
+    await logout(); 
+    navigate('/login');
+  };
+
   return (
     <nav className={`hospital-navbar ${isScrolled ? 'scrolled' : ''}`}>
       <div className="navbar-container">
@@ -93,11 +99,16 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="navbar-actions">
-          {currentUser || localUser ? (
-            <Link to="/profile" className="login-button">
-              <i className="fas fa-user"></i>
-              <span>{currentUser?.name || localUser?.name || 'Người dùng'}</span>             
-            </Link>
+          {(currentUser || localUser) ? (
+            <>
+            <button className="logout-button" onClick={handleLogout}>
+              <i className="fas fa-sign-out-alt"></i>
+            </button>
+              <Link to="/profile" className="login-button">
+                <i className="fas fa-user"></i>
+                <span>{currentUser?.name || localUser?.name || 'Người dùng'}</span>             
+              </Link>
+            </>
           ) : (
             <Link to="/login" className="login-button">
               <i className="fas fa-user"></i>
