@@ -72,6 +72,14 @@ const Login = () => {
         return;
       }
       setFormError('');
+
+      const roleMap = {
+        R001: 'Admin',
+        R002: 'Manager',
+        R003: 'Doctor',
+        R004: 'Staff',
+        R005: 'Patient'
+      };
       
       const user = {
         id: result.UserId || '',
@@ -79,8 +87,8 @@ const Login = () => {
         email: result.Email || '',
         role: result.RoleId || 'patient',
         accountStatus: 'active',
-        accountType: result.roleId === 'R001' ? 'Quản trị viên' : 'Bệnh nhân',
-        token: result.token || ''
+        accountType: roleMap[result.RoleId] || 'Không xác định',
+        token: result.Token || ''
       };
       
       console.log('User object created:', user);
