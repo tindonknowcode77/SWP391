@@ -565,9 +565,6 @@ const AppointmentManager = () => {
                   </div>
                 </div>
               </div>
-              <div className="help-image">
-                <img src="/src/assets/images/appointment.png" alt="Doctor appointment" />
-              </div>
             </div>
           </div>
         </section>
