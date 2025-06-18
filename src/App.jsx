@@ -29,6 +29,7 @@ import Services from './pages/Services';
 import Consulting from './pages/Consulting';
 import ARVTreatment from './pages/ARVTreatment';
 import HIVTesting from './pages/HIVTesting';
+import Staff from './staff/Staff';
 
 function App() {
   // const [file, setFile] = useState(null);
@@ -89,6 +90,9 @@ function App() {
             <Route path="/treatment-plan" element={<TreatmentPlan />} />
             <Route path="/medication" element={<MedicationManager />} />
             <Route path="/appointments" element={<AppointmentManager />} />
+
+            {/* Trang staff */}
+            <Route path="/staff" element={<Staff />} />
 
             {/* Chuyển hướng cho các URL không hợp lệ */}
             <Route path="*" element={<Navigate to="/" replace />} />

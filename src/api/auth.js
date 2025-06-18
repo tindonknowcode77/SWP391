@@ -31,3 +31,7 @@ export const capnhatprofile = (data) => {
     }
   );
 };
+
+export const xemdanhsachlichhen = () => {
+  return axiosClient.get('staff/appointments/pending');
+};
