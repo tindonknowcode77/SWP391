@@ -3,29 +3,14 @@ import '../styles/Staff.css';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { xemdanhsachlichhen } from '../api/auth';
-
+ //Const cho API hoặc State nha ba !!! Tách ra cho dễ đọc dễ sửa
 const Staff = () => {
   const [selected, setSelected] = useState('appointments');
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
-  //Const cho API hoặc State nha ba !!! Tách ra cho dễ đọc dễ sửa
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  if (!currentUser || currentUser.role !== 'R004') {
-    return (
-      <div className="staff-warning-banner" style={{flexDirection: 'column', gap: '18px'}}>
-        <div style={{display: 'flex', alignItems: 'center', gap: 18}}>
-          <span className="warning-icon">&#9888;</span>
-          Không phận sự miễn vào !!!
-        </div>
-        <button className="staff-warning-btn" onClick={() => navigate('/hospital')}>
-          Quay lại trang chủ
-        </button>
-      </div>
-    );
-  }
 
   useEffect(() => {
     if (selected === 'appointments') {
@@ -42,6 +27,20 @@ const Staff = () => {
         });
     }
   }, [selected]);
+
+  if (!currentUser || currentUser.role !== 'R004') {
+    return (
+      <div className="staff-warning-banner" style={{flexDirection: 'column', gap: '18px'}}>
+        <div style={{display: 'flex', alignItems: 'center', gap: 18}}>
+          <span className="warning-icon">&#9888;</span>
+          Không phận sự miễn vào !!!
+        </div>
+        <button className="staff-warning-btn" onClick={() => navigate('/hospital')}>
+          Quay lại trang chủ
+        </button>
+      </div>
+    );
+  }
 
   const handleLogout = async () => {
     await logout();
