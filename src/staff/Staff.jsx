@@ -13,6 +13,20 @@ const Staff = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  if (!currentUser || currentUser.role !== 'R004') {
+    return (
+      <div className="staff-warning-banner" style={{flexDirection: 'column', gap: '18px'}}>
+        <div style={{display: 'flex', alignItems: 'center', gap: 18}}>
+          <span className="warning-icon">&#9888;</span>
+          Không phận sự miễn vào !!!
+        </div>
+        <button className="staff-warning-btn" onClick={() => navigate('/hospital')}>
+          Quay lại trang chủ
+        </button>
+      </div>
+    );
+  }
+
   useEffect(() => {
     if (selected === 'appointments') {
       setLoading(true);
@@ -61,7 +75,7 @@ const Staff = () => {
       <main className="staff-main">
         {selected === 'appointments' && (
           <div className="staff-content">
-            <h2>Danh sách lịch hẹn</h2>
+            <h2 className="staff-table-title">Danh sách lịch hẹn</h2>
             {loading && <div>Đang tải...</div>}
             {error && <div style={{color: 'red'}}>{error}</div>}
             {!loading && !error && appointments.length === 0 && <div>Không có lịch hẹn nào.</div>}

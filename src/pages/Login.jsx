@@ -98,14 +98,18 @@ const Login = () => {
       setCurrentUser(user);
       
       // Chuyển hướng người dùng
-      navigate("/hospital", {
-        replace: true,
-        state: {
-          showAccountStatus: true,
-          accountStatus: 'active',
-          accountType: 'Bệnh nhân'
-        }
-      });
+      if (user.role === 'R004') {
+        navigate('/staff', { replace: true });
+      } else {
+        navigate("/hospital", {
+          replace: true,
+          state: {
+            showAccountStatus: true,
+            accountStatus: 'active',
+            accountType: 'Bệnh nhân'
+          }
+        });
+      }
     } catch (error) {
       // Nếu API trả lỗi 400/401 từ BE
       if (error.response && error.response.status === 401) {

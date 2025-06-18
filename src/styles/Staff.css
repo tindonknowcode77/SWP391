@@ -191,8 +191,6 @@
   border-bottom: none;
 }
 
-
-
 .appointments-table tr {
   font-weight: bold;
 }
@@ -227,4 +225,51 @@
   background: #d4edda;
   color: #218838;
   border: 1px solid #a5d6a7;
+}
+
+.staff-warning-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg, #fffbe6 0%, #ffe0b2 100%);
+  border: 2px solid #ff9800;
+  color: #d32f2f;
+  font-weight: 700;
+  font-size: 1.5rem;
+  padding: 32px 40px;
+  border-radius: 16px;
+  margin: 80px auto 0 auto;
+  max-width: 480px;
+  box-shadow: 0 4px 24px rgba(255, 152, 0, 0.08);
+  gap: 18px;
+}
+.staff-warning-banner .warning-icon {
+  font-size: 2.2rem;
+  color: #ff9800;
+  margin-right: 12px;
+}
+
+.staff-warning-btn {
+  margin-top: 18px;
+  padding: 12px 32px;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+  transition: background 0.2s;
+}
+.staff-warning-btn:hover {
+  background: #1251a3;
+}
+
+.staff-table-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+  margin-top: 0;
 }
