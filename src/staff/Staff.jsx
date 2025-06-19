@@ -241,7 +241,7 @@ const Staff = () => {
                       <th>Loại dịch vụ</th>
                       <th>Thời gian</th>
                       <th>Trạng thái</th>
-                      <th>Hành động</th>
+                      <th>Xác nhận/Hủy</th>
                     </tr>
                   </thead>
                   <tbody>
