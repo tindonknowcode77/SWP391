@@ -88,7 +88,8 @@ const Login = () => {
         role: result.RoleId || 'patient',
         accountStatus: 'active',
         accountType: roleMap[result.RoleId] || 'Không xác định',
-        token: result.Token || ''
+        token: result.Token || '',
+        PantientID: result.PantientID || result.pantientId || ''
       };
       
       console.log('User object created:', user);

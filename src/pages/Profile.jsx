@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import '../styles/Profile.css';
 import {capnhatprofile} from '../api/auth';
+import {pantient} from '../api/auth';
 
 const Profile = () => {  
   const { currentUser, loading, updateProfile, logout, setCurrentUser } = useAuth();
@@ -45,16 +46,13 @@ const Profile = () => {
   );
   
   const [formData, setFormData] = useState({
-    fullName: currentUser?.name || currentUser?.Fullname || '',
-    email: currentUser?.email || currentUser?.Email || '',
-    phoneNumber: currentUser?.phoneNumber || '',
-    dateOfBirth: currentUser?.dateOfBirth || '',
-    gender: currentUser?.gender || '',
-    address: currentUser?.address || '',
-    bloodType: currentUser?.bloodType || '',
-    emergencyContact: currentUser?.emergencyContact || '',
-    allergies: currentUser?.allergies || '',
-    currentMedications: currentUser?.currentMedications || '',
+    fullName: '',
+    email: '',
+    phoneNumber: '',
+    dateOfBirth: '',
+    gender: '',
+    bloodType: '',
+    allergies: ''
   });
 
   // Mô phỏng dữ liệu lịch sử khám bệnh
@@ -138,6 +136,27 @@ const Profile = () => {
     }
   ]);
 
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+
+  // Lấy dữ liệu profile từ API khi vào trang hoặc khi currentUser thay đổi
+  useEffect(() => {
+    if (currentUser?.id) {
+      pantient(currentUser.id).then(userRes => {
+        if (userRes) {
+          setFormData({
+            fullName: userRes.Fullname || '',
+            email: userRes.Email || '',
+            phoneNumber: userRes.Phone || '',
+            dateOfBirth: userRes.DateOfBirth ? userRes.DateOfBirth.split('T')[0] : '',
+            gender: userRes.Gender || '',
+            bloodType: userRes.BloodType || '',
+            allergies: userRes.Allergy || ''
+          });
+        }
+      });
+    }
+  }, [currentUser]);
+
   useEffect(() => {
     if (!loading && !currentUser) {
       navigate('/login', { state: { from: location } });
@@ -148,30 +167,20 @@ const Profile = () => {
     if (notification) {
       const timer = setTimeout(() => {
         setNotification(null);
-        // Clear the account status flag after showing the notification
+       
         localStorage.removeItem('hivAppShowAccountStatus');
-      }, 5000);
+      }, 2500);
       
       return () => clearTimeout(timer);
     }
   }, [notification]);
 
   useEffect(() => {
-    if (currentUser) {
-      setFormData({
-        fullName: currentUser.name || currentUser.Fullname || '',
-        email: currentUser.email || currentUser.Email || '',
-        phoneNumber: currentUser.phoneNumber || '',
-        dateOfBirth: currentUser.dateOfBirth || '',
-        gender: currentUser.gender || '',
-        address: currentUser.address || '',
-        bloodType: currentUser.bloodType || '',
-        emergencyContact: currentUser.emergencyContact || '',
-        allergies: currentUser.allergies || '',
-        currentMedications: currentUser.currentMedications || '',
-      });
+    if (localStorage.getItem('showProfileSuccessPopup') === 'true') {
+      setShowSuccessPopup(true);
+      localStorage.removeItem('showProfileSuccessPopup');
     }
-  }, [currentUser]);
+  }, []);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -191,59 +200,44 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     try {
       // Prepare data for capnhatprofile API
       const profileData = {
         UserId: currentUser?.id, // Get UserId from currentUser
         Fullname: formData.fullName,
         DateOfBirth: formData.dateOfBirth ? `${formData.dateOfBirth}T00:00:00.000Z` : '',
-        Email: formData.email,
+        // Email: formData.email,
         DayOfBirth: formData.dateOfBirth ? `${formData.dateOfBirth}T00:00:00.000Z` : '',
         Gender: formData.gender,
         Phone: formData.phoneNumber,
         BloodType: formData.bloodType,
         Allergy: formData.allergies,
       };
-
-      
       console.log('Sending profileData:', profileData);
       const response = await capnhatprofile(profileData);
-      
       if (response && response.message === "Cập nhật hồ sơ thành công") {
-        
-        const updatedUser = {
-          ...currentUser,
-          name: formData.fullName,
-          phoneNumber: formData.phoneNumber,
-          dateOfBirth: formData.dateOfBirth,
-          gender: formData.gender,
-          address: formData.address, // Address is not in capnhatprofile but update locally
-          bloodType: formData.bloodType,
-          emergencyContact: formData.emergencyContact, 
-          allergies: formData.allergies,
-          currentMedications: formData.currentMedications, 
-        };
-        localStorage.setItem('hivAppUser', JSON.stringify(updatedUser));
-        setCurrentUser(updatedUser); 
-
-        setNotification({
-          type: 'success',
-          message: 'Cập nhật thông tin thành công!'
-        });
+        if (currentUser?.id) {
+          const userRes = await pantient(currentUser.id);
+          if (userRes) {
+            setFormData({
+              fullName: userRes.Fullname || '',
+              email: userRes.Email || '',
+              phoneNumber: userRes.Phone || '',
+              dateOfBirth: userRes.DateOfBirth ? userRes.DateOfBirth.split('T')[0] : '',
+              gender: userRes.Gender || '',
+              bloodType: userRes.BloodType || '',
+            });
+          }
+        }
         setEditMode(false);
-      } else {
-        setNotification({
-          type: 'error',
-          message: response?.message || 'Không thể cập nhật thông tin'
-        });
       }
     } catch (err) {
-      setNotification({
-        type: 'error',
-        message: 'Đã xảy ra lỗi khi cập nhật thông tin'
-      });
       console.error(err);
+    } finally {
+      localStorage.setItem('showProfileSuccessPopup', 'true');
+      setTimeout(() => {
+        window.location.reload();
+      }, 2500);
     }
   };
   const handleLogout = () => {
@@ -437,23 +431,6 @@ const Profile = () => {
                     </div>
                     
                     <div className="form-group">
-                      <label htmlFor="address">Địa chỉ</label>
-                      <input
-                        type="text"
-                        id="address"
-                        name="address"
-                        value={formData.address}
-                        onChange={handleChange}
-                        disabled={!editMode}
-                      />
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="form-section">
-                  <h3>Thông tin y tế</h3>
-                  <div className="form-row">
-                    <div className="form-group">
                       <label htmlFor="bloodType">Nhóm máu</label>
                       <select
                         id="bloodType"
@@ -473,22 +450,12 @@ const Profile = () => {
                         <option value="O-">O-</option>
                       </select>
                     </div>
-                    
-                    <div className="form-group">
-                      <label htmlFor="emergencyContact">Liên hệ khẩn cấp</label>
-                      <input
-                        type="text"
-                        id="emergencyContact"
-                        name="emergencyContact"
-                        value={formData.emergencyContact}
-                        onChange={handleChange}
-                        disabled={!editMode}
-                        placeholder="Tên & số điện thoại"
-                      />
-                    </div>
                   </div>
-                  
-                  <div className="form-row vertical">
+                </div>
+                
+                <div className="form-section">
+                  <h3>Thông tin y tế</h3>
+                  <div className="form-row">
                     <div className="form-group">
                       <label htmlFor="allergies">Dị ứng</label>
                       <textarea
@@ -498,20 +465,6 @@ const Profile = () => {
                         onChange={handleChange}
                         disabled={!editMode}
                         placeholder="Liệt kê các loại dị ứng (nếu có)"
-                      ></textarea>
-                    </div>
-                  </div>
-                  
-                  <div className="form-row vertical">
-                    <div className="form-group">
-                      <label htmlFor="currentMedications">Thuốc đang sử dụng (ngoài phác đồ HIV)</label>
-                      <textarea
-                        id="currentMedications"
-                        name="currentMedications"
-                        value={formData.currentMedications}
-                        onChange={handleChange}
-                        disabled={!editMode}
-                        placeholder="Liệt kê các loại thuốc đang sử dụng ngoài phác đồ điều trị HIV"
                       ></textarea>
                     </div>
                   </div>
@@ -712,6 +665,17 @@ const Profile = () => {
           </div>
         </div>
       </div>
+      {showSuccessPopup && (
+        <div className="profile-success-popup-overlay">
+          <div className="profile-success-popup">
+            <div className="profile-success-icon-wrapper">
+              <i className="fas fa-check-circle profile-success-icon"></i>
+            </div>
+            <div className="profile-success-title">Bạn đã thay đổi thông tin thành công!</div>
+            <button className="profile-success-btn" onClick={() => setShowSuccessPopup(false)}>OK</button>
+          </div>
+        </div>
+      )}
     </>
   );
 };

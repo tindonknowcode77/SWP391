@@ -16,6 +16,10 @@ export const Laylichhen = () => {
   return axiosClient.get('/Appointment');
 };
 
+export const pantient = (userId) => {
+  return axiosClient.get(`EditProfileUser/${userId}`);
+};
+
 export const dangky = (request) => {
   return axiosClient.post('/Register/register', {...request});
 };

@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import { loginInfor as apiLogin, session, dangky } from '../api/auth';
 import axiosClient from '../api/http';
 
+
 // Tạo Context
 export const AuthContext = createContext(null);
 
@@ -46,7 +47,8 @@ export const AuthProvider = ({ children }) => {
             role: userData.roleId || "patient",
             accountStatus: "active",
             accountType: userData.roleId === "R001" ? "Quản trị viên" : "Bệnh nhân",
-            token: userData.token || response.token // Lưu token nếu có
+            token: userData.token || response.token, // Lưu token nếu có
+            PantientID: userData.pantientId || userData.PantientID || ''
           };
           
           // Lưu thông tin user vào localStorage
@@ -64,7 +66,8 @@ export const AuthProvider = ({ children }) => {
             role: response.roleId || "patient",
             accountStatus: "active",
             accountType: response.roleId === "R001" ? "Quản trị viên" : "Bệnh nhân",
-            token: response.token || '' // Lưu token nếu có
+            token: response.token || '', // Lưu token nếu có
+            PantientID: response.pantientId || response.PantientID || ''
           };
           
           // Lưu thông tin user vào localStorage
@@ -105,7 +108,8 @@ export const AuthProvider = ({ children }) => {
             email: userData.email || email,
             role: userData.roleId || "patient",
             accountStatus: "active",
-            accountType: "Bệnh nhân"
+            accountType: "Bệnh nhân",
+            PantientID: userData.pantientId || userData.PantientID || ''
           };
           
           // Lưu thông tin user vào localStorage
