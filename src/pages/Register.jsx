@@ -144,9 +144,9 @@ const Register = () => {
             {step === 1 && (
               <div className="form-step">
                 <div className="form-group">
-                  <label htmlFor="fullName">Họ và tên</label>
-                  <div className="input-with-icon">
-                    <i className="fas fa-user"></i>
+                  <label htmlFor="fullName" className="form-label-3" >Họ và tên</label>
+                  <div className="input-row">
+                    <i className="fas fa-user input-icon"></i>
                     <input
                       type="text"
                       id="fullName"
@@ -160,9 +160,9 @@ const Register = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label htmlFor="email">Email</label>
-                  <div className="input-with-icon">
-                    <i className="fas fa-envelope"></i>
+                  <label htmlFor="email" className="form-label-3">Email</label>
+                  <div className="input-row">
+                    <i className="fas fa-envelope input-icon"></i>
                     <input
                       type="email"
                       id="email"
@@ -176,9 +176,9 @@ const Register = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label htmlFor="password">Mật khẩu</label>
-                  <div className="input-with-icon">
-                    <i className="fas fa-lock"></i>
+                  <label htmlFor="password" className="form-label-3">Mật khẩu</label>
+                  <div className="input-row">
+                    <i className="fas fa-lock input-icon"></i>
                     <input
                       type="password"
                       id="password"
@@ -192,9 +192,9 @@ const Register = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label htmlFor="confirmPassword">Xác nhận mật khẩu</label>
-                  <div className="input-with-icon">
-                    <i className="fas fa-lock"></i>
+                  <label htmlFor="confirmPassword" className="form-label-3">Xác nhận mật khẩu</label>
+                  <div className="input-row">
+                    <i className="fas fa-lock input-icon"></i>
                     <input
                       type="password"
                       id="confirmPassword"
@@ -220,9 +220,9 @@ const Register = () => {
             {step === 2 && (
               <div className="form-step">
                 <div className="form-group">
-                  <label htmlFor="phoneNumber">Số điện thoại</label>
-                  <div className="input-with-icon">
-                    <i className="fas fa-phone"></i>
+                  <label htmlFor="phoneNumber" className="form-label-3">Số điện thoại</label>
+                  <div className="input-row">
+                    <i className="fas fa-phone input-icon"></i>
                     <input
                       type="tel"
                       id="phoneNumber"
@@ -236,9 +236,9 @@ const Register = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label htmlFor="dateOfBirth">Ngày sinh</label>
-                  <div className="input-with-icon">
-                    <i className="fas fa-calendar"></i>
+                  <label htmlFor="dateOfBirth" className="form-label-3">Ngày sinh</label>
+                  <div className="input-row">
+                    <i className="fas fa-calendar input-icon"></i>
                     <input
                       type="date"
                       id="dateOfBirth"
@@ -251,7 +251,7 @@ const Register = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label>Giới tính</label>
+                  <label></label>
                   <div className="gender-options">
                     <div className="gender-option">
                       <input 
