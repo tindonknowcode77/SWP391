@@ -144,8 +144,8 @@ const Login = () => {
 
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <div className="input-with-icon">
+              <label htmlFor="email" className='form-label-4' >Email</label>
+              <div className="input-row">
                 <i className="fas fa-envelope"></i>
                 <input
                   type="email"
@@ -159,8 +159,8 @@ const Login = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="password">Mật khẩu</label>
-              <div className="input-with-icon">
+              <label htmlFor="password" className='form-label-4'>Mật khẩu</label>
+              <div className="input-row">
                 <i className="fas fa-lock"></i>
                 <input
                   type="password"
