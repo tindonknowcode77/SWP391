@@ -30,6 +30,7 @@ import Consulting from './pages/Consulting';
 import ARVTreatment from './pages/ARVTreatment';
 import HIVTesting from './pages/HIVTesting';
 import Staff from './staff/Staff';
+import Doctor from './doctor/doctor';
 
 function App() {
   // const [file, setFile] = useState(null);
@@ -93,6 +94,8 @@ function App() {
 
             {/* Trang staff */}
             <Route path="/staff" element={<Staff />} />
+            {/* Trang doctor */}
+            <Route path="/doctor" element={<Doctor />} />
 
             {/* Chuyển hướng cho các URL không hợp lệ */}
             <Route path="*" element={<Navigate to="/" replace />} />

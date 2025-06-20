@@ -101,6 +101,8 @@ const Login = () => {
       // Chuyển hướng người dùng
       if (user.role === 'R004') {
         navigate('/staff', { replace: true });
+      } else if (user.role === 'R003') {
+        navigate('/doctor', { replace: true });
       } else {
         navigate("/hospital", {
           replace: true,

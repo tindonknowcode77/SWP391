@@ -66,3 +66,7 @@ export const huylich = (id, reason) => {
     }
   );
 };
+
+export const xemdanhsachlichduocduyet = () => {
+  return axiosClient.get('/Appointment/approved');
+};
