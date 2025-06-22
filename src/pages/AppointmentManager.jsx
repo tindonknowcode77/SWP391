@@ -233,6 +233,19 @@ const AppointmentManager = () => {
     return date.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' });
   };
 
+  // Hàm xử lý đặt lịch
+  const handleBookAppointment = async (appointmentData) => {
+    try {
+      await datlichhen(appointmentData);
+      setShowSuccess(true); // Hiện thông báo thành công
+      // Lấy lại danh sách lịch hẹn mới
+      const appointmentsData = await Laylichhen();
+      setAppointments(appointmentsData);
+    } catch (error) {
+      alert('Đặt lịch thất bại, vui lòng thử lại!');
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -240,7 +253,7 @@ const AppointmentManager = () => {
         <div className="appointments-header">
           <div className="container">
             <h1>Quản Lý Lịch Khám</h1>
-            <p>Quản lý lịch hẹn khám bệnh, theo dõi lịch sử khám và đặt lịch khám mới.</p>
+            <p></p>
             
             <div className="appointment-actions">
               <div className="appointment-tabs">
@@ -568,6 +581,13 @@ const AppointmentManager = () => {
             </div>
           </div>
         </section>
+        
+        {showSuccess && (
+          <div className="success-message">
+            Đặt lịch thành công!
+            <button onClick={() => setShowSuccess(false)}>Đóng</button>
+          </div>
+        )}
       </div>
     </>
   );

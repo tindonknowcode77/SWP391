@@ -2,93 +2,64 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import '../styles/DoctorsList.css';
+import { getAllDoctors } from '../api/auth';
 
 const DoctorsList = () => {
   const [doctors, setDoctors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSpecialty, setFilterSpecialty] = useState('');
-
   useEffect(() => {
-    // Fetch doctors data - this would be replaced with an actual API call in production
+    // Fetch doctors data from API
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // Simulating API call with timeout
-        setTimeout(() => {
-          setDoctors([
-            {
-              id: 1,
-              name: 'BS. Nguyễn Văn A',
-              specialty: 'Trưởng khoa HIV/AIDS',
-              image: 'https://randomuser.me/api/portraits/men/32.jpg',
-              experience: '15 năm kinh nghiệm',
-              education: 'Đại học Y Hà Nội',
-              description: 'Bác sĩ Nguyễn Văn A là chuyên gia hàng đầu trong lĩnh vực điều trị HIV/AIDS với hơn 15 năm kinh nghiệm. Bác sĩ đã tham gia nhiều nghiên cứu quốc tế và có nhiều công trình nghiên cứu được công bố.',
-              certifications: ['Bác sĩ chuyên khoa II', 'Thành viên Hội đồng Y khoa Việt Nam']
-            },
-            {
-              id: 2,
-              name: 'BS. Trần Thị B',
-              specialty: 'Bác sĩ điều trị HIV',
-              image: 'https://randomuser.me/api/portraits/women/44.jpg',
-              experience: '10 năm kinh nghiệm',
-              education: 'Đại học Y Dược TP.HCM',
-              description: 'Bác sĩ Phạm Thị B chuyên về điều trị và theo dõi người nhiễm HIV. Với kinh nghiệm 10 năm trong lĩnh vực, bác sĩ đã giúp hàng nghìn bệnh nhân kiểm soát hiệu quả tình trạng bệnh.',
-              certifications: ['Bác sĩ chuyên khoa I', 'Chứng chỉ điều trị HIV quốc tế']
-            },
-            {
-              id: 3,
-              name: 'BS. Lê Văn C',
-              specialty: 'Chuyên gia tư vấn HIV',
-              image: 'https://randomuser.me/api/portraits/men/65.jpg',
-              experience: '12 năm kinh nghiệm',
-              education: 'Đại học Y Huế',
-              description: 'Bác sĩ Trần Văn C là chuyên gia tư vấn tâm lý cho người nhiễm HIV và gia đình. Với phương pháp tiếp cận đặc biệt, bác sĩ đã giúp nhiều bệnh nhân vượt qua khó khăn tâm lý.',
-              certifications: ['Tiến sĩ Y học', 'Chuyên gia tư vấn tâm lý lâm sàng']
-            },
-            {
-              id: 4,
-              name: 'BS. Phạm Thị D',
-              specialty: 'Bác sĩ điều trị nhiễm trùng cơ hội',
-              image: 'https://randomuser.me/api/portraits/women/28.jpg',
-              experience: '8 năm kinh nghiệm',
-              education: 'Đại học Y Hà Nội',
-              description: 'Bác sĩ Lê Thị D chuyên về chẩn đoán và điều trị các bệnh nhiễm trùng cơ hội liên quan đến HIV/AIDS. Bác sĩ có kinh nghiệm đặc biệt trong điều trị lao và các bệnh nấm ở bệnh nhân HIV.',
-              certifications: ['Bác sĩ chuyên khoa I', 'Chứng chỉ về bệnh nhiễm trùng']
-            },
-            {
-              id: 5,
-              name: 'BS. Đỗ Văn E',
-              specialty: 'Chuyên gia dinh dưỡng HIV/AIDS',
-              image: 'https://randomuser.me/api/portraits/men/1.jpg',
-              experience: '9 năm kinh nghiệm',
-              education: 'Đại học Y Dược TP.HCM',
-              description: 'Bác sĩ Đỗ Văn E là chuyên gia về dinh dưỡng cho người nhiễm HIV/AIDS. Bác sĩ giúp bệnh nhân xây dựng chế độ dinh dưỡng phù hợp để tăng cường hệ miễn dịch và cải thiện chất lượng cuộc sống.',
-              certifications: ['Thạc sĩ Y học', 'Chuyên gia dinh dưỡng lâm sàng']
-            },
-          ]);
-          setIsLoading(false);
-        }, 1000);
+        // Calling API to get all doctors
+        const doctorsData = await getAllDoctors();
+        console.log('Doctors data from API:', doctorsData);
+        
+        // Check if API returned valid data
+        if (doctorsData && Array.isArray(doctorsData)) {
+          setDoctors(doctorsData);
+        } else {
+          console.error('API không trả về dữ liệu bác sĩ dạng mảng:', doctorsData);
+          setDoctors([]); // Set empty array if data format is incorrect
+        }
+        setIsLoading(false);
       } catch (error) {
-        console.error('Lỗi khi tải dữ liệu bác sĩ:', error);
+        console.error('Lỗi khi tải dữ liệu bác sĩ từ API:', error);
         setIsLoading(false);
       }
     };
 
     fetchData();
   }, []);
-
+  // Helper function for safe toLowerCase handling
+  const safeToLowerCase = (text) => {
+    if (text && typeof text === 'string') {
+      return text.toLowerCase();
+    }
+    return '';
+  };
   // Filter doctors based on search term and specialty
   const filteredDoctors = doctors.filter(doctor => {
-    const matchesSearch = doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           doctor.specialty.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSpecialty = filterSpecialty === '' || doctor.specialty === filterSpecialty;
+    const doctorName = safeToLowerCase(doctor.Fullname || doctor.name);
+    const doctorSpecialty = safeToLowerCase(doctor.specialization || doctor.specialty);
+    const doctorEmail = safeToLowerCase(doctor.Email);
+    const searchTermLower = safeToLowerCase(searchTerm);
+    
+    const matchesSearch = doctorName.includes(searchTermLower) ||
+                         doctorSpecialty.includes(searchTermLower) ||
+                         doctorEmail.includes(searchTermLower);
+                         
+    const matchesSpecialty = filterSpecialty === '' || 
+                            (doctor.specialization === filterSpecialty) || 
+                            (doctor.specialty === filterSpecialty);
     return matchesSearch && matchesSpecialty;
   });
 
   // Get unique specialties for filter dropdown
-  const specialties = [...new Set(doctors.map(doctor => doctor.specialty))];
+  const specialties = [...new Set(doctors.map(doctor => doctor.specialization || doctor.specialty).filter(Boolean))];
 
   if (isLoading) {
     return (
@@ -106,7 +77,7 @@ const DoctorsList = () => {
       <div className="doctors-list-hero">
         <div className="container">
           <h1>Đội ngũ bác sĩ</h1>
-          <p>Gặp gỡ những chuyên gia y tế giàu kinh nghiệm của chúng tôi</p>
+          <p></p>
         </div>
       </div>
       
@@ -135,21 +106,32 @@ const DoctorsList = () => {
               </select>
             </div>
           </div>
-          
-          <div className="doctors-grid">
+            <div className="doctors-grid">
             {filteredDoctors.length > 0 ? (
               filteredDoctors.map(doctor => (
-                <div className="doctor-card" key={doctor.id}>
+                <div className="doctor-card" key={doctor.UserID || doctor.id}>
                   <div className="doctor-image">
-                    <img src={doctor.image} alt={doctor.name} />
+                    <img 
+                      src={doctor.image || "https://randomuser.me/api/portraits/med/men/32.jpg"} 
+                      alt={doctor.Fullname || doctor.name || "Bác sĩ"} 
+                    />
                   </div>
                   <div className="doctor-info">
-                    <h3>{doctor.name}</h3>
-                    <p className="specialty">{doctor.specialty}</p>
-                    <p className="experience">{doctor.experience}</p>
-                    <p className="education">{doctor.education}</p>
+                    <h3>{doctor.Fullname || doctor.name}</h3>
+                    <p className="specialty">
+                      <i className="fas fa-stethoscope"></i> {doctor.Specialization || doctor.Specialty || "Chuyên khoa chung"}
+                    </p>
+                    <p className="experience">
+                      <i className="fas fa-history"></i> {doctor.ExperienceYears ? `${doctor.ExperienceYears} năm kinh nghiệm` : doctor.Experience || ""}
+                    </p>
+                    <p className="license-number">
+                      <i className="fas fa-id-card"></i> Số giấy phép: {doctor.LicenseNumber || "N/A"}
+                    </p>
+                    <p className="email">
+                      <i className="fas fa-envelope"></i> {doctor.Email || "Email không có sẵn"}
+                    </p>
                     <div className="doctor-contact">
-                      <Link to={`/hospital/bac-si/${doctor.id}`} className="doctor-btn">Xem hồ sơ</Link>
+                      <Link to={`/hospital/bac-si/${doctor.UserID || doctor.id}`} className="doctor-btn">Xem hồ sơ</Link>
                     </div>
                   </div>
                 </div>

@@ -19,6 +19,13 @@ export const Laylichhen = () => {
 export const pantient = (userId) => {
   return axiosClient.get(`EditProfileUser/${userId}`);
 };
+export const getAllDoctors = () => {
+  return axiosClient.get('/Doctor/AllDoctors');
+};
+
+export const getDoctorById = (id) => {
+  return axiosClient.get(`/Doctor/${id}`);
+};
 
 export const dangky = (request) => {
   return axiosClient.post('/Register/register', {...request});
