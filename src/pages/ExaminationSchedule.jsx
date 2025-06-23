@@ -3,208 +3,88 @@ import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ExaminationSchedule.css';
 import '../styles/ExaminationScheduleEnhancements.css';
+import { getAllDoctors, getDoctorWorkSchedules, getDoctorWorkScheduleById } from '../api/auth';
+import { bookAppointment } from '../api/auth';
 
-const doctors = [
-  { 
-    id: 1, 
-    name: 'BS. Nguyễn Văn A',
-    workDays: {
-      1: true, // Thứ 2
-      3: true, // Thứ 4
-      5: true, // Thứ 6
-      0: false, 2: false, 4: false, 6: false // Những ngày không làm việc
-    }, 
-    schedule: 'Thứ 2, 4, 6', 
-    hours: '8:00 - 11:00',
-    workHours: {
-      start: 8,
-      end: 11
-    },
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg', 
-    specialty: 'Chuyên khoa HIV/AIDS',
-    experience: '15 năm kinh nghiệm',
-    rating: 4.9,
-    education: 'Đại học Y Hà Nội',
-    description: 'Bác sĩ chuyên khoa II về HIV/AIDS với hơn 15 năm kinh nghiệm điều trị các bệnh nhiễm trùng và quản lý HIV.',
-    certifications: ['Chuyên khoa II - ĐH Y Hà Nội', 'Chứng chỉ quốc tế về HIV/AIDS'],
-    researchAreas: ['Thuốc kháng virus thế hệ mới', 'Miễn dịch trong điều trị HIV'],    services: [
-      'Tư vấn HIV/AIDS',
-      'Điều trị ARV',
-      'Xét nghiệm định kỳ', 
-      'Theo dõi tải lượng virus',
-      'Tư vấn dinh dưỡng cho bệnh nhân HIV'
-    ],
-    fees: {
-      'Xét nghiệm HIV': 250000,
-      'Điều trị ARV': 350000,
-      'Tư vấn HIV': 150000,
-      'Tái khám định kỳ': 200000,
-      'Khám tổng quát': 300000
-    }
-  },
-  { 
-    id: 2, 
-    name: 'BS. Trần Thị B',
-    workDays: {
-      2: true, // Thứ 3
-      4: true, // Thứ 5
-      6: true, // Thứ 7
-      0: false, 1: false, 3: false, 5: false // Những ngày không làm việc
-    },
-    schedule: 'Thứ 3, 5, 7', 
-    hours: '13:00 - 16:00',
-    workHours: {
-      start: 13,
-      end: 16
-    },
-    avatar: 'https://randomuser.me/api/portraits/women/44.jpg', 
-    specialty: 'Chuyên khoa Nội - Truyền nhiễm',
-    experience: '10 năm kinh nghiệm',
-    rating: 4.7,
-    education: 'Đại học Y Dược TP.HCM',
-    description: 'Bác sĩ chuyên điều trị các bệnh truyền nhiễm và đồng nhiễm HIV/AIDS, có kinh nghiệm điều trị ARV.',
-    certifications: ['Chuyên khoa I Truyền nhiễm', 'Nghiên cứu sinh tại Pháp'],
-    researchAreas: ['Đồng nhiễm HIV và bệnh truyền nhiễm', 'Kháng thuốc trong điều trị HIV'],    services: [
-      'Tư vấn HIV/AIDS',
-      'Điều trị ARV',
-      'Điều trị các bệnh truyền nhiễm cơ hội',
-      'Quản lý tác dụng phụ thuốc',
-      'Theo dõi bệnh nhân đồng nhiễm'
-    ],
-    fees: {
-      'Xét nghiệm HIV': 270000,
-      'Điều trị ARV': 380000,
-      'Tư vấn HIV': 170000,
-      'Tái khám định kỳ': 220000,
-      'Khám tổng quát': 320000
-    }
-  },
-  { 
-    id: 3, 
-    name: 'BS. Lê Văn C',
-    workDays: {
-      1: true, // Thứ 2
-      2: true, // Thứ 3
-      3: true, // Thứ 4
-      4: true, // Thứ 5
-      5: true, // Thứ 6
-      0: false, 6: false // Những ngày không làm việc
-    },
-    schedule: 'Thứ 2 - Thứ 6', 
-    hours: '9:00 - 12:00',
-    workHours: {
-      start: 9,
-      end: 12
-    },
-    avatar: 'https://randomuser.me/api/portraits/men/65.jpg', 
-    specialty: 'Chuyên khoa Truyền nhiễm',
-    experience: '12 năm kinh nghiệm',
-    rating: 4.8,
-    education: 'Đại học Y Hà Nội',
-    description: 'Bác sĩ chuyên sâu về các bệnh nhiễm trùng cơ hội liên quan đến HIV và điều trị ARV hiện đại.',
-    certifications: ['Tiến sĩ Y khoa', 'Thành viên Hiệp hội Truyền nhiễm Châu Á'],
-    researchAreas: ['Phác đồ ARV thế hệ mới', 'Điều trị lao đa kháng thuốc ở bệnh nhân HIV'],    services: [
-      'Tư vấn HIV/AIDS',
-      'Điều trị ARV',
-      'Quản lý nhiễm trùng cơ hội',
-      'Chăm sóc bệnh nhân HIV giai đoạn cuối',
-      'Điều trị dự phòng sau phơi nhiễm'
-    ],
-    fees: {
-      'Xét nghiệm HIV': 280000,
-      'Điều trị ARV': 400000,
-      'Tư vấn HIV': 180000,
-      'Tái khám định kỳ': 230000,
-      'Khám tổng quát': 350000
-    }
-  },  { 
-    id: 4, 
-    name: 'BS. Phạm Thị D',
-    workDays: {
-      3: true, // Thứ 4
-      4: true, // Thứ 5
-      6: true, // Thứ 7
-      0: false, 1: false, 2: false, 5: false // Những ngày không làm việc
-    },
-    schedule: 'Thứ 4, 5, 7', 
-    hours: '14:00 - 17:00',
-    workHours: {
-      start: 14,
-      end: 17
-    },
-    avatar: 'https://randomuser.me/api/portraits/women/28.jpg', 
-    specialty: 'Chuyên khoa HIV/AIDS & Miễn dịch',
-    experience: '8 năm kinh nghiệm',
-    rating: 4.6,
-    education: 'Đại học Y Dược Huế',
-    description: 'Bác sĩ trẻ có chuyên môn cao về suy giảm miễn dịch và phác đồ điều trị HIV hiện đại.',
-    certifications: ['Chuyên khoa I', 'Thạc sĩ Y học'],
-    researchAreas: ['Miễn dịch trong bệnh HIV/AIDS', 'Liệu pháp điều trị mới'],
-    services: [
-      'Tư vấn HIV/AIDS',
-      'Điều trị ARV',
-      'Liệu pháp tăng cường miễn dịch',
-      'Tư vấn phòng ngừa lây nhiễm',
-      'Theo dõi CD4 và tải lượng virus'
-    ],
-    fees: {
-      'Xét nghiệm HIV': 260000,
-      'Điều trị ARV': 370000,
-      'Tư vấn HIV': 160000,
-      'Tái khám định kỳ': 210000,
-      'Khám tổng quát': 310000
-    }
-  },  { 
-    id: 5, 
-    name: 'BS. Đỗ Văn E',
-    workDays: {
-      3: true, // Thứ 4
-      4: true, // Thứ 5
-      6: true, // Thứ 7
-      0: false, 1: false, 2: false, 5: false // Những ngày không làm việc
-    },
-    schedule: 'Thứ 4, 5, 7', 
-    hours: '14:00 - 17:00',
-    workHours: {
-      start: 14,
-      end: 17
-    },
-    avatar: 'https://randomuser.me/api/portraits/men/1.jpg', 
-    specialty: 'Chuyên khoa HIV/AIDS & Miễn dịch',
-    experience: '9 năm kinh nghiệm',
-    rating: 4.6,
-    education: 'Đại học Y Dược TP.HCM',
-    description: 'Bác sĩ Đỗ Văn E là chuyên gia về dinh dưỡng cho người nhiễm HIV/AIDS.',
-    certifications: ['Chuyên gia dinh dưỡng lâm sàng', 'Thạc sĩ Y học'],
-    researchAreas: ['Miễn dịch trong bệnh HIV/AIDS', 'Liệu pháp điều trị mới'],
-    services: [
-      'Tư vấn HIV/AIDS',
-      'Điều trị ARV',
-      'Liệu pháp tăng cường miễn dịch',
-      'Tư vấn phòng ngừa lây nhiễm',
-      'Theo dõi CD4 và tải lượng virus'
-    ],
-    fees: {
-      'Xét nghiệm HIV': 255000,
-      'Điều trị ARV': 365000,
-      'Tư vấn HIV': 155000,
-      'Tái khám định kỳ': 205000,
-      'Khám tổng quát': 305000
-    }
-  },
-];
+// Dịch vụ mặc định khi không có từ API
+const defaultServices = {
+  // 'Xét nghiệm HIV':,
+  // 'Điều trị ARV': ,
+  // 'Tư vấn HIV': ,
+  // 'Tái khám định kỳ': ,
+  // 'Khám tổng quát': ,
+};
 
 export default function ExaminationSchedule() {
   const navigate = useNavigate();
+  const [doctors, setDoctors] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(1); // 1: Doctor Selection, 2: Date & Time, 3: Contact Info, 4: Success
   const [showForm, setShowForm] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([]);
-  const [selectedDate, setSelectedDate] = useState('');  
+  const [selectedDate, setSelectedDate] = useState('');
   // State variables for community feedback
   const [feedbacks, setFeedbacks] = useState([]);
   const [newFeedback, setNewFeedback] = useState({ name: '', comment: '', rating: 5 });
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  
+  // Fetch doctors data from API
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      setIsLoading(true);
+      try {
+        const doctorsData = await getAllDoctors();
+        console.log('Doctors data from API:', doctorsData);
+        
+        if (doctorsData && Array.isArray(doctorsData)) {
+          // Process doctors data to add schedule and work hours if they don't exist
+          const processedDoctors = doctorsData.map(doctor => ({
+            id: doctor.UserID || doctor.id,
+            name: doctor.Fullname || doctor.name || 'Bác sĩ',
+            specialty: doctor.Specialization || doctor.specialty || 'Chuyên khoa chung',
+            experience: doctor.ExperienceYears ? `${doctor.ExperienceYears} năm kinh nghiệm` : doctor.experience || 'Chuyên gia y tế',
+            avatar: doctor.image || `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 100)}.jpg`,
+            education: doctor.education || 'Đại học Y',
+            description: doctor.Description || doctor.description || 'Thông tin đang được cập nhật',
+            rating: doctor.rating || (4 + Math.random()).toFixed(1),
+            // Default schedules
+            schedule: 'Thứ 2 - Thứ 6',
+            hours: '8:00 - 17:00',
+            workDays: {
+              1: true, 2: true, 3: true, 4: true, 5: true, // Thứ 2 - Thứ 6
+              0: false, 6: false // CN, T7 nghỉ
+            },
+            workHours: {
+              start: 8,
+              end: 17
+            },
+            certifications: [doctor.Certifications || 'Chứng chỉ hành nghề'],
+            // Default services and fees
+            services: [
+              // 'Tư vấn HIV/AIDS',
+              // 'Điều trị ARV', 
+              // 'Xét nghiệm định kỳ',
+              // 'Tái khám định kỳ',
+              // 'Khám tổng quát'
+            ],
+            fees: defaultServices
+          }));
+          
+          setDoctors(processedDoctors);
+        } else {
+          console.error('API không trả về dữ liệu bác sĩ dạng mảng:', doctorsData);
+          setDoctors([]);
+        }
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Lỗi khi tải dữ liệu bác sĩ từ API:', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
   
   const [form, setForm] = useState({
     phone: '',
@@ -274,23 +154,113 @@ export default function ExaminationSchedule() {
       
       // If we have stored feedbacks for this doctor, use those. Otherwise, use sample data
       setFeedbacks(doctorFeedbacks.length > 0 ? doctorFeedbacks : sampleFeedbacks);
+
+      // Fetch the doctor's work schedule when selected
+      const fetchDoctorSchedule = async () => {
+        try {
+          const response = await getDoctorWorkScheduleById(selectedDoctor.id);
+          console.log(`Doctor ${selectedDoctor.id}'s schedule:`, response);
+          
+          // If response includes work schedule data, update the selected doctor info
+          if (response && response.data) {
+            const scheduleData = response.data;
+            
+            // Update doctor schedule info
+            setSelectedDoctorInfo(prevInfo => ({
+              ...prevInfo,
+              workDays: scheduleData.workDays || prevInfo.workDays,
+              workHours: {
+                start: scheduleData.startTime || prevInfo.workHours.start,
+                end: scheduleData.endTime || prevInfo.workHours.end
+              },
+              schedule: scheduleData.daysDescription || prevInfo.schedule,
+              hours: `${scheduleData.startTime || 8}:00 - ${scheduleData.endTime || 17}:00`
+            }));
+          }
+        } catch (error) {
+          console.error(`Error fetching doctor ${selectedDoctor.id}'s schedule:`, error);
+        }
+      };
+
+      fetchDoctorSchedule();
     }
   }, [selectedDoctor]);
-  
-  const generateTimeSlots = (date, doctorId) => {
+
+  // Fetch all doctor work schedules
+  useEffect(() => {
+    const fetchAllDoctorSchedules = async () => {
+      try {
+        const response = await getDoctorWorkSchedules();
+        console.log('All doctor schedules:', response);
+        
+        // If we have schedule data, update our doctors array with correct schedule information
+        if (response && response.data && Array.isArray(response.data)) {
+          const schedules = response.data;
+          
+          setDoctors(prevDoctors => {
+            return prevDoctors.map(doctor => {
+              // Find schedule for this doctor
+              const doctorSchedule = schedules.find(s => s.doctorId === doctor.id);
+              
+              if (doctorSchedule) {
+                // Convert schedule data to our format
+                const workDays = {};
+                if (doctorSchedule.workDays) {
+                  // Convert API work days format to our format
+                  Object.keys(doctorSchedule.workDays).forEach(day => {
+                    workDays[day] = doctorSchedule.workDays[day];
+                  });
+                } else {
+                  // Default weekdays
+                  workDays[0] = false; // Sunday
+                  workDays[1] = true;  // Monday
+                  workDays[2] = true;  // Tuesday
+                  workDays[3] = true;  // Wednesday
+                  workDays[4] = true;  // Thursday
+                  workDays[5] = true;  // Friday
+                  workDays[6] = false; // Saturday
+                }
+                
+                return {
+                  ...doctor,
+                  workDays,
+                  workHours: {
+                    start: doctorSchedule.startTime || doctor.workHours.start,
+                    end: doctorSchedule.endTime || doctor.workHours.end
+                  },
+                  schedule: doctorSchedule.daysDescription || doctor.schedule,
+                  hours: `${doctorSchedule.startTime || 8}:00 - ${doctorSchedule.endTime || 17}:00`
+                };
+              }
+              
+              return doctor;
+            });
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching all doctor schedules:', error);
+      }
+    };
+
+    // Call this after doctors are loaded
+    if (doctors.length > 0) {
+      fetchAllDoctorSchedules();
+    }
+  }, [doctors.length]);
+    const generateTimeSlots = (date, doctorId) => {
     if (!date) return [];
     
-    const doctor = doctors.find(doc => doc.id === parseInt(doctorId));
+    const doctor = doctors.find(doc => doc.id === parseInt(doctorId) || doc.id === doctorId);
     if (!doctor) return [];
 
     // Chuyển đổi ngày đã chọn thành thứ trong tuần (0: Chủ Nhật, 1: Thứ 2, ...)
     const dayOfWeek = new Date(date).getDay();
     
     // Kiểm tra xem bác sĩ có làm việc vào ngày đã chọn không
-    if (!doctor.workDays[dayOfWeek]) return [];
+    if (!doctor.workDays || !doctor.workDays[dayOfWeek]) return [];
     
     // Lấy giờ làm việc từ cấu trúc dữ liệu nâng cao
-    const { start: startHour, end: endHour } = doctor.workHours;
+    const { start: startHour = 8, end: endHour = 17 } = doctor.workHours || {};
     
     // Tạo các khung giờ 30 phút
     const slots = [];
@@ -330,8 +300,7 @@ export default function ExaminationSchedule() {
   const getVietnamDayName = (dayIndex) => {
     const days = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
     return days[dayIndex];
-  };
-  const handleDoctorSelect = (doctor) => {
+  };  const handleDoctorSelect = async (doctor) => {
     setSelectedDoctor(doctor);
     setSelectedDoctorInfo(doctor);
     setForm(prev => ({
@@ -344,6 +313,33 @@ export default function ExaminationSchedule() {
     
     // Sau khi chọn bác sĩ, chuyển sang bước tiếp theo trong quá trình đặt lịch
     setCurrentStep(1);
+    
+    // Fetch doctor work schedule for the selected doctor
+    try {
+      const scheduleResponse = await getDoctorWorkScheduleById(doctor.id);
+      console.log(`Fetched schedule for doctor ${doctor.id}:`, scheduleResponse);
+      
+      if (scheduleResponse && scheduleResponse.data) {
+        const schedule = scheduleResponse.data;
+        
+        // Update doctor's schedule information
+        const updatedDoctor = {
+          ...doctor,
+          workDays: schedule.workDays || doctor.workDays,
+          workHours: {
+            start: schedule.startTime || doctor.workHours.start,
+            end: schedule.endTime || doctor.workHours.end
+          },
+          schedule: schedule.daysDescription || doctor.schedule,
+          hours: `${schedule.startTime || 8}:00 - ${schedule.endTime || 17}:00`
+        };
+        
+        setSelectedDoctor(updatedDoctor);
+        setSelectedDoctorInfo(updatedDoctor);
+      }
+    } catch (error) {
+      console.error(`Error fetching schedule for doctor ${doctor.id}:`, error);
+    }
   };
   
   const handleDateChange = (e) => {
@@ -499,8 +495,12 @@ export default function ExaminationSchedule() {
           <h1>Đặt lịch khám HIV/AIDS</h1>
           <p className="subtitle">Đặt lịch khám dễ dàng với các bác sĩ chuyên khoa HIV/AIDS hàng đầu</p>
         </div>
-        
-        {showDetails ? (
+          {isLoading ? (
+          <div className="loading-container">
+            <div className="spinner"></div>
+            <p>Đang tải danh sách bác sĩ...</p>
+          </div>
+        ) : showDetails && selectedDoctorInfo ? (
           <div className="doctor-detail-container">
             <button className="back-btn" onClick={() => setShowDetails(false)}>
               <i className="fas fa-arrow-left"></i> Quay lại danh sách bác sĩ
@@ -864,22 +864,7 @@ export default function ExaminationSchedule() {
                   </div>
                 </div>
                 
-                <div className="form-section">
-                  <h3><i className="fas fa-info-circle"></i> Thông tin liên hệ</h3>
-                  <div className="form-group">
-                    <label htmlFor="phone">Số điện thoại:</label>
-                    <input 
-                      type="tel" 
-                      id="phone" 
-                      name="phone" 
-                      value={form.phone} 
-                      onChange={handleChange} 
-                      placeholder="VD: 0912345678" 
-                      required 
-                    />
-                    <p className="note">Bạn sẽ nhận thông báo qua số điện thoại này</p>
-                  </div>
-                </div>
+                
                 
                 <div className="form-section">
                   <h3><i className="fas fa-stethoscope"></i> Thông tin khám bệnh</h3>

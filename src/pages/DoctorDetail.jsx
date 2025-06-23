@@ -19,16 +19,28 @@ const DoctorDetail = () => {
         const doctorData = await getDoctorById(id);
         
         if (doctorData) {
+          console.log('Doctor detail data from API:', doctorData);
           setDoctor(doctorData);
           
           // Fetch related doctors with same specialty
           try {
             const allDoctors = await getAllDoctors();
-            if (allDoctors && allDoctors.length > 0) {
+            console.log('All doctors data for related doctors:', allDoctors);
+            
+            if (allDoctors && Array.isArray(allDoctors) && allDoctors.length > 0) {
+              // Get current doctor's specialty
+              const currentSpecialty = doctorData.Specialization || doctorData.specialty;
+              
               // Filter doctors with the same specialty, excluding current doctor
               const related = allDoctors
-                .filter(doc => doc.specialty === doctorData.specialty && doc.id !== doctorData.id)
+                .filter(doc => {
+                  const docSpecialty = doc.Specialization || doc.specialty;
+                  const docId = doc.UserID || doc.id;
+                  const currentId = doctorData.UserID || doctorData.id;
+                  return docSpecialty === currentSpecialty && docId !== currentId;
+                })
                 .slice(0, 3); // Get max 3 related doctors
+              
               setRelatedDoctors(related);
             }
           } catch (relatedError) {
@@ -104,28 +116,30 @@ const DoctorDetail = () => {
               <i className="fas fa-arrow-left"></i> Quay lại
             </button>
           </div>
-          
-          <div className="doctor-profile">
+            <div className="doctor-profile">
             <div className="doctor-profile-header">
               <div className="doctor-image">
-                <img src={doctor.image} alt={doctor.name} />
+                <img 
+                  src={doctor.image || "https://randomuser.me/api/portraits/med/men/32.jpg"} 
+                  alt={doctor.Fullname || doctor.name || "Bác sĩ"} 
+                />
               </div>
               
               <div className="doctor-info">
-                <h1>{doctor.name}</h1>
-                <p className="specialty">{doctor.specialty}</p>
+                <h1>{doctor.Fullname || doctor.name}</h1>
+                <p className="specialty">{doctor.Specialization || doctor.specialty || "Chuyên khoa chung"}</p>
                 <div className="doctor-meta">
                   <div className="meta-item">
-                    <i className="fas fa-graduation-cap"></i>
-                    <span>{doctor.education}</span>
+                    <i className="fas fa-id-card"></i>
+                    <span>Số giấy phép: {doctor.LicenseNumber || "N/A"}</span>
                   </div>
                   <div className="meta-item">
                     <i className="fas fa-clock"></i>
-                    <span>{doctor.experience}</span>
+                    <span>{doctor.ExperienceYears ? `${doctor.ExperienceYears} năm kinh nghiệm` : doctor.experience || "Chưa cập nhật kinh nghiệm"}</span>
                   </div>
                   <div className="meta-item">
-                    <i className="fas fa-calendar-alt"></i>
-                    <span>{doctor.workSchedule}</span>
+                    <i className="fas fa-envelope"></i>
+                    <span>{doctor.Email || "Email chưa cập nhật"}</span>
                   </div>
                 </div>
                 
@@ -140,18 +154,24 @@ const DoctorDetail = () => {
             <div className="doctor-profile-content">
               <div className="profile-section">
                 <h2>Giới thiệu</h2>
-                <p>{doctor.description}</p>
-                <p>{doctor.bio}</p>
+                <p>{doctor.Description || doctor.description || "Thông tin giới thiệu về bác sĩ đang được cập nhật."}</p>
+                {doctor.bio && <p>{doctor.bio}</p>}
               </div>
               
-              <div className="profile-section">
-                <h2>Chứng chỉ và đào tạo</h2>
-                <ul className="certificate-list">
-                  {doctor.certifications.map((cert, index) => (
-                    <li key={index}><i className="fas fa-certificate"></i> {cert}</li>
-                  ))}
-                </ul>
-              </div>
+              {(doctor.Certifications || doctor.certifications) && (
+                <div className="profile-section">
+                  <h2>Chứng chỉ và đào tạo</h2>
+                  <ul className="certificate-list">
+                    {doctor.Certifications ? (
+                      <li><i className="fas fa-certificate"></i> {doctor.Certifications}</li>
+                    ) : doctor.certifications && doctor.certifications.map ? (
+                      doctor.certifications.map((cert, index) => (
+                        <li key={index}><i className="fas fa-certificate"></i> {cert}</li>
+                      ))
+                    ) : null}
+                  </ul>
+                </div>
+              )}
               
               {doctor.researchPapers && doctor.researchPapers.length > 0 && (
                 <div className="profile-section">
@@ -167,10 +187,12 @@ const DoctorDetail = () => {
               <div className="profile-section">
                 <h2>Thông tin thêm</h2>
                 <div className="additional-info">
-                  <div className="info-item">
-                    <h3>Ngôn ngữ</h3>
-                    <p>{doctor.languages.join(', ')}</p>
-                  </div>
+                  {doctor.languages && (
+                    <div className="info-item">
+                      <h3>Ngôn ngữ</h3>
+                      <p>{Array.isArray(doctor.languages) ? doctor.languages.join(', ') : doctor.languages}</p>
+                    </div>
+                  )}
                   
                   {doctor.awards && doctor.awards.length > 0 && (
                     <div className="info-item">
@@ -182,27 +204,33 @@ const DoctorDetail = () => {
                       </ul>
                     </div>
                   )}
+                  
+                  {doctor.UserID && (
+                    <div className="info-item">
+                      <h3>Mã bác sĩ</h3>
+                      <p>{doctor.UserID}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-        <section className="related-doctors">
+      </div>        <section className="related-doctors">
         <div className="container">
           <h2>Bác sĩ cùng chuyên khoa</h2>
           <div className="doctors-slider">
             {relatedDoctors.length > 0 ? (
               relatedDoctors.map(relatedDoctor => (
-                <div className="doctor-card" key={relatedDoctor.id}>
+                <div className="doctor-card" key={relatedDoctor.UserID || relatedDoctor.id}>
                   <div className="doctor-image">
                     <img src={relatedDoctor.image || 'https://randomuser.me/api/portraits/men/1.jpg'} 
-                         alt={relatedDoctor.name} />
+                         alt={relatedDoctor.Fullname || relatedDoctor.name || 'Bác sĩ'} />
                   </div>
                   <div className="doctor-info">
-                    <h3>{relatedDoctor.name}</h3>
-                    <p>{relatedDoctor.specialty}</p>
-                    <Link to={`/hospital/bac-si/${relatedDoctor.id}`} className="view-profile">
+                    <h3>{relatedDoctor.Fullname || relatedDoctor.name}</h3>
+                    <p>{relatedDoctor.Specialization || relatedDoctor.specialty || 'Chuyên khoa chung'}</p>
+                    <Link to={`/hospital/bac-si/${relatedDoctor.UserID || relatedDoctor.id}`} className="view-profile">
                       Xem hồ sơ
                     </Link>
                   </div>
