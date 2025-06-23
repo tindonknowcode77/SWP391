@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/Doctor.css';
+import '../styles/AppointmentManager.css';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {datlichkham} from '../api/auth';
+import Navbar from '../components/Navbar';
 
 const SERVICE_NAME_MAP = {
   'SV000001': 'Khám tổng quát',
@@ -57,82 +58,79 @@ const Doctor = () => {
   };
 
   return (
-    <div className="doctor-container">
-      <aside className="doctor-sidebar">
-        <div className="sidebar-user-row">
-          <span className="sidebar-user">{currentUser?.name || 'Bác sĩ'}</span>
-          <button className="sidebar-logout-btn" onClick={handleLogout} title="Đăng xuất" aria-label="Đăng xuất">
-            <i className="fas fa-sign-out-alt"></i>
-          </button>
-        </div>
-        <ul className="sidebar-menu">
-          <li
-            className={selected === 'appointments' ? 'active' : ''}
-            onClick={() => setSelected('appointments')}
-          >
-            Lịch hẹn của tôi
-          </li>
-          <li
-            className={selected === 'patients' ? 'active' : ''}
-            onClick={() => setSelected('patients')}
-          >
-            Danh sách bệnh nhân
-          </li>
-        </ul>
-      </aside>
-      <main className="doctor-main">
-        {selected === 'appointments' && (
-          <div className="doctor-content">
-            <h2 className="doctor-table-title">Lịch hẹn của tôi</h2>
-            {loading && <div>Đang tải...</div>}
-            {error && <div style={{color: 'red'}}>{error}</div>}
-            {!loading && !error && appointments.length === 0 && <div>Bác sĩ chưa có lịch hẹn nào.</div>}
-            {!loading && !error && appointments.length > 0 && (
-              <div className="appointments-table-wrapper">
-                <table className="appointments-table">
-                  <thead>
-                    <tr>
-                      <th>Mã đặt lịch</th>
-                      <th>Mã bệnh nhân</th>
-                      <th>Loại dịch vụ</th>
-                      <th>Thời gian</th>
-                      <th>Ghi chú</th>
-                      <th>Trạng thái</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {appointments.map((item, idx) => (
-                      <tr key={item.BookID || idx}>
-                        <td>{item.BookID}</td>
-                        <td>{item.PatientID}</td>
-                        <td>{SERVICE_NAME_MAP[item.ServiceID] || item.ServiceID}</td>
-                        <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
-                        <td>{item.Note || ''}</td>
-                        <td className={
-                            item.Status === 'Đang chờ'
-                            ? 'status-badge-2 status-pending-3'
-                            : item.Status === 'Đã xác nhận'
-                            ? 'status-badge-2 status-confirmed-3'
-                            : item.Status === 'Rejected'
-                            ? 'status-badge-2 status-rejected-3'
-                            : 'status-badge-2'}>{item.Status || ''}
-                         </td>
+    <>
+      <Navbar />
+      <div className="doctor-container-1">
+        <aside className="doctor-sidebar">
+          <ul className="sidebar-menu">
+            <li
+              className={selected === 'appointments' ? 'active' : ''}
+              onClick={() => setSelected('appointments')}
+            >
+              Lịch hẹn của tôi
+            </li>
+            <li
+              className={selected === 'patients' ? 'active' : ''}
+              onClick={() => setSelected('patients')}
+            >
+              Danh sách
+            </li>
+          </ul>
+        </aside>
+        <main className="doctor-main">
+          {selected === 'appointments' && (
+            <div className="doctor-content">
+              <h2 className="doctor-table-title">Lịch hẹn của tôi</h2>
+              {loading && <div>Đang tải...</div>}
+              {error && <div style={{color: 'red'}}>{error}</div>}
+              {!loading && !error && appointments.length === 0 && <div>Bác sĩ chưa có lịch hẹn nào.</div>}
+              {!loading && !error && appointments.length > 0 && (
+                <div className="appointments-table-wrapper">
+                  <table className="appointments-table">
+                    <thead>
+                      <tr>
+                        <th>Mã đặt lịch</th>
+                        <th>Mã bệnh nhân</th>
+                        <th>Loại dịch vụ</th>
+                        <th>Thời gian</th>
+                        <th>Ghi chú</th>
+                        <th>Trạng thái</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
-        {selected === 'patients' && (
-          <div className="doctor-content">
-            <h2 className="doctor-table-title">Danh sách bệnh nhân</h2>
-            <div>Chức năng này dành cho bác sĩ. (Nội dung sẽ được phát triển sau)</div>
-          </div>
-        )}
-      </main>
-    </div>
+                    </thead>
+                    <tbody>
+                      {appointments.map((item, idx) => (
+                        <tr key={item.BookID || idx}>
+                          <td>{item.BookID}</td>
+                          <td>{item.PatientID}</td>
+                          <td>{SERVICE_NAME_MAP[item.ServiceID] || item.ServiceID}</td>
+                          <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
+                          <td>{item.Note || ''}</td>
+                          <td className={
+                              item.Status === 'Đang chờ'
+                              ? 'status-badge-2 status-pending-3'
+                              : item.Status === 'Đã xác nhận'
+                              ? 'status-badge-2 status-confirmed-3'
+                              : item.Status === 'Rejected'
+                              ? 'status-badge-2 status-rejected-3'
+                              : 'status-badge-2'}>{item.Status || ''}
+                           </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+          {selected === 'patients' && (
+            <div className="doctor-content">
+              <h2 className="doctor-table-title">Danh sách bệnh nhân</h2>
+              <div>Chức năng này dành cho bác sĩ. (Nội dung sẽ được phát triển sau)</div>
+            </div>
+          )}
+        </main>
+      </div>
+    </>
   );
 };
 
