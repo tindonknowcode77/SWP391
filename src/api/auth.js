@@ -77,3 +77,38 @@ export const huylich = (id, reason) => {
 export const xemdanhsachlichduocduyet = () => {
   return axiosClient.get('/Appointment/approved');
 };
+
+
+
+// Get doctor work schedules
+export const getDoctorWorkSchedules = () => {
+  return axiosClient.get('/Doctor/DoctorWorkSchedule/');
+};
+
+// Get work schedule for a specific doctor
+export const getDoctorWorkScheduleById = (doctorId) => {
+  return axiosClient.get(`/Doctor/DoctorWorkSchedule/${doctorId}`);
+};
+
+// Get appointments for the currently logged-in user
+export const getCurrentUserAppointments = () => {
+  return axiosClient.get('/Appointment/mine');
+};
+
+
+export const datlichkham = () => {
+  return axiosClient.get("/Appointment/MyBooking");
+};
+
+// Book an appointment with specific details
+export const bookAppointment = (bookingData) => {
+  return axiosClient.post(
+    '/Appointment/Booking',
+    bookingData,
+    {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+};
