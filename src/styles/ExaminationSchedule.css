@@ -2419,3 +2419,43 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+.service-success-popup {
+  max-width: 400px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px 24px 24px 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  position: relative;
+  text-align: center;
+}
+.service-success-popup .success-icon {
+  font-size: 3.5rem;
+  color: #43a047;
+  margin-bottom: 12px;
+}
+.service-success-popup h2 {
+  color: #1976d2;
+  margin-bottom: 10px;
+}
+.service-success-popup .success-message {
+  color: #333;
+  margin-bottom: 18px;
+  font-size: 1.1rem;
+}
+.service-success-popup .success-actions {
+  margin-top: 10px;
+}
+.service-success-popup .done-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 22px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.service-success-popup .done-btn:hover {
+  background: #125ea2;
+}

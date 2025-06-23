@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/ExaminationSchedule.css';
 import '../styles/ExaminationScheduleEnhancements.css';
 import { getAllDoctors, getDoctorWorkSchedules, getDoctorWorkScheduleById } from '../api/auth';
-import { bookAppointment } from '../api/auth';
+import { nguoidungdatlich } from '../api/auth';
 
 // Dịch vụ mặc định khi không có từ API
 const defaultServices = {
@@ -15,11 +15,21 @@ const defaultServices = {
   // 'Khám tổng quát': ,
 };
 
+// Map tên dịch vụ sang ServiceID
+const serviceNameToId = {
+  'Khám Tổng Quát': 'SV000001',
+  'Tư Vấn Điều Trị': 'SV000002',
+  'Xét Nghiệm HIV': 'SV000003',
+  'Xét Nghiệm CD4': 'SV000004',
+  'Tư Vấn Điều trị ARV': 'SV000005',
+  'Xét Nghiệm Tải Lượng Virus': 'SV000006',
+};
+
 export default function ExaminationSchedule() {
   const navigate = useNavigate();
   const [doctors, setDoctors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentStep, setCurrentStep] = useState(1); // 1: Doctor Selection, 2: Date & Time, 3: Contact Info, 4: Success
+  const [currentStep, setCurrentStep] = useState(1); 
   const [showForm, setShowForm] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([]);
@@ -28,6 +38,10 @@ export default function ExaminationSchedule() {
   const [feedbacks, setFeedbacks] = useState([]);
   const [newFeedback, setNewFeedback] = useState({ name: '', comment: '', rating: 5 });
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  // Thêm state cho popup và data lịch khám
+  const [showSchedulePopup, setShowSchedulePopup] = useState(false);
+  const [doctorScheduleData, setDoctorScheduleData] = useState([]);
+  const [showServiceSuccessPopup, setShowServiceSuccessPopup] = useState(false);
   
   // Fetch doctors data from API
   useEffect(() => {
@@ -40,7 +54,8 @@ export default function ExaminationSchedule() {
         if (doctorsData && Array.isArray(doctorsData)) {
           // Process doctors data to add schedule and work hours if they don't exist
           const processedDoctors = doctorsData.map(doctor => ({
-            id: doctor.UserID || doctor.id,
+            id: doctor.DoctorId,
+            userId: doctor.UserID,
             name: doctor.Fullname || doctor.name || 'Bác sĩ',
             specialty: doctor.Specialization || doctor.specialty || 'Chuyên khoa chung',
             experience: doctor.ExperienceYears ? `${doctor.ExperienceYears} năm kinh nghiệm` : doctor.experience || 'Chuyên gia y tế',
@@ -524,17 +539,27 @@ export default function ExaminationSchedule() {
                   </div>
                 </div>
                 <div className="doctor-schedule-info">
-                  <h3>Lịch khám</h3>
-                  <div className="schedule-item">
-                    <i className="fas fa-calendar-alt"></i>
-                    <span>{selectedDoctorInfo.schedule}</span>
-                  </div>
-                  <div className="schedule-item">
-                    <i className="fas fa-clock"></i>
-                    <span>{selectedDoctorInfo.hours}</span>
-                  </div>
+                  <h3>Xem lịch bác sĩ ngày</h3>
                   <button className="book-doctor-btn" onClick={() => setShowForm(true)}>
                     Đặt lịch với bác sĩ này
+                  </button>
+                  <button className="book-doctor-btn" onClick={async () => {
+                    
+                    if (selectedDoctorInfo && selectedDoctorInfo.id) {
+                      try {
+                        const res = await getDoctorWorkScheduleById(selectedDoctorInfo.id);
+                        if (res && Array.isArray(res)) {
+                          setDoctorScheduleData(res);
+                        } else if (res && res.data && Array.isArray(res.data)) {
+                          setDoctorScheduleData(res.data);
+                        }
+                        setShowSchedulePopup(true);
+                      } catch (e) {
+                        alert('Không lấy được lịch khám!');
+                      }
+                    }
+                  }}>
+                    Xem lịch làm việc
                   </button>
                 </div>
               </div>
@@ -887,108 +912,112 @@ export default function ExaminationSchedule() {
                         <input 
                           type="checkbox" 
                           id="hivTest" 
-                          value="Xét nghiệm HIV" 
-                          checked={form.requestedServices.includes('Xét nghiệm HIV')} 
+                          value="Khám Tổng Quát" 
+                          checked={form.requestedServices.includes('Khám Tổng Quát')} 
                           onChange={handleServiceChange} 
                         />
-                        <label htmlFor="hivTest">Xét nghiệm HIV</label>
+                        <label htmlFor="hivTest">Khám Tổng Quát</label>
                       </div>
                       <div className="checkbox-item">
                         <input 
                           type="checkbox" 
                           id="arvTreatment" 
-                          value="Điều trị ARV" 
-                          checked={form.requestedServices.includes('Điều trị ARV')} 
+                          value="Tư Vấn Điều Trị" 
+                          checked={form.requestedServices.includes('Tư Vấn Điều Trị')} 
                           onChange={handleServiceChange} 
                         />
-                        <label htmlFor="arvTreatment">Điều trị ARV</label>
+                        <label htmlFor="arvTreatment">Tư Vấn Điều Trị</label>
                       </div>
                       <div className="checkbox-item">
                         <input 
                           type="checkbox" 
                           id="counseling" 
-                          value="Tư vấn HIV" 
-                          checked={form.requestedServices.includes('Tư vấn HIV')} 
+                          value="Xét Nghiệm HIV" 
+                          checked={form.requestedServices.includes('Xét Nghiệm HIV')} 
                           onChange={handleServiceChange} 
                         />
-                        <label htmlFor="counseling">Tư vấn HIV</label>
+                        <label htmlFor="counseling">Xét Nghiệm HIV</label>
                       </div>
                       <div className="checkbox-item">
                         <input 
                           type="checkbox" 
                           id="followUp" 
-                          value="Tái khám định kỳ" 
-                          checked={form.requestedServices.includes('Tái khám định kỳ')} 
+                          value="Xét Nghiệm CD4" 
+                          checked={form.requestedServices.includes('Xét Nghiệm CD4')} 
                           onChange={handleServiceChange} 
                         />
-                        <label htmlFor="followUp">Tái khám định kỳ</label>
+                        <label htmlFor="followUp">Xét Nghiệm CD</label>
+                      </div>
+                      <div className="checkbox-item">
+                        <input 
+                          type="checkbox" 
+                          id="followUp" 
+                          value="Tư Vấn Điều trị ARV" 
+                          checked={form.requestedServices.includes('Tư Vấn Điều trị ARV')} 
+                          onChange={handleServiceChange} 
+                        />
+                        <label htmlFor="followUp">Tư Vấn Điều trị ARV</label>
+                      </div>
+                      <div className="checkbox-item">
+                        <input 
+                          type="checkbox" 
+                          id="followUp" 
+                          value="Xét Nghiệm Tải Lượng Virus" 
+                          checked={form.requestedServices.includes('Xét Nghiệm Tải Lượng Virus')} 
+                          onChange={handleServiceChange} 
+                        />
+                        <label htmlFor="followUp">Xét Nghiệm Tải Lượng Virus</label>
                       </div>
                     </div>
-                  </div>
                     <div className="form-group">
-                    <label htmlFor="notes">Ghi chú bổ sung:</label>
-                    <textarea 
-                      id="notes" 
-                      name="notes" 
-                      value={form.notes} 
-                      onChange={handleChange} 
-                      placeholder="Thông tin bổ sung (nếu có)"
-                    ></textarea>
-                  </div>
-                  
-                  <div className="form-group online-consultation">
-                    <div className="checkbox-item">
-                      <input 
-                        type="checkbox" 
-                        id="isOnlineConsultation" 
-                        checked={form.isOnlineConsultation} 
-                        onChange={(e) => {
-                          const isChecked = e.target.checked;
-                          setForm(prev => ({
-                            ...prev,
-                            isOnlineConsultation: isChecked,
-                            totalFee: isChecked 
-                              ? prev.totalFee + prev.onlineConsultationFee 
-                              : prev.totalFee - prev.onlineConsultationFee
-                          }));
-                        }} 
-                      />
-                      <label htmlFor="isOnlineConsultation">Tư vấn trực tuyến (Phí: {new Intl.NumberFormat('vi-VN').format(form.onlineConsultationFee)} VNĐ)</label>
+                      <label htmlFor="notes">Ghi chú bổ sung:</label>
+                      <textarea 
+                        id="notes" 
+                        name="notes" 
+                        value={form.notes} 
+                        onChange={handleChange} 
+                        placeholder="Thông tin bổ sung (nếu có)"
+                      ></textarea>
                     </div>
-                    <p className="note">Bác sĩ sẽ tư vấn trực tuyến trước cuộc hẹn khám thực tế</p>
-                  </div>                </div>
-                
-                <div className="form-section fee-summary">
-                  <h3><i className="fas fa-money-bill"></i> Chi phí dự kiến</h3>
-                  <div className="fee-details">
-                    {form.requestedServices.map(service => {
-                      const serviceFee = doctors.find(doc => doc.id.toString() === form.doctorId)?.fees[service] || 0;
-                      return (
-                        <div key={service} className="fee-item">
-                          <span className="fee-service">{service}</span>
-                          <span className="fee-amount">{new Intl.NumberFormat('vi-VN').format(serviceFee)} VNĐ</span>
-                        </div>
-                      );
-                    })}
-                    
-                    {form.isOnlineConsultation && (
-                      <div className="fee-item">
-                        <span className="fee-service">Tư vấn trực tuyến</span>
-                        <span className="fee-amount">{new Intl.NumberFormat('vi-VN').format(form.onlineConsultationFee)} VNĐ</span>
-                      </div>
-                    )}
-                    
-                    <div className="fee-item total">
-                      <span className="fee-service">Tổng chi phí</span>
-                      <span className="fee-amount">{new Intl.NumberFormat('vi-VN').format(form.totalFee)} VNĐ</span>
-                    </div>
-                    <p className="note">Chi phí có thể thay đổi sau khi bác sĩ thăm khám và kê đơn thuốc</p>
+                    <button
+                      type="button"
+                      className="submit-btn"
+                      style={{marginTop: '12px'}}
+                      onClick={async () => {
+                        if (!selectedDoctor) {
+                          alert('Vui lòng chọn bác sĩ trước!');
+                          return;
+                        }
+                        if (form.requestedServices.length === 0) {
+                          alert('Vui lòng chọn ít nhất một dịch vụ!');
+                          return;
+                        }
+                        const bookDate = new Date().toISOString(); // hoặc dùng form.appointmentDate nếu muốn
+                        let allSuccess = true;
+                        for (const serviceName of form.requestedServices) {
+                          const serviceId = serviceNameToId[serviceName];
+                          if (!serviceId) continue;
+                          try {
+                            await nguoidungdatlich({
+                              DoctorID: selectedDoctor.id,
+                              ServiceID: serviceId,
+                              BookDate: bookDate,
+                              Note: form.notes || '',
+                            });
+                          } catch (e) {
+                            allSuccess = false;
+                          }
+                        }
+                        if (allSuccess) {
+                          setShowServiceSuccessPopup(true);
+                        } else {
+                          alert('Có lỗi khi đăng ký một số dịch vụ!');
+                        }
+                      }}
+                    >
+                      Đăng ký dịch vụ
+                    </button>
                   </div>
-                </div>
-                
-                <div className="form-actions">
-                  <button type="button" onClick={() => setShowForm(false)} className="cancel-btn">Hủy bỏ</button>
-                  <button type="submit" className="submit-btn">Xác nhận đặt lịch</button>
                 </div>
               </form>
             </div>
@@ -1034,8 +1063,50 @@ export default function ExaminationSchedule() {
                 )}
               </div>
               <div className="success-actions">
-                <button onClick={() => setShowSuccessPopup(false)} className="done-btn">Đóng</button>
-                <button onClick={() => navigate('/appointments')} className="view-appointments-btn">Xem lịch hẹn của tôi</button>
+                <button onClick={() => { setShowServiceSuccessPopup(false); setShowForm(false); navigate('/appointments'); }} className="done-btn">Đóng</button>
+                
+              </div>
+            </div>
+          </div>
+        )}
+        {showSchedulePopup && (
+          <div className="popup-overlay">
+            <div className="popup-form schedule-popup">
+              <div className="popup-header">
+                <h2>Lịch khám chi tiết cố định hàng tuần</h2>
+                <button className="close-btn" onClick={() => setShowSchedulePopup(false)}>
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
+              <table className="schedule-table">
+                <thead>
+                  <tr>
+                    <th>Thứ</th>
+                    <th>Giờ bắt đầu làm việc</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {doctorScheduleData.map((item) => (
+                    <tr key={item.ScheduleID}>
+                      <td>{item.DayOfWeek}</td>
+                      <td>{item.StartTime ? item.StartTime.slice(0,5) : ''}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+        {showServiceSuccessPopup && (
+          <div className="popup-overlay">
+            <div className="popup-form service-success-popup">
+              <div className="success-icon">
+                <i className="fas fa-check-circle"></i>
+              </div>
+              <h2>Đăng ký dịch vụ thành công!</h2>
+              <p className="success-message">Bạn đã đăng ký dịch vụ thành công. Vui lòng chờ xác nhận từ phòng khám.</p>
+              <div className="success-actions">
+                <button onClick={() => { setShowServiceSuccessPopup(false); setShowForm(false); navigate('/appointments'); }} className="done-btn">Đóng</button>
               </div>
             </div>
           </div>

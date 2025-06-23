@@ -100,8 +100,7 @@ export const datlichkham = () => {
   return axiosClient.get("/Appointment/MyBooking");
 };
 
-// Book an appointment with specific details
-export const bookAppointment = (bookingData) => {
+export const nguoidungdatlich = (bookingData) => {
   return axiosClient.post(
     '/Appointment/Booking',
     bookingData,
