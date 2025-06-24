@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import {useAuth} from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import '../styles/Login.css';
-import {login} from '../api/auth';
+import {login, pantient} from '../api/auth';
 import {session} from '../api/auth';
 import { saveUserToLocalStorage } from '../utils/helpers';
 
@@ -104,11 +104,17 @@ const Login = () => {
       } else if (user.role === 'R003') {
         navigate('/doctor', { replace: true });
       } else {
-        if (!user.PantientID) {
-          navigate("/profile");
-          alert("Quý khách vui lòng cập nhật hồ sơ để sử dụng các dịch vụ.");
-        } else {
-          navigate("/HospitalHome");
+        try {
+          await pantient(user.id);
+          navigate("/hospital");
+        } catch (error) {
+          if (error.response && error.response.status === 404) {
+            navigate("/profile");
+            alert("Quý khách vui lòng cập nhật hồ sơ để sử dụng các dịch vụ.");
+          } else {
+            console.error("Lỗi khi kiểm tra hồ sơ:", error);
+            setFormError('Không thể xác minh hồ sơ người dùng. Vui lòng thử lại.');
+          }
         }
       }
     } catch (error) {
