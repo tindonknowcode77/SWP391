@@ -104,14 +104,12 @@ const Login = () => {
       } else if (user.role === 'R003') {
         navigate('/doctor', { replace: true });
       } else {
-        navigate("/hospital", {
-          replace: true,
-          state: {
-            showAccountStatus: true,
-            accountStatus: 'active',
-            accountType: 'Bệnh nhân'
-          }
-        });
+        if (!user.PantientID) {
+          navigate("/profile");
+          alert("Quý khách vui lòng cập nhật hồ sơ để sử dụng các dịch vụ.");
+        } else {
+          navigate("/HospitalHome");
+        }
       }
     } catch (error) {
       // Nếu API trả lỗi 400/401 từ BE

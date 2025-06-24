@@ -929,33 +929,46 @@ export default function ExaminationSchedule() {
                   <div className="form-row">
                     <div className="form-group">
                       <label htmlFor="appointmentDate">Ngày khám:</label>
-                      <input 
-                        type="date" 
-                        id="appointmentDate" 
-                        name="appointmentDate" 
+                      <select
+                        id="appointmentDate"
+                        name="appointmentDate"
                         value={form.appointmentDate}
-                        min={new Date().toISOString().split('T')[0]}
                         onChange={handleDateChange}
-                        required 
-                      />
+                        required
+                      >
+                        <option value="">-- Chọn ngày khám --</option>
+                        {doctorScheduleData
+                          .map(item => item.BookDate && item.BookDate.slice(0, 10))
+                          .filter((date, idx, arr) => date && arr.indexOf(date) === idx)
+                          .map(date => (
+                            <option key={date} value={date}>{date}</option>
+                          ))}
+                      </select>
                     </div>
                     
                     <div className="form-group">
                       <label htmlFor="appointmentTime">Giờ khám:</label>
-                      <select 
-                        id="appointmentTime" 
-                        name="appointmentTime" 
-                        value={form.appointmentTime} 
+                      <select
+                        id="appointmentTime"
+                        name="appointmentTime"
+                        value={form.appointmentTime}
                         onChange={handleChange}
                         required
-                        disabled={availableSlots.length === 0}
+                        disabled={
+                          !form.appointmentDate ||
+                          doctorScheduleData.filter(item => item.BookDate && item.BookDate.slice(0,10) === form.appointmentDate).length === 0
+                        }
                       >
                         <option value="">-- Chọn giờ khám --</option>
-                        {availableSlots.map((slot) => (
-                          <option key={slot} value={slot}>{slot}</option>
-                        ))}
+                        {doctorScheduleData
+                          .filter(item => item.BookDate && item.BookDate.slice(0,10) === form.appointmentDate)
+                          .map(item => (
+                            <option key={item.ScheduleID} value={item.StartTime && item.StartTime.slice(0,5)}>
+                              {item.StartTime && item.StartTime.slice(0,5)}
+                            </option>
+                          ))}
                       </select>
-                      {availableSlots.length === 0 && form.appointmentDate && (
+                      {form.appointmentDate && doctorScheduleData.filter(item => item.BookDate && item.BookDate.slice(0,10) === form.appointmentDate).length === 0 && (
                         <p className="note">Không có khung giờ trống cho ngày đã chọn</p>
                       )}
                     </div>
