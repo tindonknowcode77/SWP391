@@ -13,6 +13,7 @@ import NewsDetail from './pages/NewsDetail';
 import ExaminationSchedule from './pages/ExaminationSchedule';
 import DoctorsList from './pages/DoctorsList';
 import DoctorDetail from './pages/DoctorDetail';
+import DoctorProfile from '../doctorprofile/UID000011';
 
 import HospitalHome from './pages/HospitalHome';
 import Home from './pages/Home';
@@ -76,9 +77,10 @@ function App() {
             <Route path="/hospital/dich-vu/xet-nghiem" element={<HIVTesting />} />
             <Route path="/hospital/lich-kham" element={<ExaminationSchedule />} />
             <Route path="/hospital/tin-tuc" element={<News />} />
+            <Route path="/hospital/tin-tuc/:id" element={<NewsDetail />} />
             <Route path="/hospital/lien-he" element={<Contact />} />
             <Route path="/hospital/bac-si" element={<DoctorsList />} />
-            <Route path="/hospital/bac-si/:id" element={<DoctorDetail />} />
+            <Route path="/hospital/bac-si/:id" element={<DoctorProfile />} />
 
             <Route path="/contact" element={<Contact />} />
             <Route path="/news" element={<News />} />

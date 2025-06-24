@@ -168,7 +168,44 @@ export default function ExaminationSchedule() {
       const doctorFeedbacks = allFeedbacks.filter(feedback => feedback.doctorId === selectedDoctor.id);
       
       // If we have stored feedbacks for this doctor, use those. Otherwise, use sample data
-      setFeedbacks(doctorFeedbacks.length > 0 ? doctorFeedbacks : sampleFeedbacks);
+      const finalFeedbacks = doctorFeedbacks.length > 0 ? doctorFeedbacks : sampleFeedbacks;
+      setFeedbacks(finalFeedbacks);
+
+      // Calculate average rating and rating distribution
+      const calculateRatingStats = (feedbacks) => {
+        if (feedbacks.length === 0) {
+          return {
+            averageRating: 0,
+            totalReviews: 0,
+            ratingDistribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+          };
+        }
+
+        const totalRating = feedbacks.reduce((sum, feedback) => sum + feedback.rating, 0);
+        const averageRating = totalRating / feedbacks.length;
+        
+        // Calculate rating distribution
+        const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        feedbacks.forEach(feedback => {
+          distribution[feedback.rating]++;
+        });
+
+        return {
+          averageRating: parseFloat(averageRating.toFixed(1)),
+          totalReviews: feedbacks.length,
+          ratingDistribution: distribution
+        };
+      };
+
+      const ratingStats = calculateRatingStats(finalFeedbacks);
+      
+      // Update selectedDoctorInfo with calculated rating
+      setSelectedDoctorInfo(prevInfo => ({
+        ...prevInfo,
+        rating: ratingStats.averageRating,
+        totalReviews: ratingStats.totalReviews,
+        ratingDistribution: ratingStats.ratingDistribution
+      }));
 
       // Fetch the doctor's work schedule when selected
       const fetchDoctorSchedule = async () => {
@@ -591,44 +628,44 @@ export default function ExaminationSchedule() {
                         <i key={i} className={`fas fa-star ${i < Math.floor(selectedDoctorInfo.rating) ? 'filled' : 'empty'}`}></i>
                       ))}
                     </div>
-                    <div className="rating-count">Dựa trên 28 đánh giá</div>
+                    <div className="rating-count">Dựa trên {selectedDoctorInfo.totalReviews} đánh giá</div>
                   </div>
                   
                   <div className="rating-bars">
                     <div className="rating-bar-item">
                       <span className="rating-label">5 sao</span>
                       <div className="rating-bar">
-                        <div className="rating-bar-fill" style={{width: '70%'}}></div>
+                        <div className="rating-bar-fill" style={{width: `${selectedDoctorInfo.totalReviews > 0 ? (selectedDoctorInfo.ratingDistribution[5] / selectedDoctorInfo.totalReviews) * 100 : 0}%`}}></div>
                       </div>
-                      <span className="rating-percent">70%</span>
+                      <span className="rating-percent">{selectedDoctorInfo.totalReviews > 0 ? ((selectedDoctorInfo.ratingDistribution[5] / selectedDoctorInfo.totalReviews) * 100).toFixed(0) : 0}%</span>
                     </div>
                     <div className="rating-bar-item">
                       <span className="rating-label">4 sao</span>
                       <div className="rating-bar">
-                        <div className="rating-bar-fill" style={{width: '20%'}}></div>
+                        <div className="rating-bar-fill" style={{width: `${selectedDoctorInfo.totalReviews > 0 ? (selectedDoctorInfo.ratingDistribution[4] / selectedDoctorInfo.totalReviews) * 100 : 0}%`}}></div>
                       </div>
-                      <span className="rating-percent">20%</span>
+                      <span className="rating-percent">{selectedDoctorInfo.totalReviews > 0 ? ((selectedDoctorInfo.ratingDistribution[4] / selectedDoctorInfo.totalReviews) * 100).toFixed(0) : 0}%</span>
                     </div>
                     <div className="rating-bar-item">
                       <span className="rating-label">3 sao</span>
                       <div className="rating-bar">
-                        <div className="rating-bar-fill" style={{width: '7%'}}></div>
+                        <div className="rating-bar-fill" style={{width: `${selectedDoctorInfo.totalReviews > 0 ? (selectedDoctorInfo.ratingDistribution[3] / selectedDoctorInfo.totalReviews) * 100 : 0}%`}}></div>
                       </div>
-                      <span className="rating-percent">7%</span>
+                      <span className="rating-percent">{selectedDoctorInfo.totalReviews > 0 ? ((selectedDoctorInfo.ratingDistribution[3] / selectedDoctorInfo.totalReviews) * 100).toFixed(0) : 0}%</span>
                     </div>
                     <div className="rating-bar-item">
                       <span className="rating-label">2 sao</span>
                       <div className="rating-bar">
-                        <div className="rating-bar-fill" style={{width: '2%'}}></div>
+                        <div className="rating-bar-fill" style={{width: `${selectedDoctorInfo.totalReviews > 0 ? (selectedDoctorInfo.ratingDistribution[2] / selectedDoctorInfo.totalReviews) * 100 : 0}%`}}></div>
                       </div>
-                      <span className="rating-percent">2%</span>
+                      <span className="rating-percent">{selectedDoctorInfo.totalReviews > 0 ? ((selectedDoctorInfo.ratingDistribution[2] / selectedDoctorInfo.totalReviews) * 100).toFixed(0) : 0}%</span>
                     </div>
                     <div className="rating-bar-item">
                       <span className="rating-label">1 sao</span>
                       <div className="rating-bar">
-                        <div className="rating-bar-fill" style={{width: '1%'}}></div>
+                        <div className="rating-bar-fill" style={{width: `${selectedDoctorInfo.totalReviews > 0 ? (selectedDoctorInfo.ratingDistribution[1] / selectedDoctorInfo.totalReviews) * 100 : 0}%`}}></div>
                       </div>
-                      <span className="rating-percent">1%</span>
+                      <span className="rating-percent">{selectedDoctorInfo.totalReviews > 0 ? ((selectedDoctorInfo.ratingDistribution[1] / selectedDoctorInfo.totalReviews) * 100).toFixed(0) : 0}%</span>
                     </div>
                   </div>
                 </div>
@@ -700,6 +737,42 @@ export default function ExaminationSchedule() {
                         // Update state
                         const updatedFeedbacks = [newFeedbackItem, ...feedbacks];
                         setFeedbacks(updatedFeedbacks);
+                        
+                        // Calculate new rating stats
+                        const calculateRatingStats = (feedbacks) => {
+                          if (feedbacks.length === 0) {
+                            return {
+                              averageRating: 0,
+                              totalReviews: 0,
+                              ratingDistribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+                            };
+                          }
+
+                          const totalRating = feedbacks.reduce((sum, feedback) => sum + feedback.rating, 0);
+                          const averageRating = totalRating / feedbacks.length;
+                          
+                          // Calculate rating distribution
+                          const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+                          feedbacks.forEach(feedback => {
+                            distribution[feedback.rating]++;
+                          });
+
+                          return {
+                            averageRating: parseFloat(averageRating.toFixed(1)),
+                            totalReviews: feedbacks.length,
+                            ratingDistribution: distribution
+                          };
+                        };
+
+                        const newRatingStats = calculateRatingStats(updatedFeedbacks);
+                        
+                        // Update selectedDoctorInfo with new rating
+                        setSelectedDoctorInfo(prevInfo => ({
+                          ...prevInfo,
+                          rating: newRatingStats.averageRating,
+                          totalReviews: newRatingStats.totalReviews,
+                          ratingDistribution: newRatingStats.ratingDistribution
+                        }));
                         
                         // Save to localStorage
                         const storedFeedbacks = localStorage.getItem('doctorFeedbacks');
@@ -1083,6 +1156,7 @@ export default function ExaminationSchedule() {
                   <tr>
                     <th>Thứ</th>
                     <th>Giờ bắt đầu làm việc</th>
+                    <th>Ngày </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1090,6 +1164,7 @@ export default function ExaminationSchedule() {
                     <tr key={item.ScheduleID}>
                       <td>{item.DayOfWeek}</td>
                       <td>{item.StartTime ? item.StartTime.slice(0,5) : ''}</td>
+                      <td>{item.BookDate ? item.BookDate.slice(0,10) : ''}</td>
                     </tr>
                   ))}
                 </tbody>

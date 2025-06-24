@@ -23,24 +23,27 @@ const HospitalHome = () => {
           setNews([
             {
               id: 1,
-              title: 'Kỷ niệm Ngày Thế giới phòng chống HIV/AIDS',
-              image: '/news-1.jpg',
-              date: '01/12/2024',
-              summary: 'Bệnh viện tổ chức chuỗi hoạt động nâng cao nhận thức cộng đồng về HIV/AIDS...'
+              title: 'Nghiên cứu mới về thuốc điều trị HIV',
+              summary: 'Các nhà khoa học đã tìm ra phương pháp điều trị mới giúp giảm tác dụng phụ của thuốc ARV.',
+              image: 'https://images.pexels.com/photos/2280549/pexels-photo-2280549.jpeg?auto=compress&w=600&q=80',
+              date: '15/05/2025',
+              category: 'research'
             },
             {
               id: 2,
-              title: 'Thêm phác đồ điều trị HIV mới được phê duyệt',
-              image: '/news-2.jpg',
-              date: '15/10/2024',
-              summary: 'Bộ Y tế phê duyệt phác đồ điều trị HIV mới, hỗ trợ bệnh nhân giảm tác dụng phụ...'
+              title: 'Hội thảo về sức khỏe tâm lý cho người sống chung với HIV',
+              summary: 'Hội thảo cung cấp các kỹ năng quản lý sức khỏe tâm lý cho người sống chung với HIV.',
+              image: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&w=600&q=80',
+              date: '12/05/2025',
+              category: 'event'
             },
             {
               id: 3,
-              title: 'Chương trình tư vấn dinh dưỡng cho người nhiễm HIV',
-              image: '/news-3.jpg',
-              date: '05/09/2024',
-              summary: 'Bệnh viện triển khai chương trình tư vấn dinh dưỡng miễn phí cho bệnh nhân HIV...'
+              title: 'Chính sách mới về bảo hiểm y tế cho bệnh nhân HIV',
+              summary: 'Từ tháng 6/2025, bệnh nhân HIV sẽ được hưởng thêm nhiều quyền lợi từ bảo hiểm y tế.',
+              image: 'https://images.pexels.com/photos/305568/pexels-photo-305568.jpeg?auto=compress&w=600&q=80',
+              date: '10/05/2025',
+              category: 'policy'
             },
           ]);          setDoctors([
             {
@@ -225,7 +228,7 @@ const HospitalHome = () => {
       </section>
       
       {/* Doctor Section */}      
-      <section className="doctors-section">
+      {/* <section className="doctors-section">
         <div className="container">
           <div className="section-header-home">
             <h2>Đội ngũ bác sĩ chuyên khoa</h2>
@@ -265,7 +268,7 @@ const HospitalHome = () => {
             <Link to="/hospital/bac-si" className="view-all-btn">Xem tất cả bác sĩ</Link>
           </div>
         </div>
-      </section>
+      </section> */}
       
       {/* News Section */}
       <section className="news-section">

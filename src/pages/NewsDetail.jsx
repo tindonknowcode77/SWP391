@@ -189,7 +189,7 @@ const NewsDetail = () => {
           <h2 className="related-title">Bài Viết Liên Quan</h2>
           <div className="related-grid">
             {relatedArticles.map(related => (
-              <Link to={`/news/${related.id}`} className="related-card" key={related.id}>
+              <Link to={`/hospital/tin-tuc/${related.id}`} className="related-card" key={related.id}>
                 <div className="related-card-image">
                   <img src={related.image} alt={related.title} />
                 </div>

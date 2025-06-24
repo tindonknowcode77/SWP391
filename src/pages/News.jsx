@@ -229,7 +229,7 @@ const News = () => {
                   </div>
                   <h3 className="news-title">{article.title}</h3>
                   <p className="news-summary">{article.summary}</p>
-                  <Link to={`/news/${article.id}`} className="read-more">
+                  <Link to={`/hospital/tin-tuc/${article.id}`} className="read-more">
                     Đọc tiếp <i className="fas fa-arrow-right"></i>
                   </Link>
                 </div>
