@@ -67,20 +67,20 @@ const Doctor = () => {
               className={selected === 'appointments' ? 'active' : ''}
               onClick={() => setSelected('appointments')}
             >
-              Lịch hẹn của tôi
+              Danh Sách Lịch Hẹn
             </li>
             <li
               className={selected === 'patients' ? 'active' : ''}
               onClick={() => setSelected('patients')}
             >
-              Danh sách
+             Hủy Lịch Khám
             </li>
           </ul>
         </aside>
         <main className="doctor-main">
           {selected === 'appointments' && (
             <div className="doctor-content">
-              <h2 className="doctor-table-title">Lịch hẹn của tôi</h2>
+              <h2 className="doctor-table-title">Lịch Hẹn Của Tôi</h2>
               {loading && <div>Đang tải...</div>}
               {error && <div style={{color: 'red'}}>{error}</div>}
               {!loading && !error && appointments.length === 0 && <div>Bác sĩ chưa có lịch hẹn nào.</div>}
@@ -124,7 +124,7 @@ const Doctor = () => {
           )}
           {selected === 'patients' && (
             <div className="doctor-content">
-              <h2 className="doctor-table-title">Danh sách bệnh nhân</h2>
+              <h2 className="doctor-table-title">Danh Sách Lịch Đã Đặt</h2>
               <div>Chức năng này dành cho bác sĩ. (Nội dung sẽ được phát triển sau)</div>
             </div>
           )}
