@@ -52,7 +52,9 @@ const Profile = () => {
     dateOfBirth: '',
     gender: '',
     bloodType: '',
-    allergies: ''
+    allergies: '',    
+    address : '',
+    image : ''
   });
 
   // Mô phỏng dữ liệu lịch sử khám bệnh
@@ -150,7 +152,9 @@ const Profile = () => {
             dateOfBirth: userRes.DateOfBirth ? userRes.DateOfBirth.split('T')[0] : '',
             gender: userRes.Gender || '',
             bloodType: userRes.BloodType || '',
-            allergies: userRes.Allergy || ''
+            allergies: userRes.Allergy || '' ,
+            address : userRes.Address || '' ,
+            image : userRes.Image 
           });
         }
       });
@@ -256,7 +260,16 @@ const Profile = () => {
         <div className="profile-sidebar">
           <div className="profile-user-info">
             <div className="profile-avatar">
-              <i className="fas fa-user profile-avatar-icon"></i>
+              {formData.image ? (
+                <img
+                  src={`https://localhost:7246/image/${formData.image}` || "fa fa-user"}
+                  alt=""
+                  className="profile-avatar-img"
+                  style={{ width: 150, height: 150, borderRadius: '50%', zIndex: 1  }}
+                />
+              ) : (
+                <i className="fas fa-user-circle" style={{ fontSize: 100 }}></i>
+              )}
               {editMode && (
                 <button className="change-avatar-btn">
                   <i className="fas fa-camera"></i>
@@ -385,6 +398,7 @@ const Profile = () => {
                         required
                       />
                     </div>
+                    
                   </div>
                   
                   <div className="form-row">
@@ -411,7 +425,21 @@ const Profile = () => {
                         disabled={!editMode}
                       />
                     </div>
+
+                    <div className="form-group">
+                     <label htmlFor="address">Địa chỉ</label>
+                      <input
+                        type="text"
+                        id="address"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleChange}
+                        disabled={!editMode}
+                        required/>
+                   </div>
                   </div>
+
+                  
                   
                   <div className="form-row">
                     <div className="form-group">
