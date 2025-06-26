@@ -214,6 +214,14 @@
   color: #c20909;
 }
 
+.status-successful-3 {
+  color: #43a047;
+}
+
+.status-cancelled-3 {
+  color: #d20a0a;
+}
+
 .staff-warning-banner {
   display: flex;
   align-items: center;

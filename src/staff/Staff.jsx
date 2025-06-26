@@ -1,20 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../styles/Staff.css';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { xemdanhsachlichhen } from '../api/auth';
+import { xemdanhsachlichhendathanhcong } from '../api/auth';
 import {xacnhanlich} from '../api/auth';
-import { xemdanhsachlichhenpending } from '../api/auth';
-import { huylich } from '../api/auth';
+import { xemdanhsachlichhendahuy } from '../api/auth';
+import { xemdanhsachlichhendone } from '../api/auth';
+import { xemdanhsachlichhendahoanthanh } from '../api/auth';
 
-const SERVICE_NAME_MAP = {
-  'SV000001': 'Khám tổng quát',
-  'SV000002': 'Tư vấn điều trị',
-  'SV000003': 'Xét nghiệm HIV',
-  'SV000004': 'Xét nghiệm CD4',
-  'SV000005': 'Tư vấn điều trị ARV',
-  'SV000006': 'Xét nghiệm tải lượng virus',
-};
+
+
 
 const DOCTOR_NAME_MAP = {
   'DT000001': 'Nguyễn Văn A',
@@ -22,26 +17,49 @@ const DOCTOR_NAME_MAP = {
 };
 
 const Staff = () => {
-  const [selected, setSelected] = useState('appointments');
+  const [selected, setSelected] = useState('all');
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+  const [allAppointments, setAllAppointments] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [cancelledAppointments, setCancelledAppointments] = useState([]);
+  const [completedAppointments, setCompletedAppointments] = useState([]);
+  const [loadingAll, setLoadingAll] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingCancelled, setLoadingCancelled] = useState(false);
+  const [loadingCompleted, setLoadingCompleted] = useState(false);
+  const [errorAll, setErrorAll] = useState(null);
   const [error, setError] = useState(null);
+  const [errorCancelled, setErrorCancelled] = useState(null);
+  const [errorCompleted, setErrorCompleted] = useState(null);
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [confirmingBookID, setConfirmingBookID] = useState(null);
-  const [pendingAppointments, setPendingAppointments] = useState([]);
-  const [loadingPending, setLoadingPending] = useState(false);
-  const [errorPending, setErrorPending] = useState(null);
-  const [showCancelPopup, setShowCancelPopup] = useState(false);
-  const [cancellingBookID, setCancellingBookID] = useState(null);
-  const [cancelReason, setCancelReason] = useState('');
+  const [statusFilterAll, setStatusFilterAll] = useState('Tất cả');
+  const [statusFilterSuccess, setStatusFilterSuccess] = useState('Tất cả');
+  const [statusFilterCancelled, setStatusFilterCancelled] = useState('Tất cả');
+  const [statusFilterCompleted, setStatusFilterCompleted] = useState('Tất cả');
+  const [showStatusDropdown, setShowStatusDropdown] = useState('');
+  const dropdownRef = useRef();
+
+  const statusOptions = ['Tất cả', 'Đang chờ', 'Đã xác nhận', 'Thành công', 'Đã hủy'];
 
   useEffect(() => {
-    if (selected === 'appointments') {
+    if (selected === 'all') {
+      setLoadingAll(true);
+      setErrorAll(null);
+      xemdanhsachlichhendone()
+        .then((data) => {
+          setAllAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+          setLoadingAll(false);
+        })
+        .catch((err) => {
+          setErrorAll('Không thể tải danh sách tất cả lịch hẹn');
+          setLoadingAll(false);
+        });
+    } else if (selected === 'appointments') {
       setLoading(true);
       setError(null);
-      xemdanhsachlichhen()
+      xemdanhsachlichhendathanhcong()
         .then((data) => {
           setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
           setLoading(false);
@@ -50,20 +68,46 @@ const Staff = () => {
           setError('Không thể tải danh sách lịch hẹn');
           setLoading(false);
         });
-    } else if (selected === 'confirm') {
-      setLoadingPending(true);
-      setErrorPending(null);
-      xemdanhsachlichhenpending()
+    } else if (selected === 'cancelled') {
+      setLoadingCancelled(true);
+      setErrorCancelled(null);
+      xemdanhsachlichhendahuy()
         .then((data) => {
-          setPendingAppointments(Array.isArray(data) ? data : (data?.appointments || []));
-          setLoadingPending(false);
+          setCancelledAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+          setLoadingCancelled(false);
         })
         .catch((err) => {
-          setErrorPending('Không thể tải danh sách lịch hẹn chờ xác nhận');
-          setLoadingPending(false);
+          setErrorCancelled('Không thể tải danh sách lịch hẹn đã hủy');
+          setLoadingCancelled(false);
+        });
+    } else if (selected === 'completed') {
+      setLoadingCompleted(true);
+      setErrorCompleted(null);
+      xemdanhsachlichhendahoanthanh()
+        .then((data) => {
+          setCompletedAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+          setLoadingCompleted(false);
+        })
+        .catch((err) => {
+          setErrorCompleted('Không thể tải danh sách lịch hẹn đã hoàn thành');
+          setLoadingCompleted(false);
         });
     }
   }, [selected]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowStatusDropdown('');
+      }
+    }
+    if (showStatusDropdown === 'all') {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showStatusDropdown]);
 
   if (!currentUser || currentUser.role !== 'R004') {
     return (
@@ -95,16 +139,16 @@ const Staff = () => {
         await xacnhanlich(confirmingBookID);
         setShowConfirmPopup(false);
         setConfirmingBookID(null);
-        setLoadingPending(true);
-        setErrorPending(null);
-        xemdanhsachlichhenpending()
+        setLoading(true);
+        setError(null);
+        xemdanhsachlichhendathanhcong()
           .then((data) => {
-            setPendingAppointments(Array.isArray(data) ? data : (data?.appointments || []));
-            setLoadingPending(false);
+            setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+            setLoading(false);
           })
           .catch((err) => {
-            setErrorPending('Không thể tải danh sách lịch hẹn chờ xác nhận');
-            setLoadingPending(false);
+            setError('Không thể tải danh sách lịch hẹn');
+            setLoading(false);
           });
       } catch (e) {
         alert('Xác nhận lịch thất bại!');
@@ -115,42 +159,6 @@ const Staff = () => {
   const handleConfirmCancel = () => {
     setShowConfirmPopup(false);
     setConfirmingBookID(null);
-  };
-
-  const handleCancelClick = (bookID) => {
-    setCancellingBookID(bookID);
-    setShowCancelPopup(true);
-    setCancelReason('');
-  };
-
-  const handleCancelYes = async () => {
-    if (cancellingBookID && cancelReason.trim()) {
-      try {
-        await huylich(cancellingBookID, cancelReason);
-        setShowCancelPopup(false);
-        setCancellingBookID(null);
-        setCancelReason('');
-        setLoadingPending(true);
-        setErrorPending(null);
-        xemdanhsachlichhenpending()
-          .then((data) => {
-            setPendingAppointments(Array.isArray(data) ? data : (data?.appointments || []));
-            setLoadingPending(false);
-          })
-          .catch((err) => {
-            setErrorPending('Không thể tải danh sách lịch hẹn chờ xác nhận');
-            setLoadingPending(false);
-          });
-      } catch (e) {
-        alert('Hủy lịch thất bại!');
-      }
-    }
-  };
-
-  const handleCancelCancel = () => {
-    setShowCancelPopup(false);
-    setCancellingBookID(null);
-    setCancelReason('');
   };
 
   return (
@@ -164,23 +172,125 @@ const Staff = () => {
         </div>
         <ul className="sidebar-menu">
           <li
+            className={selected === 'all' ? 'active' : ''}
+            onClick={() => setSelected('all')}
+          >
+            Xem Tất Cả Lịch Hẹn
+          </li>
+          <li
             className={selected === 'appointments' ? 'active' : ''}
             onClick={() => setSelected('appointments')}
           >
-            Xem danh sách lịch hẹn
+            Xem Danh Sách Lịch Hẹn Đã Thành Công  
           </li>
           <li
-            className={selected === 'confirm' ? 'active' : ''}
-            onClick={() => setSelected('confirm')}
+            className={selected === 'cancelled' ? 'active' : ''}
+            onClick={() => setSelected('cancelled')}
           >
-            Xác nhận đặt lịch
+            Xem Danh Sách Lịch Hẹn Đã Hủy
+          </li>
+          <li
+            className={selected === 'completed' ? 'active' : ''}
+            onClick={() => setSelected('completed')}
+          >
+            Danh Sách Lịch Hẹn Đã Hoàn Thành
           </li>
         </ul>
       </aside>
       <main className="staff-main">
+        {selected === 'all' && (
+          <div className="staff-content">
+            <h2 className="staff-table-title">Tất Cả Lịch Hẹn</h2>
+            {loadingAll && <div>Đang tải...</div>}
+            {errorAll && <div style={{color: 'red'}}>{errorAll}</div>}
+            {!loadingAll && !errorAll && allAppointments.length === 0 && <div>Không có lịch hẹn nào.</div>}
+            {!loadingAll && !errorAll && allAppointments.length > 0 && (
+              <div className="appointments-table-wrapper">
+                <table className="appointments-table">
+                  <thead>
+                    <tr>
+                      <th>Mã đặt lịch</th>
+                      <th>Mã bệnh nhân</th>
+                      <th>Tên bác sĩ</th>
+                      <th>Loại dịch vụ</th>
+                      <th>Thời gian</th>
+                      <th>Ghi chú</th>
+                      <th style={{position: 'relative', cursor: 'pointer'}} onClick={() => setShowStatusDropdown(showStatusDropdown === 'all' ? '' : 'all')}>
+                        Trạng thái
+                        <span style={{marginLeft: 6, fontSize: 12}}>▼</span>
+                        {showStatusDropdown === 'all' && (
+                          <div
+                            ref={dropdownRef}
+                            style={{
+                              position: 'absolute',
+                              top: '100%',
+                              left: 0,
+                              background: '#fff',
+                              border: '1px solid #ccc',
+                              zIndex: 10,
+                              minWidth: 120,
+                              boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                            }}
+                          >
+                            {statusOptions.map(opt => (
+                              <div
+                                key={opt}
+                                style={{
+                                  padding: 8,
+                                  cursor: 'pointer',
+                                  background: statusFilterAll === opt ? '#eee' : '#fff',
+                                  color: '#222'
+                                }}
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  setStatusFilterAll(opt);
+                                  setShowStatusDropdown('');
+                                }}
+                              >
+                                {opt}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {allAppointments.filter(item => 
+                      statusFilterAll === 'Tất cả' ||
+                      (item.Status && item.Status.trim().toLowerCase() === statusFilterAll.trim().toLowerCase())
+                    ).map((item, idx) => (
+                      <tr key={item.BookID || idx}>
+                        <td>{item.BookID}</td>
+                        <td>{item.PatientID}</td>
+                        <td>{DOCTOR_NAME_MAP[item.DoctorID] || item.DoctorID}</td>
+                        <td>{item.BookingType || item.BookingType}</td>
+                        <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
+                        <td>{item.Note || ''}</td>
+                        <td className={
+                              item.Status === 'Đang chờ'
+                            ? 'status-badge-2 status-pending-3'
+                            : item.Status === 'Đã xác nhận'
+                            ? 'status-badge-2 status-confirmed-3'
+                            : item.Status === 'Rejected'
+                            ? 'status-badge-2 status-rejected-3'
+                            : item.Status === 'Thành công'
+                            ? 'status-badge-2 status-successful-3'
+                            : item.Status === 'Đã hủy'
+                            ? 'status-badge-2 status-cancelled-3'
+                            : 'status-badge-2'}>{item.Status || ''} 
+                         </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
         {selected === 'appointments' && (
           <div className="staff-content">
-            <h2 className="staff-table-title">Danh sách lịch hẹn</h2>
+            <h2 className="staff-table-title">Danh Sách Lịch Hẹn Đã Thành Công</h2>
             {loading && <div>Đang tải...</div>}
             {error && <div style={{color: 'red'}}>{error}</div>}
             {!loading && !error && appointments.length === 0 && <div>Không có lịch hẹn nào.</div>}
@@ -204,17 +314,21 @@ const Staff = () => {
                         <td>{item.BookID}</td>
                         <td>{item.PatientID}</td>
                         <td>{DOCTOR_NAME_MAP[item.DoctorID] || item.DoctorID}</td>
-                        <td>{SERVICE_NAME_MAP[item.ServiceID] || item.ServiceID}</td>
+                        <td>{item.BookingType || item.BookingType}</td>
                         <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
                         <td>{item.Note || ''}</td>
                         <td className={
-                            item.Status === 'Đang chờ'
+                              item.Status === 'Đang chờ'
                             ? 'status-badge-2 status-pending-3'
                             : item.Status === 'Đã xác nhận'
                             ? 'status-badge-2 status-confirmed-3'
                             : item.Status === 'Rejected'
                             ? 'status-badge-2 status-rejected-3'
-                            : 'status-badge-2'}>{item.Status || ''}
+                            : item.Status === 'Thành công'
+                            ? 'status-badge-2 status-successful-3'
+                            : item.Status === 'Đã hủy'
+                            ? 'status-badge-2 status-cancelled-3'
+                            : 'status-badge-2'}>{item.Status || ''} 
                          </td>
                       </tr>
                     ))}
@@ -224,13 +338,13 @@ const Staff = () => {
             )}
           </div>
         )}
-        {selected === 'confirm' && (
+        {selected === 'cancelled' && (
           <div className="staff-content">
-            <h2 className="staff-table-title" >Xác nhận đặt lịch</h2>
-            {loadingPending && <div>Đang tải...</div>}
-            {errorPending && <div style={{color: 'red'}}>{errorPending}</div>}
-            {!loadingPending && !errorPending && pendingAppointments.length === 0 && <div>Không có lịch hẹn nào.</div>}
-            {!loadingPending && !errorPending && pendingAppointments.length > 0 && (
+            <h2 className="staff-table-title">Danh Sách Lịch Hẹn Đã Hủy</h2>
+            {loadingCancelled && <div>Đang tải...</div>}
+            {errorCancelled && <div style={{color: 'red'}}>{errorCancelled}</div>}
+            {!loadingCancelled && !errorCancelled && cancelledAppointments.length === 0 && <div>Không có lịch hẹn nào.</div>}
+            {!loadingCancelled && !errorCancelled && cancelledAppointments.length > 0 && (
               <div className="appointments-table-wrapper">
                 <table className="appointments-table">
                   <thead>
@@ -240,71 +354,86 @@ const Staff = () => {
                       <th>Tên bác sĩ</th>
                       <th>Loại dịch vụ</th>
                       <th>Thời gian</th>
+                      <th>Ghi chú</th>
                       <th>Trạng thái</th>
-                      <th>Xác nhận/Hủy</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {pendingAppointments.map((item, idx) => (
+                    {cancelledAppointments.map((item, idx) => (
                       <tr key={item.BookID || idx}>
                         <td>{item.BookID}</td>
                         <td>{item.PatientID}</td>
                         <td>{DOCTOR_NAME_MAP[item.DoctorID] || item.DoctorID}</td>
-                        <td>{SERVICE_NAME_MAP[item.ServiceID] || item.ServiceID}</td>
+                        <td>{item.BookingType || item.BookingType}</td>
                         <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
-                        <td className={item.Status === 'Đang chờ'? 'status-badge-1 status-pending-1': item.Status === 'Đã xác nhận'? 'status-badge-1 status-confirmed-1': 'status-badge-1'}>
-                          {item.Status || ''}
-                        </td>
-                        <td className="action-buttons-col">
-                          <button
-                            title="Xác nhận"
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'green', fontSize: 18 }}
-                            onClick={() => handleConfirmClick(item.BookID)}
-                          >
-                            <i className="fas fa-check"></i>
-                          </button>
-                          <button
-                            title="Xóa lịch hẹn"
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'red', fontSize: 18 }}
-                            onClick={() => handleCancelClick(item.BookID)}
-                          >
-                            <i className="fas fa-trash"></i>
-                          </button>
-                        </td>
+                        <td>{item.Note || ''}</td>
+                        <td className={
+                              item.Status === 'Đang chờ'
+                            ? 'status-badge-2 status-pending-3'
+                            : item.Status === 'Đã xác nhận'
+                            ? 'status-badge-2 status-confirmed-3'
+                            : item.Status === 'Rejected'
+                            ? 'status-badge-2 status-rejected-3'
+                            : item.Status === 'Thành công'
+                            ? 'status-badge-2 status-successful-3'
+                            : item.Status === 'Đã hủy'
+                            ? 'status-badge-2 status-cancelled-3'
+                            : 'status-badge-2'}>{item.Status || ''} 
+                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             )}
-            {showConfirmPopup && (
-              <div className="popup-overlay">
-                <div className="popup-confirm">
-                  <div className="popup-title">Chắc chắn xác nhận lịch?</div>
-                  <div className="popup-actions">
-                    <button className="popup-btn-yes" onClick={handleConfirmYes}>Yes</button>
-                    <button className="popup-btn-cancel" onClick={handleConfirmCancel}>Cancel</button>
-                  </div>
-                </div>
-              </div>
-            )}
-            {showCancelPopup && (
-              <div className="popup-overlay">
-                <div className="popup-confirm">
-                  <div className="popup-title">Bạn chắc chắn muốn hủy lịch?</div>
-                  <textarea
-                    className="popup-reason-box"
-                    placeholder="Lý do hủy..."
-                    value={cancelReason}
-                    onChange={e => setCancelReason(e.target.value)}
-                    rows={3}
-                    style={{width: '100%', marginBottom: 16, borderRadius: 8, border: '1px solid #ccc', padding: 8, fontSize: '1rem'}}
-                  />
-                  <div className="popup-actions">
-                    <button className="popup-btn-yes" onClick={handleCancelYes} disabled={!cancelReason.trim()}>Yes</button>
-                    <button className="popup-btn-cancel" onClick={handleCancelCancel}>Cancel</button>
-                  </div>
-                </div>
+          </div>
+        )}
+        {selected === 'completed' && (
+          <div className="staff-content">
+            <h2 className="staff-table-title">Danh Sách Lịch Hẹn Đã Hoàn Thành</h2>
+            {loadingCompleted && <div>Đang tải...</div>}
+            {errorCompleted && <div style={{color: 'red'}}>{errorCompleted}</div>}
+            {!loadingCompleted && !errorCompleted && completedAppointments.length === 0 && <div>Không có lịch hẹn nào.</div>}
+            {!loadingCompleted && !errorCompleted && completedAppointments.length > 0 && (
+              <div className="appointments-table-wrapper">
+                <table className="appointments-table">
+                  <thead>
+                    <tr>
+                      <th>Mã đặt lịch</th>
+                      <th>Mã bệnh nhân</th>
+                      <th>Tên bác sĩ</th>
+                      <th>Loại dịch vụ</th>
+                      <th>Thời gian</th>
+                      <th>Ghi chú</th>
+                      <th>Trạng thái</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {completedAppointments.map((item, idx) => (
+                      <tr key={item.BookID || idx}>
+                        <td>{item.BookID}</td>
+                        <td>{item.PatientID}</td>
+                        <td>{DOCTOR_NAME_MAP[item.DoctorID] || item.DoctorID}</td>
+                        <td>{item.BookingType || item.BookingType}</td>
+                        <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
+                        <td>{item.Note || ''}</td>
+                        <td className={
+                              item.Status === 'Đang chờ'
+                            ? 'status-badge-2 status-pending-3'
+                            : item.Status === 'Đã xác nhận'
+                            ? 'status-badge-2 status-confirmed-3'
+                            : item.Status === 'Rejected'
+                            ? 'status-badge-2 status-rejected-3'
+                            : item.Status === 'Thành công'
+                            ? 'status-badge-2 status-successful-3'
+                            : item.Status === 'Đã hủy'
+                            ? 'status-badge-2 status-cancelled-3'
+                            : 'status-badge-2'}>{item.Status || ''} 
+                         </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>

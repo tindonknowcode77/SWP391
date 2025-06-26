@@ -43,12 +43,20 @@ export const capnhatprofile = (data) => {
   );
 };
 
-export const xemdanhsachlichhen = () => {
-  return axiosClient.get('Appointment');
+export const xemdanhsachlichhendathanhcong = () => {
+  return axiosClient.get('staff/appointments/successful');
 };
 
-export const xemdanhsachlichhenpending = () => {
-  return axiosClient.get('staff/appointments/pending');
+export const xemdanhsachlichhendahuy = () => {
+  return axiosClient.get('staff/appointments/cancelled');
+};
+
+export const xemdanhsachlichhendone = () => {
+  return axiosClient.get('staff/appointments/all');
+};
+
+export const xemdanhsachlichhendahoanthanh = () => {
+  return axiosClient.get('staff/appointments/completed');
 };
 
 export const xacnhanlich = (id) => {
