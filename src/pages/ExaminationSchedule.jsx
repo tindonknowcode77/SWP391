@@ -15,16 +15,6 @@ const defaultServices = {
   // 'Khám tổng quát': ,
 };
 
-// Map tên dịch vụ sang ServiceID
-const serviceNameToId = {
-  'Khám Tổng Quát': 'SV000001',
-  'Tư Vấn Điều Trị': 'SV000002',
-  'Xét Nghiệm HIV': 'SV000003',
-  'Xét Nghiệm CD4': 'SV000004',
-  'Tư Vấn Điều trị ARV': 'SV000005',
-  'Xét Nghiệm Tải Lượng Virus': 'SV000006',
-};
-
 export default function ExaminationSchedule() {
   const navigate = useNavigate();
   const [doctors, setDoctors] = useState([]);
@@ -107,7 +97,8 @@ export default function ExaminationSchedule() {
     appointmentDate: '',
     appointmentTime: '',
     doctorId: '',
-    requestedServices: [],
+    bookingtype: '',
+    bookdate : '',
     notes: '',
     totalFee: 0,
     isOnlineConsultation: false,
@@ -397,15 +388,24 @@ export default function ExaminationSchedule() {
   const handleDateChange = (e) => {
     const selectedDate = e.target.value;
     setSelectedDate(selectedDate);
-    setForm(prev => ({ ...prev, appointmentDate: selectedDate }));
-    
+    setForm(prev => ({
+      ...prev,
+      appointmentDate: selectedDate,
+      bookdate: combineDateTime(selectedDate, prev.appointmentTime)
+    }));
     const slots = generateTimeSlots(selectedDate, form.doctorId);
     setAvailableSlots(slots);
   };
   
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'phone') {
+    if (name === 'appointmentTime') {
+      setForm(prev => ({
+        ...prev,
+        [name]: value,
+        bookdate: combineDateTime(prev.appointmentDate, value)
+      }));
+    } else if (name === 'phone') {
       // Chỉ cho nhập số, tối đa 10 ký tự
       const numericValue = value.replace(/[^0-9]/g, '').slice(0, 10);
       setForm((prev) => ({ ...prev, [name]: numericValue }));
@@ -532,13 +532,20 @@ export default function ExaminationSchedule() {
       appointmentDate: '',
       appointmentTime: '',
       doctorId: '',
-      requestedServices: [],
+      bookingtype: '',
       notes: '',
       totalFee: 0,
       isOnlineConsultation: false,
       onlineConsultationFee: 100000,
     });
   };
+
+  function combineDateTime(date, time) {
+    if (!date || !time) return '';
+    // time: 'HH:mm'
+    return new Date(`${date}T${time}:00`).toISOString();
+  }
+
   return (
     <>
       <Navbar />
@@ -964,7 +971,7 @@ export default function ExaminationSchedule() {
                           .filter(item => item.DateWork && item.DateWork.slice(0,10) === form.appointmentDate)
                           .map(item => (
                             <option key={item.ScheduleID} value={item.StartTime && item.StartTime.slice(0,5)}>
-                              {item.StartTime && item.StartTime.slice(0,5)} - {item.EndTime && item.EndTime.slice(0,5)} | Slot: {item.SlotNumber}
+                              {item.StartTime && item.StartTime.slice(0,5)} - {item.EndTime && item.EndTime.slice(0,5)} 
                             </option>
                           ))}
                       </select>
@@ -993,117 +1000,62 @@ export default function ExaminationSchedule() {
                   
                   <div className="form-group">
                     <label>Dịch vụ cần khám:</label>
-                    <div className="checkbox-group">
-                      <div className="checkbox-item">
-                        <input 
-                          type="checkbox" 
-                          id="hivTest" 
-                          value="Khám Tổng Quát" 
-                          checked={form.requestedServices.includes('Khám Tổng Quát')} 
-                          onChange={handleServiceChange} 
-                        />
-                        <label htmlFor="hivTest">Khám Tổng Quát</label>
-                      </div>
-                      <div className="checkbox-item">
-                        <input 
-                          type="checkbox" 
-                          id="arvTreatment" 
-                          value="Tư Vấn Điều Trị" 
-                          checked={form.requestedServices.includes('Tư Vấn Điều Trị')} 
-                          onChange={handleServiceChange} 
-                        />
-                        <label htmlFor="arvTreatment">Tư Vấn Điều Trị</label>
-                      </div>
-                      <div className="checkbox-item">
-                        <input 
-                          type="checkbox" 
-                          id="counseling" 
-                          value="Xét Nghiệm HIV" 
-                          checked={form.requestedServices.includes('Xét Nghiệm HIV')} 
-                          onChange={handleServiceChange} 
-                        />
-                        <label htmlFor="counseling">Xét Nghiệm HIV</label>
-                      </div>
-                      <div className="checkbox-item">
-                        <input 
-                          type="checkbox" 
-                          id="followUp" 
-                          value="Xét Nghiệm CD4" 
-                          checked={form.requestedServices.includes('Xét Nghiệm CD4')} 
-                          onChange={handleServiceChange} 
-                        />
-                        <label htmlFor="followUp">Xét Nghiệm CD</label>
-                      </div>
-                      <div className="checkbox-item">
-                        <input 
-                          type="checkbox" 
-                          id="followUp" 
-                          value="Tư Vấn Điều trị ARV" 
-                          checked={form.requestedServices.includes('Tư Vấn Điều trị ARV')} 
-                          onChange={handleServiceChange} 
-                        />
-                        <label htmlFor="followUp">Tư Vấn Điều trị ARV</label>
-                      </div>
-                      <div className="checkbox-item">
-                        <input 
-                          type="checkbox" 
-                          id="followUp" 
-                          value="Xét Nghiệm Tải Lượng Virus" 
-                          checked={form.requestedServices.includes('Xét Nghiệm Tải Lượng Virus')} 
-                          onChange={handleServiceChange} 
-                        />
-                        <label htmlFor="followUp">Xét Nghiệm Tải Lượng Virus</label>
-                      </div>
-                    </div>
                     <div className="form-group">
-                      <label htmlFor="notes">Ghi chú bổ sung:</label>
-                      <textarea 
-                        id="notes" 
-                        name="notes" 
-                        value={form.notes} 
-                        onChange={handleChange} 
-                        placeholder="Thông tin bổ sung (nếu có)"
-                      ></textarea>
+                      <input
+                        type="text"
+                        id="bookingtype"
+                        name="bookingtype"
+                        value={form.bookingtype}
+                        onChange={handleChange}
+                        placeholder="Nhập dịch vụ cần khám (ví dụ: Khám Tổng Quát)"
+                        required
+                      />
                     </div>
-                    <button
-                      type="button"
-                      className="submit-btn"
-                      style={{marginTop: '12px'}}
-                      onClick={async () => {
-                        if (!selectedDoctor) {
-                          alert('Vui lòng chọn bác sĩ trước!');
-                          return;
-                        }
-                        if (form.requestedServices.length === 0) {
-                          alert('Vui lòng chọn ít nhất một dịch vụ!');
-                          return;
-                        }
-                        const bookDate = new Date().toISOString(); // hoặc dùng form.appointmentDate nếu muốn
-                        let allSuccess = true;
-                        for (const serviceName of form.requestedServices) {
-                          const serviceId = serviceNameToId[serviceName];
-                          if (!serviceId) continue;
-                          try {
-                            await nguoidungdatlich({
-                              DoctorID: selectedDoctor.id,
-                              ServiceID: serviceId,
-                              DateWork: bookDate,
-                              Note: form.notes || '',
-                            });
-                          } catch (e) {
-                            allSuccess = false;
-                          }
-                        }
-                        if (allSuccess) {
-                          setShowServiceSuccessPopup(true);
-                        } else {
-                          alert('Có lỗi khi đăng ký một số dịch vụ!');
-                        }
-                      }}
-                    >
-                      Đăng ký dịch vụ
-                    </button>
                   </div>
+                  <div className="form-group">
+                    <label htmlFor="notes">Ghi chú bổ sung:</label>
+                    <textarea 
+                      id="notes" 
+                      name="notes" 
+                      value={form.notes} 
+                      onChange={handleChange} 
+                      placeholder="Thông tin bổ sung (nếu có)"
+                    ></textarea>
+                  </div>
+                  <button
+                    type="button"
+                    className="submit-btn"
+                    style={{marginTop: '12px'}}
+                    onClick={async () => {
+                      if (!selectedDoctor) {
+                        alert('Vui lòng chọn bác sĩ trước!');
+                        return;
+                      }
+                      if (!form.bookingtype || form.bookingtype.trim() === "") {
+                        alert('Vui lòng nhập dịch vụ cần khám!');
+                        return;
+                      }
+                      
+                      let allSuccess = true;
+                      try {
+                        await nguoidungdatlich({
+                          DoctorID: selectedDoctor.id,
+                          BookingType: form.bookingtype,
+                          BookDate: form.bookdate,
+                          Note: form.notes || '',
+                        });
+                      } catch (e) {
+                        allSuccess = false;
+                      }
+                      if (allSuccess) {
+                        setShowServiceSuccessPopup(true);
+                      } else {
+                        alert('Có lỗi khi đăng ký dịch vụ!');
+                      }
+                    }}
+                  >
+                    Đăng ký dịch vụ
+                  </button>
                 </div>
               </form>
             </div>

@@ -105,12 +105,12 @@ export const getCurrentUserAppointments = () => {
 
 
 export const datlichkham = () => {
-  return axiosClient.get("/Appointment/MyBooking");
+  return axiosClient.get("/Appointment/mine");
 };
 
 export const nguoidungdatlich = (bookingData) => {
   return axiosClient.post(
-    '/Appointment/Booking',
+    '/Appointment/booking',
     bookingData,
     {
       headers: {
