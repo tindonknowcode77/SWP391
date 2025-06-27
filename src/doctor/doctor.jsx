@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {xemdanhsachlichduocduyet} from '../api/auth';
 import {bacsilaytreatmentplan} from '../api/auth';
+import {bacsilaydanhsachbenhnhan} from '../api/auth';
 
 
 
@@ -18,6 +19,9 @@ const Doctor = () => {
   const [treatmentPlans, setTreatmentPlans] = useState([]);
   const [loadingPlans, setLoadingPlans] = useState(false);
   const [planError, setPlanError] = useState(null);
+  const [patients, setPatients] = useState([]);
+  const [loadingPatients, setLoadingPatients] = useState(false);
+  const [patientsError, setPatientsError] = useState(null);
 
   useEffect(() => {
     if (selected === 'appointments') {
@@ -43,6 +47,18 @@ const Doctor = () => {
         .catch((err) => {
           setPlanError('Không thể tải hồ sơ điều trị');
           setLoadingPlans(false);
+        });
+    } else if (selected === 'my-patients') {
+      setLoadingPatients(true);
+      setPatientsError(null);
+      bacsilaydanhsachbenhnhan()
+        .then((res) => {
+          setPatients(Array.isArray(res) ? res : (res?.data || []));
+          setLoadingPatients(false);
+        })
+        .catch((err) => {
+          setPatientsError('Không thể tải danh sách bệnh nhân');
+          setLoadingPatients(false);
         });
     }
   }, [selected]);
@@ -86,7 +102,13 @@ const Doctor = () => {
             className={selected === 'patients' ? 'active' : ''}
             onClick={() => setSelected('patients')}
           >
-            Danh sách bệnh nhân
+            Danh sách hồ sơ điều trị
+          </li>
+          <li
+            className={selected === 'my-patients' ? 'active' : ''}
+            onClick={() => setSelected('my-patients')}
+          >
+            Bệnh nhân của tôi
           </li>
         </ul>
       </aside>
@@ -218,6 +240,40 @@ const Doctor = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+          </div>
+        )}
+        {selected === 'my-patients' && (
+          <div className="doctor-content">
+            <h2 className="doctor-table-title">Bệnh nhân của tôi</h2>
+            {loadingPatients && <div className="loading-container"><div className="spinner"></div>Đang tải danh sách bệnh nhân...</div>}
+            {patientsError && <div style={{color: 'red'}}>{patientsError}</div>}
+            {!loadingPatients && !patientsError && patients.length === 0 && (
+              <div className="no-plan-container">
+                <i className="fas fa-users"></i>
+                <h2>Chưa có bệnh nhân nào</h2>
+                <p>Bạn chưa có bệnh nhân nào trong danh sách.</p>
+              </div>
+            )}
+            {!loadingPatients && !patientsError && patients.length > 0 && (
+              <div className="patient-list">
+                {patients.map((p) => (
+                  <div className="patient-card" key={p.BookID}>
+                    <div className="patient-info">
+                      <div className="patient-avatar"><i className="fas fa-user-injured"></i></div>
+                      <div className="patient-details">
+                        <div className="patient-row"><span className="patient-label">Mã BN:</span> {p.Patient?.PatientID || '---'}</div>
+                        <div className="patient-row"><span className="patient-label">Tên:</span> {p.Patient?.FullName || p.Patient?.Name || '---'}</div>
+                        <div className="patient-row"><span className="patient-label">Giới tính:</span> {p.Patient?.Gender || '---'}</div>
+                        <div className="patient-row"><span className="patient-label">Ngày sinh:</span> {p.Patient?.DateOfBirth ? new Date(p.Patient.DateOfBirth).toLocaleDateString('vi-VN') : '---'}</div>
+                        <div className="patient-row"><span className="patient-label">SĐT:</span> {p.Patient?.Phone || '---'}</div>
+                        <div className="patient-row"><span className="patient-label">Nhóm máu:</span> {p.Patient?.BloodType || '---'}</div>
+                        <div className="patient-row"><span className="patient-label">Dị ứng:</span> {p.Patient?.Allergy || '---'}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>

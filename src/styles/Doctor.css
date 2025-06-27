@@ -271,7 +271,7 @@
   box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
   margin-bottom: 36px;
   padding: 0;
-  overflow: hidden;
+  overflow: hidden; 
   transition: box-shadow 0.2s;
 }
 .plan-container:hover {
@@ -400,5 +400,79 @@
   .overview-grid {
     flex-direction: column;
     gap: 12px;
+  }
+}
+
+/* --- Patient List Section (Doctor View) --- */
+.patient-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 18px;
+}
+.patient-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
+  padding: 22px 24px 18px 24px;
+  min-width: 260px;
+  max-width: 340px;
+  flex: 1 1 300px;
+  display: flex;
+  align-items: flex-start;
+  transition: box-shadow 0.2s;
+  position: relative;
+}
+.patient-card:hover {
+  box-shadow: 0 6px 24px rgba(25, 118, 210, 0.16);
+}
+.patient-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  width: 100%;
+}
+.patient-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1976d2 60%, #64b5f6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 2rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+}
+.patient-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+.patient-row {
+  font-size: 1.04rem;
+  color: #222;
+  margin-bottom: 2px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.patient-label {
+  color: #1976d2;
+  font-weight: 600;
+  min-width: 80px;
+  display: inline-block;
+}
+@media (max-width: 900px) {
+  .patient-list {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .patient-card {
+    min-width: unset;
+    max-width: 100%;
+    padding: 16px 8px 12px 8px;
   }
 }
