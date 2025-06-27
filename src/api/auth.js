@@ -127,3 +127,10 @@ export const bacsilaytreatmentplan = () => {
 export const bacsilaydanhsachbenhnhan = () => {
   return axiosClient.get('/Appointment/mine-patients');
 };
+export const huylichthanhcong = (id, reason) => {
+  return axiosClient.put(`/Appointment/rejected/${id}`, reason, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}

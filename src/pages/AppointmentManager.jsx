@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {datlichkham} from '../api/auth';
 import Navbar from '../components/Navbar';
+import { huylichthanhcong } from  '../api/auth';
 
 const SERVICE_NAME_MAP = {
   'SV000001': 'Khám tổng quát',
@@ -57,6 +58,20 @@ const Doctor = () => {
     navigate('/login');
   };
 
+  const handleCancelAppointment = async (bookId) => {
+    try {
+      await huylichthanhcong(bookId, "Người dùng tự hủy ");
+      setAppointments(prev =>
+        prev.map(app =>
+          app.BookID === bookId ? { ...app, Status: 'Đã hủy' } : app
+        )
+      );
+      alert('Hủy lịch thành công!');
+    } catch (error) {
+      alert('Hủy lịch thất bại!');
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -102,7 +117,7 @@ const Doctor = () => {
                         <tr key={item.BookID || idx}>
                           <td>{item.BookID}</td>
                           <td>{item.PatientID}</td>
-                          <td>{SERVICE_NAME_MAP[item.ServiceID] || item.ServiceID}</td>
+                          <td>{ item.BookingType}</td>
                           <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
                           <td>{item.Note || ''}</td>
                           <td className={
@@ -110,10 +125,30 @@ const Doctor = () => {
                               ? 'status-badge-2 status-pending-3'
                               : item.Status === 'Đã xác nhận'
                               ? 'status-badge-2 status-confirmed-3'
-                              : item.Status === 'Rejected'
+                              : item.Status === 'rejected'
                               ? 'status-badge-2 status-rejected-3'
-                              : 'status-badge-2'}>{item.Status || ''}
-                           </td>
+                              : item.Status === 'Đã hủy'
+                              ? 'status-badge-2 status-cancelled-3'
+                              : 'status-badge-2'
+                            }>
+                            {item.Status || ''}
+                            {(item.Status !== 'Đã hủy' && item.Status !== 'rejected') && (
+                              <button
+                                style={{
+                                  marginLeft: 8,
+                                  padding: '2px 8px',
+                                  background: '#ff4d4f',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: 4,
+                                  cursor: 'pointer'
+                                }}
+                                onClick={() => handleCancelAppointment(item.BookID)}
+                              >
+                                Hủy lịch
+                              </button>
+                            )}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
