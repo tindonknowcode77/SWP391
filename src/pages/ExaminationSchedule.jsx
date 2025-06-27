@@ -938,7 +938,7 @@ export default function ExaminationSchedule() {
                       >
                         <option value="">-- Chọn ngày khám --</option>
                         {doctorScheduleData
-                          .map(item => item.BookDate && item.BookDate.slice(0, 10))
+                          .map(item => item.DateWork && item.DateWork.slice(0, 10))
                           .filter((date, idx, arr) => date && arr.indexOf(date) === idx)
                           .map(date => (
                             <option key={date} value={date}>{date}</option>
@@ -956,19 +956,19 @@ export default function ExaminationSchedule() {
                         required
                         disabled={
                           !form.appointmentDate ||
-                          doctorScheduleData.filter(item => item.BookDate && item.BookDate.slice(0,10) === form.appointmentDate).length === 0
+                          doctorScheduleData.filter(item => item.DateWork && item.DateWork.slice(0,10) === form.appointmentDate).length === 0
                         }
                       >
                         <option value="">-- Chọn giờ khám --</option>
                         {doctorScheduleData
-                          .filter(item => item.BookDate && item.BookDate.slice(0,10) === form.appointmentDate)
+                          .filter(item => item.DateWork && item.DateWork.slice(0,10) === form.appointmentDate)
                           .map(item => (
                             <option key={item.ScheduleID} value={item.StartTime && item.StartTime.slice(0,5)}>
-                              {item.StartTime && item.StartTime.slice(0,5)}
+                              {item.StartTime && item.StartTime.slice(0,5)} - {item.EndTime && item.EndTime.slice(0,5)} | Slot: {item.SlotNumber}
                             </option>
                           ))}
                       </select>
-                      {form.appointmentDate && doctorScheduleData.filter(item => item.BookDate && item.BookDate.slice(0,10) === form.appointmentDate).length === 0 && (
+                      {form.appointmentDate && doctorScheduleData.filter(item => item.DateWork && item.DateWork.slice(0,10) === form.appointmentDate).length === 0 && (
                         <p className="note">Không có khung giờ trống cho ngày đã chọn</p>
                       )}
                     </div>
@@ -1087,7 +1087,7 @@ export default function ExaminationSchedule() {
                             await nguoidungdatlich({
                               DoctorID: selectedDoctor.id,
                               ServiceID: serviceId,
-                              BookDate: bookDate,
+                              DateWork: bookDate,
                               Note: form.notes || '',
                             });
                           } catch (e) {
@@ -1167,7 +1167,7 @@ export default function ExaminationSchedule() {
               <table className="schedule-table">
                 <thead>
                   <tr>
-                    <th>Thứ</th>
+                    <th></th>
                     <th>Giờ bắt đầu làm việc</th>
                     <th>Ngày </th>
                   </tr>
@@ -1177,7 +1177,7 @@ export default function ExaminationSchedule() {
                     <tr key={item.ScheduleID}>
                       <td>{item.DayOfWeek}</td>
                       <td>{item.StartTime ? item.StartTime.slice(0,5) : ''}</td>
-                      <td>{item.BookDate ? item.BookDate.slice(0,10) : ''}</td>
+                      <td>{item.DateWork ? item.DateWork.slice(0,10) : ''}</td>
                     </tr>
                   ))}
                 </tbody>
