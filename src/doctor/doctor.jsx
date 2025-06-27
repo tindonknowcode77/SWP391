@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Doctor.css';
+import '../styles/TreatmentPlan.css';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {xemdanhsachlichduocduyet} from '../api/auth';
+import {bacsilaytreatmentplan} from '../api/auth';
 
-const SERVICE_NAME_MAP = {
-  'SV000001': 'Khám tổng quát',
-  'SV000002': 'Tư vấn điều trị',
-  'SV000003': 'Xét nghiệm HIV',
-  'SV000004': 'Xét nghiệm CD4',
-  'SV000005': 'Tư vấn điều trị ARV',
-  'SV000006': 'Xét nghiệm tải lượng virus',
-};
+
 
 const Doctor = () => {
   const [selected, setSelected] = useState('appointments');
@@ -20,6 +15,9 @@ const Doctor = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [treatmentPlans, setTreatmentPlans] = useState([]);
+  const [loadingPlans, setLoadingPlans] = useState(false);
+  const [planError, setPlanError] = useState(null);
 
   useEffect(() => {
     if (selected === 'appointments') {
@@ -33,6 +31,18 @@ const Doctor = () => {
         .catch((err) => {
           setError('Không thể tải danh sách lịch hẹn');
           setLoading(false);
+        });
+    } else if (selected === 'patients') {
+      setLoadingPlans(true);
+      setPlanError(null);
+      bacsilaytreatmentplan()
+        .then((res) => {
+          setTreatmentPlans(Array.isArray(res) ? res : (res?.data || []));
+          setLoadingPlans(false);
+        })
+        .catch((err) => {
+          setPlanError('Không thể tải hồ sơ điều trị');
+          setLoadingPlans(false);
         });
     }
   }, [selected]);
@@ -105,7 +115,7 @@ const Doctor = () => {
                       <tr key={item.BookID || idx}>
                         <td>{item.BookID}</td>
                         <td>{item.PatientID}</td>
-                        <td>{SERVICE_NAME_MAP[item.ServiceID] || item.ServiceID}</td>
+                        <td>{ item.BookingType}</td>
                         <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
                         <td>{item.Note || ''}</td>
                         <td className={
@@ -115,6 +125,8 @@ const Doctor = () => {
                             ? 'status-badge-2 status-confirmed-3'
                             : item.Status === 'Rejected'
                             ? 'status-badge-2 status-rejected-3'
+                            : item.Status === 'Thành công'
+                            ? 'status-badge-2 status-thanhcong-3'
                             : 'status-badge-2'}>{item.Status || ''}
                          </td>
                       </tr>
@@ -127,8 +139,87 @@ const Doctor = () => {
         )}
         {selected === 'patients' && (
           <div className="doctor-content">
-            <h2 className="doctor-table-title">Danh sách bệnh nhân</h2>
-            <div>Chức năng này dành cho bác sĩ. (Nội dung sẽ được phát triển sau)</div>
+            <h2 className="doctor-table-title">Danh sách hồ sơ điều trị</h2>
+            {loadingPlans && <div className="loading-container"><div className="spinner"></div>Đang tải hồ sơ điều trị...</div>}
+            {planError && <div style={{color: 'red'}}>{planError}</div>}
+            {!loadingPlans && !planError && treatmentPlans.length === 0 && (
+              <div className="no-plan-container">
+                <i className="fas fa-notes-medical"></i>
+                <h2>Chưa có hồ sơ điều trị nào</h2>
+                <p>Bệnh nhân chưa có hồ sơ điều trị.</p>
+              </div>
+            )}
+            {!loadingPlans && !planError && treatmentPlans.length > 0 && (
+              <div className="treatment-content">
+                <div className="container">
+                  {treatmentPlans.map((plan) => (
+                    <div className="plan-container" key={plan.TreatmentPlanID} style={{marginBottom: 32}}>
+                      <div className="plan-summary">
+                        <div className="summary-item">
+                          <div className="summary-icon doctor-icon"><i className="fas fa-user-md"></i></div>
+                          <div className="summary-details">
+                            <h3>Mã hồ sơ</h3>
+                            <p>{plan.TreatmentPlanID}</p>
+                            <span>Bác sĩ: {plan.DoctorID || '---'}</span>
+                          </div>
+                        </div>
+                        <div className="summary-item">
+                          <div className="summary-icon regimen-icon"><i className="fas fa-pills"></i></div>
+                          <div className="summary-details">
+                            <h3>Phác đồ ARV</h3>
+                            <p>{plan.ARVProtocol || '---'}</p>
+                            <span>Line: {plan.TreatmentLine || '---'}</span>
+                          </div>
+                        </div>
+                        <div className="summary-item">
+                          <div className="summary-icon status-icon"><i className="fas fa-notes-medical"></i></div>
+                          <div className="summary-details">
+                            <h3>Chẩn đoán</h3>
+                            <p>{plan.Diagnosis || '---'}</p>
+                            <span>Kết quả: {plan.TreatmentResult || '---'}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="plan-tabs">
+                        <button className="tab-btn active"><i className="fas fa-user-injured"></i> Thông tin bệnh nhân</button>
+                      </div>
+                      <div className="tab-content">
+                        <div className="overview-grid">
+                          <div className="overview-card">
+                            <h3><i className="fas fa-id-card"></i> Mã bệnh nhân</h3>
+                            <p>{plan.Patient?.PatientID || '---'}</p>
+                          </div>
+                          <div className="overview-card">
+                            <h3><i className="fas fa-user"></i> UserID</h3>
+                            <p>{plan.Patient?.UserID || '---'}</p>
+                          </div>
+                          <div className="overview-card">
+                            <h3><i className="fas fa-birthday-cake"></i> Ngày sinh</h3>
+                            <p>{plan.Patient?.DateOfBirth ? new Date(plan.Patient.DateOfBirth).toLocaleDateString('vi-VN') : '---'}</p>
+                          </div>
+                          <div className="overview-card">
+                            <h3><i className="fas fa-venus-mars"></i> Giới tính</h3>
+                            <p>{plan.Patient?.Gender || '---'}</p>
+                          </div>
+                          <div className="overview-card">
+                            <h3><i className="fas fa-phone"></i> Số điện thoại</h3>
+                            <p>{plan.Patient?.Phone || '---'}</p>
+                          </div>
+                          <div className="overview-card">
+                            <h3><i className="fas fa-tint"></i> Nhóm máu</h3>
+                            <p>{plan.Patient?.BloodType || '---'}</p>
+                          </div>
+                          <div className="overview-card">
+                            <h3><i className="fas fa-allergies"></i> Dị ứng</h3>
+                            <p>{plan.Patient?.Allergy || '---'}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </main>

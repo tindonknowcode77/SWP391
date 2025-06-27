@@ -259,3 +259,146 @@
 .status-rejected-3 {
   color: #c20909;
 }
+
+.status-thanhcong-3 {
+  color: #218838;
+}
+
+/* --- Treatment Plan Section (Doctor View) --- */
+.plan-container {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
+  margin-bottom: 36px;
+  padding: 0;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.plan-container:hover {
+  box-shadow: 0 6px 32px rgba(25, 118, 210, 0.16);
+}
+.plan-summary {
+  display: flex;
+  flex-wrap: wrap;
+  background: #f7fafd;
+  border-bottom: 1px solid #e3eaf3;
+  padding: 28px 32px 18px 32px;
+  gap: 24px;
+}
+.summary-item {
+  flex: 1 1 220px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 220px;
+}
+.summary-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #fff;
+}
+.doctor-icon {
+  background: linear-gradient(135deg, #1976d2 60%, #64b5f6 100%);
+}
+.regimen-icon {
+  background: linear-gradient(135deg, #8e24aa 60%, #ce93d8 100%);
+}
+.status-icon {
+  background: linear-gradient(135deg, #43a047 60%, #a5d6a7 100%);
+}
+.summary-details h3 {
+  font-size: 1.08rem;
+  color: #1976d2;
+  font-weight: 700;
+  margin: 0 0 2px 0;
+}
+.summary-details p {
+  font-size: 1.18rem;
+  color: #222;
+  font-weight: 600;
+  margin: 0 0 2px 0;
+}
+.summary-details span {
+  font-size: 0.98rem;
+  color: #666;
+}
+.plan-tabs {
+  display: flex;
+  border-bottom: 1px solid #e3eaf3;
+  background: #f7fafd;
+  padding: 0 32px;
+}
+.tab-btn {
+  padding: 16px 24px 12px 0;
+  background: none;
+  border: none;
+  font-weight: 700;
+  color: #1976d2;
+  font-size: 1.08rem;
+  cursor: pointer;
+  outline: none;
+  border-bottom: 3px solid transparent;
+  transition: border 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tab-btn.active {
+  color: #1565c0;
+  border-bottom: 3px solid #1976d2;
+  background: none;
+}
+.tab-content {
+  padding: 28px 32px 32px 32px;
+  background: #fff;
+}
+.overview-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.overview-card {
+  flex: 1 1 220px;
+  background: #f7fafd;
+  border-radius: 8px;
+  padding: 18px 16px 12px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 180px;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.04);
+}
+.overview-card h3 {
+  font-size: 1.01rem;
+  color: #1976d2;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.overview-card p {
+  font-size: 1.08rem;
+  color: #222;
+  font-weight: 500;
+  margin: 0;
+}
+@media (max-width: 900px) {
+  .plan-summary, .tab-content {
+    padding: 18px 8px 14px 8px;
+  }
+  .plan-tabs {
+    padding: 0 8px;
+  }
+  .overview-grid {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

@@ -119,3 +119,7 @@ export const nguoidungdatlich = (bookingData) => {
     }
   );
 };
+
+export const bacsilaytreatmentplan = () => {
+  return axiosClient.get('/TreatmentPlan/doctor');
+};
