@@ -210,3 +210,10 @@ export const getAllMedications = () => {
 export const getMedicationById = (id) => {
   return axiosClient.get(`/Medication/get-by-id/${id}`);
 };
+export const cancelAppointment = (id, reason) =>{
+  return axiosClient.put(`/Appointment/cancel/${id}`, reason, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}

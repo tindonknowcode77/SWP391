@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getTreatmentPlanById, AllARVProtocol, updateARVProtocol, addPrescription } from '../api/auth';
-
+import '../styles/TreatmentPlanDetail.css';
 const TreatmentPlanDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -99,7 +99,7 @@ const TreatmentPlanDetail = () => {
   console.log('plan:', plan);
 
   return (
-    <div style={{maxWidth: 800, margin: '0 auto', padding: 24}}>
+    <div className="treatment-detail-container">
       <button onClick={() => navigate(-1)} style={{marginBottom: 16}}>Quay lại</button>
       <h2>Chi tiết hồ sơ điều trị</h2>
       <div style={{marginBottom: 24}}>

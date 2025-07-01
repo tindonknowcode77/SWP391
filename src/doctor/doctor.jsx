@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import {xemdanhsachlichduocduyet} from '../api/auth';
 import {bacsilaytreatmentplan} from '../api/auth';
 import {bacsilaydanhsachbenhnhan} from '../api/auth';
+import { cancelAppointment } from '../api/auth';
 // import { PrescriptionByTreatmentPlan } from '../api/auth';
 
 
@@ -23,6 +24,9 @@ const Doctor = () => {
   const [patients, setPatients] = useState([]);
   const [loadingPatients, setLoadingPatients] = useState(false);
   const [patientsError, setPatientsError] = useState(null);
+  const [cancelReason, setCancelReason] = useState('');
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [appointmentToCancel, setAppointmentToCancel] = useState(null);
 
   useEffect(() => {
     if (selected === 'appointments') {
@@ -83,6 +87,27 @@ const Doctor = () => {
     navigate('/login');
   };
 
+  const handleCancelClick = (appointment) => {
+    setAppointmentToCancel(appointment);
+    setShowCancelModal(true);
+  };
+
+  const handleCancelConfirm = () => {
+    if (!appointmentToCancel) return;
+    console.log('Cancel payload:', cancelReason);
+    cancelAppointment(appointmentToCancel.BookID, cancelReason)
+      .then(() => {
+        setShowCancelModal(false);
+        setCancelReason('');
+        setAppointmentToCancel(null);
+        // Refresh danh sách lịch hẹn
+        xemdanhsachlichduocduyet()
+          .then((data) => {
+            setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+          });
+      });
+  };
+
   return (
     <div className="doctor-container">
       <aside className="doctor-sidebar">
@@ -131,6 +156,7 @@ const Doctor = () => {
                       <th>Thời gian</th>
                       <th>Ghi chú</th>
                       <th>Trạng thái</th>
+                      <th>Hành động</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -138,11 +164,11 @@ const Doctor = () => {
                       <tr key={item.BookID || idx}>
                         <td>{item.BookID}</td>
                         <td>{item.PatientID}</td>
-                        <td>{ item.BookingType}</td>
+                        <td>{item.BookingType}</td>
                         <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
                         <td>{item.Note || ''}</td>
                         <td className={
-                            item.Status === 'Đang chờ'
+                          item.Status === 'Đang chờ'
                             ? 'status-badge-2 status-pending-3'
                             : item.Status === 'Đã xác nhận'
                             ? 'status-badge-2 status-confirmed-3'
@@ -151,11 +177,27 @@ const Doctor = () => {
                             : item.Status === 'Thành công'
                             ? 'status-badge-2 status-thanhcong-3'
                             : 'status-badge-2'}>{item.Status || ''}
-                         </td>
+                        </td>
+                        <td>
+                          <button onClick={() => handleCancelClick(item)} style={{color: 'red'}}>Hủy lịch</button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+            {showCancelModal && (
+              <div className="modal-overlay">
+                <div className="modal-container">
+                  <h3>Hủy lịch hẹn</h3>
+                  <p>Nhập lý do hủy:</p>
+                  <textarea value={cancelReason} onChange={e => setCancelReason(e.target.value)} rows={3} style={{width: '100%'}} />
+                  <div style={{marginTop: 16, display: 'flex', gap: 12}}>
+                    <button onClick={handleCancelConfirm} style={{background: 'red', color: '#fff', borderRadius: 6, padding: '8px 16px'}}>Xác nhận hủy</button>
+                    <button onClick={() => setShowCancelModal(false)} style={{borderRadius: 6, padding: '8px 16px'}}>Hủy bỏ</button>
+                  </div>
+                </div>
               </div>
             )}
           </div>
