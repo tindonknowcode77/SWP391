@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import {xemdanhsachlichduocduyet} from '../api/auth';
 import {bacsilaytreatmentplan} from '../api/auth';
 import {bacsilaydanhsachbenhnhan} from '../api/auth';
+// import { PrescriptionByTreatmentPlan } from '../api/auth';
 
 
 
@@ -204,6 +205,13 @@ const Doctor = () => {
                       </div>
                       <div className="plan-tabs">
                         <button className="tab-btn active"><i className="fas fa-user-injured"></i> Thông tin bệnh nhân</button>
+                        <button
+                          className="tab-btn"
+                          style={{marginLeft: 12, background: '#1976d2', color: '#fff', borderRadius: 6, fontWeight: 500}}
+                          onClick={() => navigate(`/treatment-plan/${plan.TreatmentPlanID}`)}
+                        >
+                          <i className="fas fa-eye"></i> Xem chi tiết
+                        </button>
                       </div>
                       <div className="tab-content">
                         <div className="overview-grid">

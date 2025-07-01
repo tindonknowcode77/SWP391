@@ -32,6 +32,8 @@ import ARVTreatment from './pages/ARVTreatment';
 import HIVTesting from './pages/HIVTesting';
 import Staff from './staff/Staff';
 import Doctor from './doctor/doctor';
+import TreatmentPlanDetail from './pages/TreatmentPlanDetail';
+import PrescriptionForm from './pages/PrescriptionForm';
 
 function App() {
   // const [file, setFile] = useState(null);
@@ -91,8 +93,10 @@ function App() {
             <Route path="/hiv-department" element={<HIVDepartment />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/treatment-plan" element={<TreatmentPlan />} />
+            <Route path="/treatment-plan/:id" element={<TreatmentPlanDetail />} />
             <Route path="/medication" element={<MedicationManager />} />
             <Route path="/appointments" element={<AppointmentManager />} />
+            <Route path="/prescription/:treatmentPlanId" element={<PrescriptionForm />} />
 
             {/* Trang staff */}
             <Route path="/staff" element={<Staff />} />

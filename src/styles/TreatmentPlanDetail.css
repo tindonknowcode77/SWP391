@@ -1,0 +1,39 @@
+.treatment-detail-container {
+  max-width: 700px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 36px 36px 28px 36px;
+}
+.treatment-detail-container h2 {
+  font-size: 2rem;
+  margin-bottom: 18px;
+  color: #1976d2;
+}
+.treatment-detail-container .info-block {
+  margin-bottom: 28px;
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+.treatment-detail-container strong {
+  color: #1976d2;
+}
+.treatment-detail-container select, .treatment-detail-container button, .treatment-detail-container input {
+  font-size: 1rem;
+}
+.add-prescription-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.2s;
+}
+.add-prescription-btn:hover {
+  background: #1256a3;
+} 

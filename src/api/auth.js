@@ -133,4 +133,80 @@ export const huylichthanhcong = (id, reason) => {
       'Content-Type': 'application/json'
     }
   });
+};
+
+export const TreatmentPlansByPatient = (patientId) => {
+  return axiosClient.get(`/TreatmentPlan/by-patient/${patientId}`);
+};
+
+export const getTreatmentPlanById = (treatmentPlanId) => {
+  return axiosClient.get(`/TreatmentPlan/GetTreatmentPlanById/${treatmentPlanId}`);
+}; 
+export const  AddTreatmentPlan = (data) => {
+  return axiosClient.post('/TreatmentPlan/add', data, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
 }
+export const UpdateTreatmentPlan = (data, treatmentPlanId ) =>{
+  return axiosClient.put(`/TreatmentPlan/update/${treatmentPlanId}`, data, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}
+export const DeleteTreatmentPlan = (treatmentPlanId) =>{
+  return axiosClient.delete(`/TreatmentPlan/delete/${treatmentPlanId}`);
+}
+
+export const addPrescription = (data) => {
+  return axiosClient.post('/Prescription/add-prescription', data, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+};
+
+export const updatePrescription = (data) => {
+  return axiosClient.put('/Prescription/update-prescription', data, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+};
+
+export const AllPrescriptions = () => {
+  return axiosClient.get('/Prescription/all-prescriptions');
+};
+
+export const PrescriptionById = (prescriptionId) => {
+  return axiosClient.get(`/Prescription/get-prescription-by-id/${prescriptionId}`);
+};
+
+export const PrescriptionsByPatient = (patientId) => {
+  return axiosClient.get(`/Prescription/by-patient/${patientId}`);
+};
+export const AllARVProtocol = () => {
+  return axiosClient.get('/Doctor/AllARVProtocol');
+}
+
+export const ARVProtocolById = (ARVProtocolID) => {
+  return axiosClient.get(`/Doctor/ARVProtocol/${ARVProtocolID}`);
+};
+
+export const updateARVProtocol = (data) => {
+  return axiosClient.put('/Doctor/UpdateARVProtocol', data, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+};
+
+export const getAllMedications = () => {
+  return axiosClient.get('/Medication/get-all');
+};
+
+export const getMedicationById = (id) => {
+  return axiosClient.get(`/Medication/get-by-id/${id}`);
+};

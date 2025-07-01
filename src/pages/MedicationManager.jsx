@@ -6,6 +6,7 @@ import { formatDate, getTimeOfDay } from '../utils/helpers';
 import useResponsive from '../hooks/useResponsive';
 import '../styles/MedicationManager.css';
 import Navbar from '../components/Navbar';
+import { getAllMedications } from '../api/auth';
 
 const MedicationManager = () => {
   const { currentUser } = useContext(AuthContext);
@@ -27,35 +28,14 @@ const MedicationManager = () => {
   const { isMobile } = useResponsive();
 
   useEffect(() => {
-    const fetchMedications = async () => {
-      try {
-        setLoading(true);
-        
-        // Fetch current medications
-        const medData = await apiService.getMedications(currentUser.id);
-        setMedications(medData);
-        
-        // Fetch medication history
-        const historyData = await apiService.getMedicationHistory(currentUser.id);
-        setHistory(historyData);
-        
-        // Fetch reminder settings
-        const settings = await apiService.getMedicationReminders(currentUser.id);
-        if (settings) {
-          setReminderSettings(settings);
-        }
-        
+    setLoading(true);
+    getAllMedications()
+      .then(res => {
+        setMedications(res.data || res);
         setLoading(false);
-      } catch (error) {
-        console.error('Error fetching medication data:', error);
-        setLoading(false);
-      }
-    };
-
-    if (currentUser) {
-      fetchMedications();
-    }
-  }, [currentUser]);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   // Group medications by time of day
   const groupedMedications = medications.reduce((acc, med) => {
