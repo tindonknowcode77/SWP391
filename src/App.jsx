@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
+import ChatButton from './components/ChatButton';
 
 import AboutPage from './pages/AboutPage'; 
 import Specialty from './pages/Specialty'; 
@@ -55,58 +56,57 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        
+        {/* Nút chat AI hiển thị ở mọi trang */}
+        <ChatButton />
+        {/* Phần định tuyến các trang */}
+        <Routes>
+          {/* Trang chủ chính của ứng dụng */}
+          <Route path="/" element={<Home />} />
 
-          {/* Phần định tuyến các trang */}
-          <Routes>
-            {/* Trang chủ chính của ứng dụng */}
-            <Route path="/" element={<Home />} />
+          {/* Trang chủ bệnh viện */}
+          <Route path="/hospital" element={<HospitalHome />} />
 
-            {/* Trang chủ bệnh viện */}
-            <Route path="/hospital" element={<HospitalHome />} />
+          {/* Các trang xác thực */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
-            {/* Các trang xác thực */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
+          {/* Các trang thuộc bệnh viện */}
+          <Route path="/hospital/gioi-thieu" element={<AboutPage />} />
+          <Route path="/hospital/chuyen-khoa" element={<Specialty />} />
+          <Route path="/hospital/dich-vu" element={<Services />} />
+          <Route path="/hospital/dich-vu/tu-van" element={<Consulting />} />
+          <Route path="/hospital/dich-vu/dieu-tri-arv" element={<ARVTreatment />} />
+          <Route path="/hospital/dich-vu/xet-nghiem" element={<HIVTesting />} />
+          <Route path="/hospital/lich-kham" element={<ExaminationSchedule />} />
+          <Route path="/hospital/tin-tuc" element={<News />} />
+          <Route path="/hospital/tin-tuc/:id" element={<NewsDetail />} />
+          <Route path="/hospital/lien-he" element={<Contact />} />
+          <Route path="/hospital/bac-si" element={<DoctorsList />} />
+          <Route path="/hospital/bac-si/:id" element={<DoctorProfile />} />
 
-            {/* Các trang thuộc bệnh viện */}
-            <Route path="/hospital/gioi-thieu" element={<AboutPage />} />
-            <Route path="/hospital/chuyen-khoa" element={<Specialty />} />
-            <Route path="/hospital/dich-vu" element={<Services />} />
-            <Route path="/hospital/dich-vu/tu-van" element={<Consulting />} />
-            <Route path="/hospital/dich-vu/dieu-tri-arv" element={<ARVTreatment />} />
-            <Route path="/hospital/dich-vu/xet-nghiem" element={<HIVTesting />} />
-            <Route path="/hospital/lich-kham" element={<ExaminationSchedule />} />
-            <Route path="/hospital/tin-tuc" element={<News />} />
-            <Route path="/hospital/tin-tuc/:id" element={<NewsDetail />} />
-            <Route path="/hospital/lien-he" element={<Contact />} />
-            <Route path="/hospital/bac-si" element={<DoctorsList />} />
-            <Route path="/hospital/bac-si/:id" element={<DoctorProfile />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/news/:id" element={<NewsDetail />} />
 
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/news/:id" element={<NewsDetail />} />
+          {/* Các trang chức năng của ứng dụng */}
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/hiv-department" element={<HIVDepartment />} />
+          <Route path="/resources" element={<Resources />} />
+          <Route path="/treatment-plan" element={<TreatmentPlan />} />
+          <Route path="/treatment-plan/:id" element={<TreatmentPlanDetail />} />
+          <Route path="/medication" element={<MedicationManager />} />
+          <Route path="/appointments" element={<AppointmentManager />} />
+          <Route path="/prescription/:treatmentPlanId" element={<PrescriptionForm />} />
 
-            {/* Các trang chức năng của ứng dụng */}
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/hiv-department" element={<HIVDepartment />} />
-            <Route path="/resources" element={<Resources />} />
-            <Route path="/treatment-plan" element={<TreatmentPlan />} />
-            <Route path="/treatment-plan/:id" element={<TreatmentPlanDetail />} />
-            <Route path="/medication" element={<MedicationManager />} />
-            <Route path="/appointments" element={<AppointmentManager />} />
-            <Route path="/prescription/:treatmentPlanId" element={<PrescriptionForm />} />
+          {/* Trang staff */}
+          <Route path="/staff" element={<Staff />} />
+          {/* Trang doctor */}
+          <Route path="/doctor" element={<Doctor />} />
 
-            {/* Trang staff */}
-            <Route path="/staff" element={<Staff />} />
-            {/* Trang doctor */}
-            <Route path="/doctor" element={<Doctor />} />
-
-            {/* Chuyển hướng cho các URL không hợp lệ */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        
+          {/* Chuyển hướng cho các URL không hợp lệ */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </Router>
     </AuthProvider>
   );

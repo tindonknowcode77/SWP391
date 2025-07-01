@@ -210,3 +210,17 @@ export const getAllMedications = () => {
 export const getMedicationById = (id) => {
   return axiosClient.get(`/Medication/get-by-id/${id}`);
 };
+
+export const aichat = (message) => {
+  const token = localStorage.getItem('token');
+  return axiosClient.post(
+    '/Chat',
+    { Message: message },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    }
+  );
+};
