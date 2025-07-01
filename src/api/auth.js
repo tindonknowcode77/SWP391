@@ -211,6 +211,7 @@ export const getMedicationById = (id) => {
   return axiosClient.get(`/Medication/get-by-id/${id}`);
 };
 
+
 export const aichat = (message) => {
   const token = localStorage.getItem('token');
   return axiosClient.post(
@@ -224,3 +225,12 @@ export const aichat = (message) => {
     }
   );
 };
+
+export const cancelAppointment = (id, reason) =>{
+  return axiosClient.put(`/Appointment/cancel/${id}`, reason, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
