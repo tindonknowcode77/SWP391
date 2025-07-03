@@ -32,6 +32,8 @@ export default function ExaminationSchedule() {
   const [showSchedulePopup, setShowSchedulePopup] = useState(false);
   const [doctorScheduleData, setDoctorScheduleData] = useState([]);
   const [showServiceSuccessPopup, setShowServiceSuccessPopup] = useState(false);
+  const [examschPage, setExamschPage] = useState(0); // Pagination for doctor grid
+  const doctorsPerPage = 5;
   
   // Fetch doctors data from API
   useEffect(() => {
@@ -887,28 +889,52 @@ export default function ExaminationSchedule() {
             
             <h2 className="section-title">Chọn bác sĩ chuyên khoa</h2>
             <div className="doctor-grid">
-              {doctors.map((doc) => (
-                <div className="doctor-card" key={doc.id} onClick={() => handleDoctorSelect(doc)}>
-                  <img className="doctor-avatar" src={doc.avatar} alt={doc.name} />
-                  <div className="doctor-card-info">
-                    <h3 className="doctor-name">{doc.name}</h3>
-                    <p className="doctor-specialty">{doc.specialty}</p>
-                    <div className="doctor-experience">{doc.experience}</div>
-                    <div className="doctor-rating">
-                      {[...Array(5)].map((_, i) => (
-                        <i key={i} className={`fas fa-star ${i < Math.floor(doc.rating) ? 'filled' : 'empty'}`}></i>
-                      ))}
-                      <span>{doc.rating}</span>
+              {doctors
+                .slice(examschPage * doctorsPerPage, examschPage * doctorsPerPage + doctorsPerPage)
+                .map((doc) => (
+                  <div className="doctor-card" key={doc.id} onClick={() => handleDoctorSelect(doc)}>
+                    <img className="doctor-avatar" src={doc.avatar} alt={doc.name} />
+                    <div className="doctor-card-info">
+                      <h3 className="doctor-name">{doc.name}</h3>
+                      <p className="doctor-specialty">{doc.specialty}</p>
+                      <div className="doctor-experience">{doc.experience}</div>
+                      <div className="doctor-rating">
+                        {[...Array(5)].map((_, i) => (
+                          <i key={i} className={`fas fa-star ${i < Math.floor(doc.rating) ? 'filled' : 'empty'}`}></i>
+                        ))}
+                        <span>{doc.rating}</span>
+                      </div>
+                      <div className="doctor-schedule-brief">
+                        <div><i className="fas fa-calendar-alt"></i> {doc.schedule}</div>
+                        <div><i className="fas fa-clock"></i> {doc.hours}</div>
+                      </div>
+                      <button className="view-profile-btn">Xem hồ sơ</button>
                     </div>
-                    <div className="doctor-schedule-brief">
-                      <div><i className="fas fa-calendar-alt"></i> {doc.schedule}</div>
-                      <div><i className="fas fa-clock"></i> {doc.hours}</div>
-                    </div>
-                    <button className="view-profile-btn">Xem hồ sơ</button>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
+            {/* Pagination controls */}
+            {doctors.length > doctorsPerPage && (
+              <div className="examsch-pagination">
+                <button
+                  className="examsch-pagination-arrow"
+                  onClick={() => setExamschPage((prev) => Math.max(prev - 1, 0))}
+                  disabled={examschPage === 0}
+                  aria-label="Trang trước"
+                >
+                  &lt;
+                </button>
+                <span className="examsch-pagination-info">{examschPage + 1} / {Math.ceil(doctors.length / doctorsPerPage)}</span>
+                <button
+                  className="examsch-pagination-arrow"
+                  onClick={() => setExamschPage((prev) => Math.min(prev + 1, Math.ceil(doctors.length / doctorsPerPage) - 1))}
+                  disabled={examschPage === Math.ceil(doctors.length / doctorsPerPage) - 1}
+                  aria-label="Trang sau"
+                >
+                  &gt;
+                </button>
+              </div>
+            )}
           </>
         )}
         

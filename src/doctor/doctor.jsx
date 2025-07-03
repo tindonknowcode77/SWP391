@@ -27,6 +27,7 @@ const Doctor = () => {
   const [cancelReason, setCancelReason] = useState('');
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [appointmentToCancel, setAppointmentToCancel] = useState(null);
+  const [planPage, setPlanPage] = useState(0); // Pagination for treatment plans
 
   useEffect(() => {
     if (selected === 'appointments') {
@@ -151,22 +152,22 @@ const Doctor = () => {
                   <thead>
                     <tr>
                       <th>Mã đặt lịch</th>
-                      <th>Mã bệnh nhân</th>
+                      <th>Tên bệnh nhân</th>
                       <th>Loại dịch vụ</th>
                       <th>Thời gian</th>
-                      <th>Ghi chú</th>
+                      <th>Số điện thoại</th>
                       <th>Trạng thái</th>
                       <th>Hành động</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {appointments.map((item, idx) => (
+                    {appointments.map((item, idx ) => (
                       <tr key={item.BookID || idx}>
                         <td>{item.BookID}</td>
-                        <td>{item.PatientID}</td>
+                        <td>{item.PatientFullname}</td>
                         <td>{item.BookingType}</td>
                         <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
-                        <td>{item.Note || ''}</td>
+                        <td>{item.Patient?.Phone || ''}</td>
                         <td className={
                           item.Status === 'Đang chờ'
                             ? 'status-badge-2 status-pending-3'
@@ -217,78 +218,98 @@ const Doctor = () => {
             {!loadingPlans && !planError && treatmentPlans.length > 0 && (
               <div className="treatment-content">
                 <div className="container">
-                  {treatmentPlans.map((plan) => (
-                    <div className="plan-container" key={plan.TreatmentPlanID} style={{marginBottom: 32}}>
-                      <div className="plan-summary">
-                        <div className="summary-item">
-                          <div className="summary-icon doctor-icon"><i className="fas fa-user-md"></i></div>
-                          <div className="summary-details">
-                            <h3>Mã hồ sơ</h3>
-                            <p>{plan.TreatmentPlanID}</p>
-                            <span>Bác sĩ: {plan.DoctorID || '---'}</span>
+                  {/* Only show 1 plan at a time */}
+                  {(() => {
+                    const plan = treatmentPlans[planPage];
+                    return (
+                      <div className="plan-container" key={plan.TreatmentPlanID} style={{marginBottom: 32}}>
+                        <div className="plan-summary">
+                          <div className="summary-item">
+                            <div className="summary-icon doctor-icon"><i className="fas fa-user-md"></i></div>
+                            <div className="summary-details">
+                              <h3>Mã hồ sơ</h3>
+                              <p>{plan.TreatmentPlanID}</p>
+                              <span>Bác sĩ: {plan.DoctorID || '---'}</span>
+                            </div>
+                          </div>
+                          <div className="summary-item">
+                            <div className="summary-icon regimen-icon"><i className="fas fa-pills"></i></div>
+                            <div className="summary-details">
+                              <h3>Phác đồ ARV</h3>
+                              <p>{plan.ARVProtocol || '---'}</p>
+                              <span>Line: {plan.TreatmentLine || '---'}</span>
+                            </div>
+                          </div>
+                          <div className="summary-item">
+                            <div className="summary-icon status-icon"><i className="fas fa-notes-medical"></i></div>
+                            <div className="summary-details">
+                              <h3>Chẩn đoán</h3>
+                              <p>{plan.Diagnosis || '---'}</p>
+                              <span>Kết quả: {plan.TreatmentResult || '---'}</span>
+                            </div>
                           </div>
                         </div>
-                        <div className="summary-item">
-                          <div className="summary-icon regimen-icon"><i className="fas fa-pills"></i></div>
-                          <div className="summary-details">
-                            <h3>Phác đồ ARV</h3>
-                            <p>{plan.ARVProtocol || '---'}</p>
-                            <span>Line: {plan.TreatmentLine || '---'}</span>
-                          </div>
+                        <div className="plan-tabs">
+                          <button className="tab-btn active"><i className="fas fa-user-injured"></i> Thông tin bệnh nhân</button>
+                          <button
+                            className="tab-btn"
+                            style={{marginLeft: 12, background: '#1976d2', color: '#fff', borderRadius: 6, fontWeight: 500}}
+                            onClick={() => navigate(`/treatment-plan/${plan.TreatmentPlanID}`)}
+                          >
+                            <i className="fas fa-eye"></i> Xem chi tiết
+                          </button>
                         </div>
-                        <div className="summary-item">
-                          <div className="summary-icon status-icon"><i className="fas fa-notes-medical"></i></div>
-                          <div className="summary-details">
-                            <h3>Chẩn đoán</h3>
-                            <p>{plan.Diagnosis || '---'}</p>
-                            <span>Kết quả: {plan.TreatmentResult || '---'}</span>
+                        <div className="tab-content">
+                          <div className="overview-grid">
+                            <div className="overview-card">
+                              <h3><i className="fas fa-id-card"></i> Mã bệnh nhân</h3>
+                              <p>{plan.Patient?.PatientID || '---'}</p>
+                            </div>
+                            <div className="overview-card">
+                              <h3><i className="fas fa-birthday-cake"></i> Ngày sinh</h3>
+                              <p>{plan.Patient?.DateOfBirth ? new Date(plan.Patient.DateOfBirth).toLocaleDateString('vi-VN') : '---'}</p>
+                            </div>
+                            <div className="overview-card">
+                              <h3><i className="fas fa-venus-mars"></i> Giới tính</h3>
+                              <p>{plan.Patient?.Gender || '---'}</p>
+                            </div>
+                            <div className="overview-card">
+                              <h3><i className="fas fa-phone"></i> Số điện thoại</h3>
+                              <p>{plan.Patient?.Phone || '---'}</p>
+                            </div>
+                            <div className="overview-card">
+                              <h3><i className="fas fa-tint"></i> Nhóm máu</h3>
+                              <p>{plan.Patient?.BloodType || '---'}</p>
+                            </div>
+                            <div className="overview-card">
+                              <h3><i className="fas fa-allergies"></i> Dị ứng</h3>
+                              <p>{plan.Patient?.Allergy || '---'}</p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                      <div className="plan-tabs">
-                        <button className="tab-btn active"><i className="fas fa-user-injured"></i> Thông tin bệnh nhân</button>
-                        <button
-                          className="tab-btn"
-                          style={{marginLeft: 12, background: '#1976d2', color: '#fff', borderRadius: 6, fontWeight: 500}}
-                          onClick={() => navigate(`/treatment-plan/${plan.TreatmentPlanID}`)}
-                        >
-                          <i className="fas fa-eye"></i> Xem chi tiết
-                        </button>
-                      </div>
-                      <div className="tab-content">
-                        <div className="overview-grid">
-                          <div className="overview-card">
-                            <h3><i className="fas fa-id-card"></i> Mã bệnh nhân</h3>
-                            <p>{plan.Patient?.PatientID || '---'}</p>
-                          </div>
-                          <div className="overview-card">
-                            <h3><i className="fas fa-user"></i> UserID</h3>
-                            <p>{plan.Patient?.UserID || '---'}</p>
-                          </div>
-                          <div className="overview-card">
-                            <h3><i className="fas fa-birthday-cake"></i> Ngày sinh</h3>
-                            <p>{plan.Patient?.DateOfBirth ? new Date(plan.Patient.DateOfBirth).toLocaleDateString('vi-VN') : '---'}</p>
-                          </div>
-                          <div className="overview-card">
-                            <h3><i className="fas fa-venus-mars"></i> Giới tính</h3>
-                            <p>{plan.Patient?.Gender || '---'}</p>
-                          </div>
-                          <div className="overview-card">
-                            <h3><i className="fas fa-phone"></i> Số điện thoại</h3>
-                            <p>{plan.Patient?.Phone || '---'}</p>
-                          </div>
-                          <div className="overview-card">
-                            <h3><i className="fas fa-tint"></i> Nhóm máu</h3>
-                            <p>{plan.Patient?.BloodType || '---'}</p>
-                          </div>
-                          <div className="overview-card">
-                            <h3><i className="fas fa-allergies"></i> Dị ứng</h3>
-                            <p>{plan.Patient?.Allergy || '---'}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })()}
+                  {/* Pagination controls */}
+                  <div className="plan-pagination">
+                    <button
+                      className="plan-pagination-arrow"
+                      onClick={() => setPlanPage((prev) => Math.max(prev - 1, 0))}
+                      disabled={planPage === 0}
+                      aria-label="Trang trước"
+                    >
+                      &lt;
+                    </button>
+                    <span className="plan-pagination-info">{planPage + 1} / {treatmentPlans.length}</span>
+                    <button
+                      className="plan-pagination-arrow"
+                      onClick={() => setPlanPage((prev) => Math.min(prev + 1, treatmentPlans.length - 1))}
+                      disabled={planPage === treatmentPlans.length - 1}
+                      aria-label="Trang sau"
+                    >
+                      &gt;
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -312,13 +333,13 @@ const Doctor = () => {
                   <div className="patient-card" key={p.BookID}>
                     <div className="patient-info">
                       <div className="patient-avatar"><i className="fas fa-user-injured"></i></div>
-                      <div className="patient-details">
-                        <div className="patient-row"><span className="patient-label">Mã BN:</span> {p.Patient?.PatientID || '---'}</div>
-                        <div className="patient-row"><span className="patient-label">Tên:</span> {p.Patient?.FullName || p.Patient?.Name || '---'}</div>
+                      <div className="patient-details">  
+                        <div className="patient-row"><span className="patient-label">Tên:</span> {p?.PatientFullname || p.Patient?.Name || '---'}</div>
                         <div className="patient-row"><span className="patient-label">Giới tính:</span> {p.Patient?.Gender || '---'}</div>
                         <div className="patient-row"><span className="patient-label">Ngày sinh:</span> {p.Patient?.DateOfBirth ? new Date(p.Patient.DateOfBirth).toLocaleDateString('vi-VN') : '---'}</div>
                         <div className="patient-row"><span className="patient-label">SĐT:</span> {p.Patient?.Phone || '---'}</div>
                         <div className="patient-row"><span className="patient-label">Nhóm máu:</span> {p.Patient?.BloodType || '---'}</div>
+                        <div className="patient-row"><span className="patient-label">Ghi chú:</span> {p.Note || '---'}</div>
                         <div className="patient-row"><span className="patient-label">Dị ứng:</span> {p.Patient?.Allergy || '---'}</div>
                       </div>
                     </div>

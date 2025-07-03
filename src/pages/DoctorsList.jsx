@@ -9,6 +9,9 @@ const DoctorsList = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSpecialty, setFilterSpecialty] = useState('');
+  const [currentPage, setCurrentPage] = useState(0); // Pagination for doctors
+  const doctorsPerPage = 3;
+
   useEffect(() => {
     // Fetch doctors data from API
     const fetchData = async () => {
@@ -108,34 +111,36 @@ const DoctorsList = () => {
           </div>
             <div className="doctors-grid">
             {filteredDoctors.length > 0 ? (
-              filteredDoctors.map(doctor => (
-                <div className="doctor-card" key={doctor.UserID || doctor.id}>
-                  <div className="doctor-image">
-                    <img 
-                      src={doctor.image || "https://randomuser.me/api/portraits/med/men/32.jpg"} 
-                      alt={doctor.Fullname || doctor.name || "Bác sĩ"} 
-                    />
-                  </div>
-                  <div className="doctor-info">
-                    <h3>{doctor.Fullname || doctor.name}</h3>
-                    <p className="specialty">
-                      <i className="fas fa-stethoscope"></i> {doctor.Specialization || doctor.Specialty || "Chuyên khoa chung"}
-                    </p>
-                    <p className="experience">
-                      <i className="fas fa-history"></i> {doctor.ExperienceYears ? `${doctor.ExperienceYears} năm kinh nghiệm` : doctor.Experience || ""}
-                    </p>
-                    <p className="license-number">
-                      <i className="fas fa-id-card"></i> Số giấy phép: {doctor.LicenseNumber || "N/A"}
-                    </p>
-                    <p className="email">
-                      <i className="fas fa-envelope"></i> {doctor.Email || "Email không có sẵn"}
-                    </p>
-                    <div className="doctor-contact">
-                      <Link to={`/hospital/bac-si/${doctor.UserID || doctor.id}`} className="doctor-btn">Xem hồ sơ</Link>
+              filteredDoctors
+                .slice(currentPage * doctorsPerPage, currentPage * doctorsPerPage + doctorsPerPage)
+                .map(doctor => (
+                  <div className="doctor-card" key={doctor.UserID || doctor.id}>
+                    <div className="doctor-image">
+                      <img 
+                        src={doctor.image || "https://randomuser.me/api/portraits/med/men/32.jpg"} 
+                        alt={doctor.Fullname || doctor.name || "Bác sĩ"} 
+                      />
+                    </div>
+                    <div className="doctor-info">
+                      <h3>{doctor.Fullname || doctor.name}</h3>
+                      <p className="specialty">
+                        <i className="fas fa-stethoscope"></i> {doctor.Specialization || doctor.Specialty || "Chuyên khoa chung"}
+                      </p>
+                      <p className="experience">
+                        <i className="fas fa-history"></i> {doctor.ExperienceYears ? `${doctor.ExperienceYears} năm kinh nghiệm` : doctor.Experience || ""}
+                      </p>
+                      <p className="license-number">
+                        <i className="fas fa-id-card"></i> Số giấy phép: {doctor.LicenseNumber || "N/A"}
+                      </p>
+                      <p className="email">
+                        <i className="fas fa-envelope"></i> {doctor.Email || "Email không có sẵn"}
+                      </p>
+                      <div className="doctor-contact">
+                        <Link to={`/hospital/bac-si/${doctor.UserID || doctor.id}`} className="doctor-btn">Xem hồ sơ</Link>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
+                ))
             ) : (
               <div className="no-results">
                 <i className="fas fa-user-md"></i>
@@ -144,6 +149,28 @@ const DoctorsList = () => {
               </div>
             )}
           </div>
+          {/* Pagination controls */}
+          {filteredDoctors.length > doctorsPerPage && (
+            <div className="doctor-pagination">
+              <button
+                className="doctor-pagination-arrow"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
+                disabled={currentPage === 0}
+                aria-label="Trang trước"
+              >
+                &lt;
+              </button>
+              <span className="doctor-pagination-info">{currentPage + 1} / {Math.ceil(filteredDoctors.length / doctorsPerPage)}</span>
+              <button
+                className="doctor-pagination-arrow"
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(filteredDoctors.length / doctorsPerPage) - 1))}
+                disabled={currentPage === Math.ceil(filteredDoctors.length / doctorsPerPage) - 1}
+                aria-label="Trang sau"
+              >
+                &gt;
+              </button>
+            </div>
+          )}
         </div>
       </div>
       

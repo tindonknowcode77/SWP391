@@ -2459,3 +2459,49 @@ h1 {
 .service-success-popup .done-btn:hover {
   background: #125ea2;
 }
+
+.examsch-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  margin: 32px 0 0 0;
+}
+
+.examsch-pagination-arrow {
+  background: #f5f5f5;
+  border: 1px solid #0078bf;
+  color: #0078bf;
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+.examsch-pagination-arrow:hover:not(:disabled),
+.examsch-pagination-arrow:focus:not(:disabled) {
+  background: #0078bf;
+  color: #fff;
+  border-color: #0078bf;
+}
+
+.examsch-pagination-arrow:disabled {
+  background: #eee;
+  color: #aaa;
+  border-color: #eee;
+  cursor: not-allowed;
+}
+
+.examsch-pagination-info {
+  font-size: 1.1rem;
+  color: #333;
+  font-weight: 500;
+  min-width: 60px;
+  text-align: center;
+}
