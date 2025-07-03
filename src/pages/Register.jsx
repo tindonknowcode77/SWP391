@@ -13,6 +13,7 @@ const Register = () => {
     confirmPassword: '',
     phoneNumber: '',
     dateOfBirth: '',
+    address: '',
     gender: '',
     agreeTerms: false
   });
@@ -57,19 +58,6 @@ const Register = () => {
     return true;
   };
 
-  const validateStep2 = () => {
-    if (!formData.phoneNumber || !formData.dateOfBirth || !formData.gender) {
-      setFormError('Vui lòng điền đầy đủ thông tin');
-      return false;
-    }
-    
-    if (!formData.agreeTerms) {
-      setFormError('Bạn cần đồng ý với điều khoản dịch vụ');
-      return false;
-    }
-    
-    return true;
-  };
 
   const handleNext = () => {
     if (validateStep1()) {
@@ -86,9 +74,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    if (!validateStep2()) {
-      return;
-    }
+    
   
     setIsSubmitting(true);
     setFormError('');
@@ -98,9 +84,12 @@ const Register = () => {
         Fullname: formData.fullName, 
         Email: formData.email,
         Password: formData.password,
+        Address: formData.address,
       };
   
-      console.log("Sending payload:", payload); // debug
+      // Tạo bản sao và ẩn password khi log
+      const safePayload = { ...payload, Password: '******' };
+      console.log('Sending payload:', safePayload);
   
       const success = await dangky(payload); 
   
@@ -124,209 +113,118 @@ const Register = () => {
           <div className="register-header">
             <h2>Đăng ký tài khoản</h2>
             <p>Tạo tài khoản để quản lý việc điều trị HIV của bạn</p>
-            
-            <div className="register-steps">
-              <div className={`step ${step >= 1 ? 'active' : ''}`}>
-                <div className="step-number">1</div>
-                <div className="step-text">Thông tin tài khoản</div>
-              </div>
-              <div className="step-connector"></div>
-              <div className={`step ${step >= 2 ? 'active' : ''}`}>
-                <div className="step-number">2</div>
-                <div className="step-text">Thông tin cá nhân</div>
-              </div>
-            </div>
           </div>
           
           {formError && <div className="register-error">{formError}</div>}
           
           <form onSubmit={handleSubmit} className="register-form">
-            {step === 1 && (
-              <div className="form-step">
-                <div className="form-group">
-                  <label htmlFor="fullName" className="form-label-3" >Họ và tên</label>
-                  <div className="input-row">
-                    <i className="fas fa-user input-icon"></i>
-                    <input
-                      type="text"
-                      id="fullName"
-                      name="fullName"
-                      value={formData.fullName}
-                      onChange={handleChange}
-                      placeholder="Nhập họ và tên đầy đủ"
-                      required
-                    />
-                  </div>
+            <div className="form-step">
+              <div className="form-group">
+                <label htmlFor="fullName" className="form-label-3" >Họ và tên</label>
+                <div className="input-row">
+                  <i className="fas fa-user input-icon"></i>
+                  <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    placeholder="Nhập họ và tên đầy đủ"
+                    required
+                  />
                 </div>
-                
-                <div className="form-group">
-                  <label htmlFor="email" className="form-label-3">Email</label>
-                  <div className="input-row">
-                    <i className="fas fa-envelope input-icon"></i>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="Nhập địa chỉ email"
-                      required
-                    />
-                  </div>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="email" className="form-label-3">Email</label>
+                <div className="input-row">
+                  <i className="fas fa-envelope input-icon"></i>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Nhập địa chỉ email"
+                    required
+                  />
                 </div>
-                
-                <div className="form-group">
-                  <label htmlFor="password" className="form-label-3">Mật khẩu</label>
-                  <div className="input-row">
-                    <i className="fas fa-lock input-icon"></i>
-                    <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      placeholder="Tạo mật khẩu (ít nhất 8 ký tự)"
-                      required
-                    />
-                  </div>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="password" className="form-label-3">Mật khẩu</label>
+                <div className="input-row">
+                  <i className="fas fa-lock input-icon"></i>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Tạo mật khẩu (ít nhất 8 ký tự)"
+                    required
+                  />
                 </div>
-                
-                <div className="form-group">
-                  <label htmlFor="confirmPassword" className="form-label-3">Xác nhận mật khẩu</label>
-                  <div className="input-row">
-                    <i className="fas fa-lock input-icon"></i>
-                    <input
-                      type="password"
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      placeholder="Nhập lại mật khẩu"
-                      required
-                    />
-                  </div>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="confirmPassword" className="form-label-3">Xác nhận mật khẩu</label>
+                <div className="input-row">
+                  <i className="fas fa-lock input-icon"></i>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Nhập lại mật khẩu"
+                    required
+                  />
                 </div>
-                
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="address" className="form-label-3">Địa chỉ</label>
+                <div className="input-row">
+                  <i className="fas fa-map-marker-alt input-icon"></i>
+                  <input
+                    type="text"
+                    id="address"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    placeholder="Nhập địa chỉ của bạn"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-group terms-group">
+                <div className="checkbox-container">
+                  <input
+                    type="checkbox"
+                    id="agreeTerms"
+                    name="agreeTerms"
+                    checked={formData.agreeTerms}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label htmlFor="agreeTerms">
+                    Tôi đồng ý với <a href="#">Điều khoản dịch vụ</a> và <a href="#">Chính sách bảo mật</a>
+                  </label>
+                </div>
+              </div>
+
+              <div className="form-actions">
                 <button 
-                  type="button" 
+                  type="submit" 
                   className="register-button"
-                  onClick={handleNext}
+                  disabled={isSubmitting}
                 >
-                  Tiếp theo
+                  {isSubmitting ? 'Đang xử lý...' : 'Hoàn tất đăng ký'}
                 </button>
               </div>
-            )}
-            
-            {step === 2 && (
-              <div className="form-step">
-                <div className="form-group">
-                  <label htmlFor="phoneNumber" className="form-label-3">Số điện thoại</label>
-                  <div className="input-row">
-                    <i className="fas fa-phone input-icon"></i>
-                    <input
-                      type="tel"
-                      id="phoneNumber"
-                      name="phoneNumber"
-                      value={formData.phoneNumber}
-                      onChange={handleChange}
-                      placeholder="Nhập số điện thoại"
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="dateOfBirth" className="form-label-3">Ngày sinh</label>
-                  <div className="input-row">
-                    <i className="fas fa-calendar input-icon"></i>
-                    <input
-                      type="date"
-                      id="dateOfBirth"
-                      name="dateOfBirth"
-                      value={formData.dateOfBirth}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <div className="form-group">
-                  <label></label>
-                  <div className="gender-options">
-                    <div className="gender-option">
-                      <input 
-                        type="radio" 
-                        id="male" 
-                        name="gender" 
-                        value="male"
-                        checked={formData.gender === 'male'}
-                        onChange={handleChange}
-                        required
-                      />
-                      <label htmlFor="male">Nam</label>
-                    </div>
-                    
-                    <div className="gender-option">
-                      <input 
-                        type="radio" 
-                        id="female" 
-                        name="gender" 
-                        value="female"
-                        checked={formData.gender === 'female'}
-                        onChange={handleChange}
-                      />
-                      <label htmlFor="female">Nữ</label>
-                    </div>
-                    
-                    <div className="gender-option">
-                      <input 
-                        type="radio" 
-                        id="other" 
-                        name="gender" 
-                        value="other"
-                        checked={formData.gender === 'other'}
-                        onChange={handleChange}
-                      />
-                      <label htmlFor="other">Khác</label>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="form-group terms-group">
-                  <div className="checkbox-container">
-                    <input
-                      type="checkbox"
-                      id="agreeTerms"
-                      name="agreeTerms"
-                      checked={formData.agreeTerms}
-                      onChange={handleChange}
-                      required
-                    />
-                    <label htmlFor="agreeTerms">
-                      Tôi đồng ý với <a href="#">Điều khoản dịch vụ</a> và <a href="#">Chính sách bảo mật</a>
-                    </label>
-                  </div>
-                </div>
-                
-                <div className="form-actions">
-                  <button 
-                    type="button" 
-                    className="back-button"
-                    onClick={handleBack}
-                  >
-                    Quay lại
-                  </button>
-                  
-                  <button 
-                    type="submit" 
-                    className="register-button"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? 'Đang xử lý...' : 'Hoàn tất đăng ký'}
-                  </button>
-                </div>
-              </div>
-            )}
+            </div>
           </form>
           
           <div className="register-footer">
