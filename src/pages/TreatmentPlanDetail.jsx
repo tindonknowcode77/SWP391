@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTreatmentPlanById, AllARVProtocol, updateARVProtocol, addPrescription } from '../api/auth';
+import { getTreatmentPlanById, AllARVProtocol, addPrescription, UpdateTreatmentPlan } from '../api/auth';
+import {updateARVProtocol} from '../api/auth';
 import '../styles/TreatmentPlanDetail.css';
 const TreatmentPlanDetail = () => {
   const { id } = useParams();
@@ -56,21 +57,32 @@ const TreatmentPlanDetail = () => {
       setArvEditSuccess('');
       return;
     }
-    updateARVProtocol({
-      ARVID: selectedARVObj.ARVID,
-      ARVCode: selectedARVObj.ARVCode,
-      ARVName: selectedARVObj.ARVName,
-      Description: selectedARVObj.Description,
-      AgeRange: selectedARVObj.AgeRange,
-      ForGroup: selectedARVObj.ForGroup
-    })
+    if (!plan) {
+      setArvEditError('Không tìm thấy hồ sơ điều trị!');
+      setArvEditSuccess('');
+      return;
+    }
+    const payload = {
+      TreatmentPlanID: plan.TreatmentPlanID,
+      PatientID: plan.PatientID,
+      DoctorID: plan.DoctorID,
+      ARVProtocol: selectedARVObj.ARVID,
+      TreatmentLine: plan.TreatmentLine,
+      Diagnosis: plan.Diagnosis,
+      TreatmentResult: plan.TreatmentResult
+    };
+    UpdateTreatmentPlan(payload)
       .then(() => {
         setArvEditSuccess('Cập nhật phác đồ ARV thành công!');
         setArvEditError('');
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       })
-      .catch(() => {
+      .catch((error) => {
         setArvEditError('Cập nhật phác đồ ARV thất bại!');
         setArvEditSuccess('');
+        console.log('API error:', error.response?.data || error);
       });
   };
 
@@ -104,10 +116,10 @@ const TreatmentPlanDetail = () => {
       <h2>Chi tiết hồ sơ điều trị</h2>
       <div style={{marginBottom: 24}}>
         <strong>Mã hồ sơ:</strong> {plan.TreatmentPlanID}<br/>
-        <strong>Bác sĩ:</strong> {plan.DoctorID || '---'}<br/>
-        <strong>Chẩn đoán:</strong> {plan.Diagnosis || '---'}<br/>
-        <strong>Kết quả:</strong> {plan.TreatmentResult || '---'}<br/>
-        <strong>Phác đồ ARV hiện tại:</strong> {plan.ARVProtocol || '---'}
+        <strong>Bác sĩ:</strong> {plan.DoctorID }<br/>
+        <strong>Chẩn đoán:</strong> {plan.Diagnosis}<br/>
+        <strong>Kết quả:</strong> {plan.TreatmentResult }<br/>
+        <strong>Phác đồ ARV hiện tại:</strong> {plan.ARVProtocol }
       </div>
       <div style={{marginBottom: 32}}>
         <h3>Chọn/Sửa phác đồ ARV</h3>

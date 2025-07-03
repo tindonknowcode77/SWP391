@@ -522,3 +522,96 @@
   min-width: 60px;
   text-align: center;
 }
+
+/* --- Cancel Appointment Popup & Button --- */
+.doctor-cancel-btn {
+  color: #e53935;
+  background: none;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+.doctor-cancel-btn:hover,
+.doctor-cancel-btn:focus {
+  background: #ffeaea;
+  color: #b71c1c;
+}
+
+.doctor-cancel-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.doctor-cancel-modal .doctor-cancel-container {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(229,57,53,0.18);
+  padding: 32px 28px 24px 28px;
+  min-width: 340px;
+  max-width: 95vw;
+  text-align: center;
+  animation: popup-fade-in 0.25s;
+}
+@keyframes popup-fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.doctor-cancel-modal h3 {
+  color: #e53935;
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.doctor-cancel-modal textarea {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  padding: 10px;
+  font-size: 1rem;
+  margin-bottom: 18px;
+  resize: vertical;
+  min-height: 60px;
+  transition: border 0.2s;
+}
+.doctor-cancel-modal textarea:focus {
+  border-color: #e53935;
+  outline: none;
+}
+.doctor-cancel-confirm {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.doctor-cancel-confirm:hover,
+.doctor-cancel-confirm:focus {
+  background: #b71c1c;
+}
+.doctor-cancel-close {
+  background: #f5f5f5;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.doctor-cancel-close:hover,
+.doctor-cancel-close:focus {
+  background: #e0e0e0;
+}

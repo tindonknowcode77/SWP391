@@ -7,6 +7,7 @@ import {xemdanhsachlichduocduyet} from '../api/auth';
 import {bacsilaytreatmentplan} from '../api/auth';
 import {bacsilaydanhsachbenhnhan} from '../api/auth';
 import { cancelAppointment } from '../api/auth';
+import { updateARVProtocol } from '../api/auth';
 // import { PrescriptionByTreatmentPlan } from '../api/auth';
 
 
@@ -180,7 +181,7 @@ const Doctor = () => {
                             : 'status-badge-2'}>{item.Status || ''}
                         </td>
                         <td>
-                          <button onClick={() => handleCancelClick(item)} style={{color: 'red'}}>Hủy lịch</button>
+                          <button onClick={() => handleCancelClick(item)} className="doctor-cancel-btn">Hủy lịch</button>
                         </td>
                       </tr>
                     ))}
@@ -189,14 +190,14 @@ const Doctor = () => {
               </div>
             )}
             {showCancelModal && (
-              <div className="modal-overlay">
-                <div className="modal-container">
+              <div className="doctor-cancel-modal">
+                <div className="doctor-cancel-container">
                   <h3>Hủy lịch hẹn</h3>
                   <p>Nhập lý do hủy:</p>
-                  <textarea value={cancelReason} onChange={e => setCancelReason(e.target.value)} rows={3} style={{width: '100%'}} />
-                  <div style={{marginTop: 16, display: 'flex', gap: 12}}>
-                    <button onClick={handleCancelConfirm} style={{background: 'red', color: '#fff', borderRadius: 6, padding: '8px 16px'}}>Xác nhận hủy</button>
-                    <button onClick={() => setShowCancelModal(false)} style={{borderRadius: 6, padding: '8px 16px'}}>Hủy bỏ</button>
+                  <textarea value={cancelReason} onChange={e => setCancelReason(e.target.value)} rows={3} />
+                  <div style={{marginTop: 16, display: 'flex', gap: 12, justifyContent: 'center'}}>
+                    <button onClick={handleCancelConfirm} className="doctor-cancel-confirm">Xác nhận hủy</button>
+                    <button onClick={() => setShowCancelModal(false)} className="doctor-cancel-close">Hủy bỏ</button>
                   </div>
                 </div>
               </div>
@@ -253,7 +254,7 @@ const Doctor = () => {
                           <button className="tab-btn active"><i className="fas fa-user-injured"></i> Thông tin bệnh nhân</button>
                           <button
                             className="tab-btn"
-                            style={{marginLeft: 12, background: '#1976d2', color: '#fff', borderRadius: 6, fontWeight: 500}}
+                            style={{marginLeft: 12, color: 'black', fontWeight: 500}}
                             onClick={() => navigate(`/treatment-plan/${plan.TreatmentPlanID}`)}
                           >
                             <i className="fas fa-eye"></i> Xem chi tiết

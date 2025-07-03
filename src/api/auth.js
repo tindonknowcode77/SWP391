@@ -120,7 +120,7 @@ export const nguoidungdatlich = (bookingData) => {
   );
 };
 
-export const bacsilaytreatmentplan = () => {
+export const  bacsilaytreatmentplan = () => {
   return axiosClient.get('/TreatmentPlan/doctor');
 };
 
@@ -149,13 +149,14 @@ export const  AddTreatmentPlan = (data) => {
     }
   });
 }
-export const UpdateTreatmentPlan = (data, treatmentPlanId ) =>{
-  return axiosClient.put(`/TreatmentPlan/update/${treatmentPlanId}`, data, {
+export const UpdateTreatmentPlan = (data) => {
+  return axiosClient.put('/TreatmentPlan/UpdateTreatmentPlan', data, {
     headers: {
       'Content-Type': 'application/json'
     }
   });
 }
+
 export const DeleteTreatmentPlan = (treatmentPlanId) =>{
   return axiosClient.delete(`/TreatmentPlan/delete/${treatmentPlanId}`);
 }
@@ -195,7 +196,7 @@ export const ARVProtocolById = (ARVProtocolID) => {
   return axiosClient.get(`/Doctor/ARVProtocol/${ARVProtocolID}`);
 };
 
-export const updateARVProtocol = (data) => {
+export const  updateARVProtocol = (data) => {
   return axiosClient.put('/Doctor/UpdateARVProtocol', data, {
     headers: {
       'Content-Type': 'application/json'
