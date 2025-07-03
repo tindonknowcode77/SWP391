@@ -205,14 +205,13 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Prepare data for capnhatprofile API
+
       const profileData = {
-        UserId: currentUser?.id, // Get UserId from currentUser
+        UserId: currentUser?.id, 
         Fullname: formData.fullName,
         DateOfBirth: formData.dateOfBirth ? `${formData.dateOfBirth}T00:00:00.000Z` : '',
-        // Email: formData.email,
-        DayOfBirth: formData.dateOfBirth ? `${formData.dateOfBirth}T00:00:00.000Z` : '',
         Gender: formData.gender,
+        Address : formData.address,
         Phone: formData.phoneNumber,
         BloodType: formData.bloodType,
         Allergy: formData.allergies,
