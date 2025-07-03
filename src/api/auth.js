@@ -235,3 +235,6 @@ export const cancelAppointment = (id, reason) =>{
   });
 }
 
+export const nguoidunglayhosodieutri = () => {
+  return axiosClient.get('/TreatmentPlan/patient');
+};

@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import '../styles/Profile.css';
 import {capnhatprofile} from '../api/auth';
 import {pantient} from '../api/auth';
+import { nguoidunglayhosodieutri } from  '../api/auth';
 
 const Profile = () => {  
   const { currentUser, loading, updateProfile, logout, setCurrentUser } = useAuth();
@@ -57,33 +58,7 @@ const Profile = () => {
     image : ''
   });
 
-  // Mô phỏng dữ liệu lịch sử khám bệnh
-  const [medicalHistory] = useState([
-    {
-      id: 1,
-      date: '15/04/2025',
-      doctor: 'BS. Nguyễn Văn A',
-      diagnosis: 'Tái khám định kỳ',
-      notes: 'Tình trạng ổn định, tiếp tục phác đồ điều trị hiện tại',
-      nextAppointment: '15/05/2025'
-    },
-    {
-      id: 2,
-      date: '15/03/2025',
-      doctor: 'BS. Trần Thị B',
-      diagnosis: 'Nhiễm trùng hô hấp nhẹ',
-      notes: 'Kê toa kháng sinh, nghỉ ngơi nhiều, uống nhiều nước',
-      nextAppointment: '15/04/2025'
-    },
-    {
-      id: 3,
-      date: '15/02/2025',
-      doctor: 'BS. Nguyễn Văn A',
-      diagnosis: 'Tái khám định kỳ',
-      notes: 'Điều chỉnh liều thuốc ARV, xét nghiệm CD4 cho kết quả tốt',
-      nextAppointment: '15/03/2025'
-    },
-  ]);
+  const [medicalHistory, setMedicalHistory] = useState([]);
 
   // Mô phỏng dữ liệu thuốc đang dùng
   const [medications] = useState([
@@ -140,6 +115,10 @@ const Profile = () => {
 
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
+  const [treatmentPlan, setTreatmentPlan] = useState(null);
+  const [tpLoading, setTpLoading] = useState(false);
+  const [tpError, setTpError] = useState(null);
+
   // Lấy dữ liệu profile từ API khi vào trang hoặc khi currentUser thay đổi
   useEffect(() => {
     if (currentUser?.id) {
@@ -184,6 +163,23 @@ const Profile = () => {
       setShowSuccessPopup(true);
       localStorage.removeItem('showProfileSuccessPopup');
     }
+  }, []);
+
+  useEffect(() => {
+    nguoidunglayhosodieutri()
+      .then(res => {
+        // Đảm bảo luôn là mảng
+        const arr = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [res]);
+        const mapped = arr.map(item => ({
+          id: item.TreatmentPlanID,
+          doctor: item.DoctorID, 
+          diagnosis: item.Diagnosis,
+          arv: item.TreatmentLine,
+          notes: item.TreatmentResult
+        }));
+        setMedicalHistory(mapped);
+      })
+      .catch(() => setMedicalHistory([]));
   }, []);
 
   const handleTabChange = (tab) => {
@@ -527,7 +523,7 @@ const Profile = () => {
                   {medicalHistory.map(record => (
                     <div className="medical-record" key={record.id}>
                       <div className="record-header">
-                        <div className="record-date">{record.date}</div>
+                      <div className="record-doctor">{record.id}</div>
                         <div className="record-doctor">{record.doctor}</div>
                       </div>
                       
@@ -543,8 +539,8 @@ const Profile = () => {
                         </div>
                         
                         <div className="record-item">
-                          <span className="label">Lịch hẹn tiếp theo:</span>
-                          <span className="value highlight">{record.nextAppointment}</span>
+                          <span className="label">Số Lần Điều Trị:</span>
+                          <span className="value highlight">{record.arv}</span>
                         </div>
                       </div>
                       
@@ -561,14 +557,7 @@ const Profile = () => {
                       </div>
                     </div>
                   ))}
-                </div>
-                
-                <div className="view-all-btn-container">
-                  <button className="view-all-btn">
-                    <span>Xem tất cả lịch sử khám bệnh</span>
-                    <i className="fas fa-arrow-right"></i>
-                  </button>
-                </div>
+                </div>  
               </div>
             )}
             
