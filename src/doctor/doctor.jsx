@@ -7,7 +7,6 @@ import {xemdanhsachlichduocduyet} from '../api/auth';
 import {bacsilaytreatmentplan} from '../api/auth';
 import {bacsilaydanhsachbenhnhan} from '../api/auth';
 import { cancelAppointment } from '../api/auth';
-import { updateARVProtocol } from '../api/auth';
 // import { PrescriptionByTreatmentPlan } from '../api/auth';
 
 
@@ -18,7 +17,7 @@ const Doctor = () => {
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); 
   const [treatmentPlans, setTreatmentPlans] = useState([]);
   const [loadingPlans, setLoadingPlans] = useState(false);
   const [planError, setPlanError] = useState(null);
