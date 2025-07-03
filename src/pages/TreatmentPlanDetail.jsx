@@ -111,45 +111,49 @@ const TreatmentPlanDetail = () => {
   console.log('plan:', plan);
 
   return (
-    <div className="treatment-detail-container">
-      <button onClick={() => navigate(-1)} style={{marginBottom: 16}}>Quay lại</button>
-      <h2>Chi tiết hồ sơ điều trị</h2>
-      <div style={{marginBottom: 24}}>
-        <strong>Mã hồ sơ:</strong> {plan.TreatmentPlanID}<br/>
-        <strong>Bác sĩ:</strong> {plan.DoctorID }<br/>
-        <strong>Chẩn đoán:</strong> {plan.Diagnosis}<br/>
-        <strong>Kết quả:</strong> {plan.TreatmentResult }<br/>
-        <strong>Phác đồ ARV hiện tại:</strong> {plan.ARVProtocol }
-      </div>
-      <div style={{marginBottom: 32}}>
-        <h3>Chọn/Sửa phác đồ ARV</h3>
-        <select value={selectedARV} onChange={handleARVChange} style={{marginRight: 12}}>
-          <option value="">-- Chọn phác đồ ARV --</option>
-          {arvProtocols.map((arv) => (
-            <option key={arv.ARVID} value={arv.ARVID}>
-              {arv.ARVName} ({arv.ARVCode})
-            </option>
-          ))}
-        </select>
-        <button onClick={handleARVUpdate}>Cập nhật</button>
-        {arvEditSuccess && <div style={{color:'green'}}>{arvEditSuccess}</div>}
-        {arvEditError && <div style={{color:'red'}}>{arvEditError}</div>}
-        {selectedARVObj && (
-          <div className="arv-detail" style={{marginTop: 16, marginBottom: 16, background: '#f7f7f7', padding: 16, borderRadius: 8}}>
-            <p><strong>Mã phác đồ:</strong> {selectedARVObj.ARVID}</p>
-            <p><strong>Tên phác đồ:</strong> {selectedARVObj.ARVName}</p>
-            <p><strong>Mã code:</strong> {selectedARVObj.ARVCode}</p>
-            <p><strong>Mô tả:</strong> {selectedARVObj.Description}</p>
-            <p><strong>Độ tuổi:</strong> {selectedARVObj.AgeRange}</p>
-            <p><strong>Nhóm:</strong> {selectedARVObj.ForGroup}</p>
+    <div className="treatment-plan-detail-page">
+      <div className="treatment-plan-detail-center">
+        <button className="tpd-back-btn" onClick={() => navigate(-1)}>Quay lại</button>
+        <h2 className="tpd-title">Chi tiết hồ sơ điều trị</h2>
+        <div className="tpd-info-block">
+          <strong>Mã hồ sơ:</strong> {plan.TreatmentPlanID}<br/>
+          <strong>Bác sĩ:</strong> {plan.DoctorID }<br/>
+          <strong>Chẩn đoán:</strong> {plan.Diagnosis}<br/>
+          <strong>Kết quả:</strong> {plan.TreatmentResult }<br/>
+          <strong>Phác đồ ARV hiện tại:</strong> {plan.ARVProtocol }
+        </div>
+        <section className="tpd-arv-section">
+          <h3 className="tpd-section-title">Chọn/Sửa phác đồ ARV</h3>
+          <div className="tpd-arv-row">
+            <select value={selectedARV} onChange={handleARVChange} className="tpd-arv-select">
+              <option value="">-- Chọn phác đồ ARV --</option>
+              {arvProtocols.map((arv) => (
+                <option key={arv.ARVID} value={arv.ARVID}>
+                  {arv.ARVName} ({arv.ARVCode})
+                </option>
+              ))}
+            </select>
+            <button className="tpd-update-arv-btn" onClick={handleARVUpdate}>Cập nhật</button>
           </div>
-        )}
-      </div>
-      <div>
-        <h3>Đơn thuốc</h3>
-        <button className="add-prescription-btn" onClick={() => navigate(`/prescription/${plan.TreatmentPlanID}`)}>
-          Thêm đơn thuốc
-        </button>
+          {arvEditSuccess && <div className="tpd-success-msg">{arvEditSuccess}</div>}
+          {arvEditError && <div className="tpd-error-msg">{arvEditError}</div>}
+          {selectedARVObj && (
+            <div className="tpd-arv-detail">
+              <p><strong>Mã phác đồ:</strong> {selectedARVObj.ARVID}</p>
+              <p><strong>Tên phác đồ:</strong> {selectedARVObj.ARVName}</p>
+              <p><strong>Mã code:</strong> {selectedARVObj.ARVCode}</p>
+              <p><strong>Mô tả:</strong> {selectedARVObj.Description}</p>
+              <p><strong>Độ tuổi:</strong> {selectedARVObj.AgeRange}</p>
+              <p><strong>Nhóm:</strong> {selectedARVObj.ForGroup}</p>
+            </div>
+          )}
+        </section>
+        <section className="tpd-prescription-section">
+          <h3 className="tpd-section-title">Đơn thuốc</h3>
+          <button className="tpd-add-prescription-btn" onClick={() => navigate(`/prescription/${plan.TreatmentPlanID}`)}>
+            Thêm đơn thuốc
+          </button>
+        </section>
       </div>
     </div>
   );
