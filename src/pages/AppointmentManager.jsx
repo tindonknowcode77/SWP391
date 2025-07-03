@@ -105,7 +105,7 @@ const Doctor = () => {
                     <thead>
                       <tr>
                         <th>Mã đặt lịch</th>
-                        <th>Mã bệnh nhân</th>
+                        <th>Tên bệnh nhân</th>
                         <th>Loại dịch vụ</th>
                         <th>Thời gian</th>
                         <th>Ghi chú</th>
@@ -116,7 +116,7 @@ const Doctor = () => {
                       {appointments.map((item, idx) => (
                         <tr key={item.BookID || idx}>
                           <td>{item.BookID}</td>
-                          <td>{item.PatientID}</td>
+                          <td>{item.PatientFullname}</td>
                           <td>{ item.BookingType}</td>
                           <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
                           <td>{item.Note || ''}</td>
@@ -129,6 +129,58 @@ const Doctor = () => {
                               ? 'status-badge-2 status-rejected-3'
                               : item.Status === 'Đã hủy'
                               ? 'status-badge-2 status-cancelled-3'
+                              : item.Status === 'Thành công'
+                              ? 'status-badge-2 status-thanhcong-3'
+                              : 'status-badge-2'
+                            }>
+                            {item.Status || ''}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+          {selected === 'patients' && (
+            <div className="doctor-content">
+              <h2 className="doctor-table-title">Lịch Hẹn Của Tôi</h2>
+              {loading && <div>Đang tải...</div>}
+              {error && <div style={{color: 'red'}}>{error}</div>}
+              {!loading && !error && appointments.length === 0 && <div>Bác sĩ chưa có lịch hẹn nào.</div>}
+              {!loading && !error && appointments.length > 0 && (
+                <div className="appointments-table-wrapper">
+                  <table className="appointments-table">
+                    <thead>
+                      <tr>
+                        <th>Mã đặt lịch</th>
+                        <th>Tên bệnh nhân</th>
+                        <th>Loại dịch vụ</th>
+                        <th>Thời gian</th>
+                        <th>Ghi chú</th>
+                        <th>Trạng thái</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {appointments.map((item, idx) => (
+                        <tr key={item.BookID || idx}>
+                          <td>{item.BookID}</td>
+                          <td>{item.PatientFullname}</td>
+                          <td>{ item.BookingType}</td>
+                          <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
+                          <td>{item.Note || ''}</td>
+                          <td className={
+                              item.Status === 'Đang chờ'
+                              ? 'status-badge-2 status-pending-3'
+                              : item.Status === 'Đã xác nhận'
+                              ? 'status-badge-2 status-confirmed-3'
+                              : item.Status === 'rejected'
+                              ? 'status-badge-2 status-rejected-3'
+                              : item.Status === 'Đã hủy'
+                              ? 'status-badge-2 status-cancelled-3'
+                              : item.Status === 'Thành công'
+                              ? 'status-badge-2 status-thanhcong-3'
                               : 'status-badge-2'
                             }>
                             {item.Status || ''}
@@ -155,12 +207,6 @@ const Doctor = () => {
                   </table>
                 </div>
               )}
-            </div>
-          )}
-          {selected === 'patients' && (
-            <div className="doctor-content">
-              <h2 className="doctor-table-title">Danh Sách Lịch Đã Đặt</h2>
-              <div>Chức năng này dành cho bác sĩ. (Nội dung sẽ được phát triển sau)</div>
             </div>
           )}
         </main>
