@@ -241,7 +241,7 @@ const Profile = () => {
       localStorage.setItem('showProfileSuccessPopup', 'true');
       setTimeout(() => {
         window.location.reload();
-      }, 2500);
+      }, 2000);
     }
   };
   const handleLogout = () => {
