@@ -24,6 +24,16 @@
   outline: none;
   transition: border 0.2s;
 }
+
+.prescription-form select {
+  padding: 10px 12px;
+  border: 1px solid #bdbdbd;
+  border-radius: 6px;
+  font-size: 16px;
+  outline: none;
+  transition: border 0.2s;
+}
+
 .prescription-form input:focus {
   border: 1.5px solid #1976d2;
 }
