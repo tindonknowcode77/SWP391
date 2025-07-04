@@ -1100,16 +1100,7 @@ export default function ExaminationSchedule() {
                         />
                         <label htmlFor="service-arv">Điều trị ARV</label>
                       </div>
-                      <div className="checkbox-item">
-                        <input
-                          type="checkbox"
-                          id="service-consult"
-                          value="Tư vấn HIV"
-                          checked={form.bookingtype.includes('Tư vấn HIV')}
-                          onChange={handleServiceChange}
-                        />
-                        <label htmlFor="service-consult">Tư vấn HIV</label>
-                      </div>
+                      
                       <div className="checkbox-item">
                         <input
                           type="checkbox"
@@ -1221,7 +1212,7 @@ export default function ExaminationSchedule() {
               <div className="appointment-details">
                 <div className="appointment-detail-item">
                   <i className="fas fa-calendar-alt"></i>
-                  <span>Ngày khám: {new Date(appointments[appointments.length - 1]?.appointmentDate).toLocaleDateString('vi-VN')}</span>
+                  <span>   khám: {new Date(appointments[appointments.length - 1]?.appointmentDate).toLocaleDateString('vi-VN')}</span>
                 </div>
                 <div className="appointment-detail-item">
                   <i className="fas fa-clock"></i>

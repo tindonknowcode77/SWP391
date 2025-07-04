@@ -192,8 +192,8 @@ const HospitalHome = () => {
               <div className="service-icon">
                 <i className="fas fa-user-md"></i>
               </div>
-              <h3>Tư vấn HIV/AIDS</h3>
-              <p>Dịch vụ tư vấn trước và sau xét nghiệm HIV từ đội ngũ chuyên gia tâm lý.</p>
+              <h3>Điều trị HIV/AIDS</h3>
+              <p>Dịch vụ xét nghiệm HIV từ đội ngũ chuyên gia tâm lý hàng đầu.</p>
               <Link to="/hospital/dich-vu/tu-van" className="read-more">Xem thêm</Link>
             </div>
             
@@ -560,7 +560,7 @@ const HospitalHome = () => {
             <div className="footer-column">
               <h3>Dịch vụ</h3>
               <ul className="footer-links">
-                <li><Link to="/hospital/dich-vu/tu-van">Tư vấn HIV/AIDS</Link></li>
+                <li><Link to="/hospital/dich-vu/tu-van">Điều trị HIV/AIDS</Link></li>
                 <li><Link to="/hospital/dich-vu/dieu-tri-arv">Điều trị ARV</Link></li>
                 <li><Link to="/hospital/dich-vu/xet-nghiem">Xét nghiệm HIV</Link></li>
                 <li><Link to="/hospital/dich-vu/benh-dong-nhiem">Điều trị bệnh đồng nhiễm</Link></li>

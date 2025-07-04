@@ -17,9 +17,9 @@ const Services = () => (
           <div className="service-icon">
             <i className="fas fa-user-md"></i>
           </div>
-          <h3>Tư vấn HIV/AIDS</h3>
-          <p>Dịch vụ tư vấn trước và sau xét nghiệm HIV từ đội ngũ chuyên gia tâm lý.</p>
-          <Link to="/hospital/dich-vu/tu-van" className="read-more">Xem thêm</Link>
+          <h3>Điều Trị HIV</h3>
+          <p>Dịch vụ điều trị xét nghiệm HIV từ đội ngũ chuyên gia tâm lý hàng đầu.</p>
+          <Link to="/hospital/dich-vu/xet-nghiem" className="read-more">Xem thêm</Link>
         </div>
         <div className="service-card">
           <div className="service-icon">

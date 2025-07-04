@@ -244,6 +244,17 @@ const Doctor = () => {
     }
   };
 
+  // Lọc danh sách bệnh nhân không trùng lặp theo PatientID hoặc SĐT
+  const uniquePatients = [];
+  const seenPatientKeys = new Set();
+  patients.forEach((p) => {
+    const key = p.Patient?.PatientID || p.Patient?.Phone || p.PatientFullname;
+    if (key && !seenPatientKeys.has(key)) {
+      uniquePatients.push(p);
+      seenPatientKeys.add(key);
+    }
+  });
+
   return (
     <div className="doctor-container">
       <aside className="doctor-sidebar">
@@ -495,16 +506,16 @@ const Doctor = () => {
             <h2 className="doctor-table-title">Bệnh nhân của tôi</h2>
             {loadingPatients && <div className="loading-container"><div className="spinner"></div>Đang tải danh sách bệnh nhân...</div>}
             {patientsError && <div style={{color: 'red'}}>{patientsError}</div>}
-            {!loadingPatients && !patientsError && patients.length === 0 && (
+            {!loadingPatients && !patientsError && uniquePatients.length === 0 && (
               <div className="no-plan-container">
                 <i className="fas fa-users"></i>
                 <h2>Chưa có bệnh nhân nào</h2>
                 <p>Bạn chưa có bệnh nhân nào trong danh sách.</p>
               </div>
             )}
-            {!loadingPatients && !patientsError && patients.length > 0 && (
+            {!loadingPatients && !patientsError && uniquePatients.length > 0 && (
               <div className="patient-list">
-                {patients.map((p) => (
+                {uniquePatients.map((p) => (
                   <div className="patient-card" key={p.BookID}>
                     <div className="patient-info">
                       <div className="patient-avatar"><i className="fas fa-user-injured"></i></div>
