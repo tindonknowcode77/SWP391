@@ -32,6 +32,8 @@ export default function ExaminationSchedule() {
   const [showSchedulePopup, setShowSchedulePopup] = useState(false);
   const [doctorScheduleData, setDoctorScheduleData] = useState([]);
   const [showServiceSuccessPopup, setShowServiceSuccessPopup] = useState(false);
+  const [showConflictErrorPopup, setShowConflictErrorPopup] = useState(false);
+  const [conflictErrorMessage, setConflictErrorMessage] = useState('');
   const [examschPage, setExamschPage] = useState(0); // Pagination for doctor grid
   const doctorsPerPage = 5;
   
@@ -423,23 +425,24 @@ export default function ExaminationSchedule() {
   };
     const handleServiceChange = (e) => {
     const { value, checked } = e.target;
-    const selectedDoctor = doctors.find(doc => doc.id.toString() === form.doctorId);
     
     if (checked) {
-      // Add service to the list and update total fee
-      const serviceFee = selectedDoctor?.fees[value] || 0;
-      setForm(prev => ({
-        ...prev,
-        requestedServices: [...prev.requestedServices, value],
-        totalFee: prev.totalFee + serviceFee
-      }));
+      // Add service to the bookingtype string
+      const currentServices = form.bookingtype ? form.bookingtype.split(', ') : [];
+      if (!currentServices.includes(value)) {
+        const newServices = [...currentServices, value];
+        setForm(prev => ({
+          ...prev,
+          bookingtype: newServices.join(', ')
+        }));
+      }
     } else {
-      // Remove service from the list and update total fee
-      const serviceFee = selectedDoctor?.fees[value] || 0;
+      // Remove service from the bookingtype string
+      const currentServices = form.bookingtype ? form.bookingtype.split(', ') : [];
+      const newServices = currentServices.filter(service => service !== value);
       setForm(prev => ({
         ...prev,
-        requestedServices: prev.requestedServices.filter(service => service !== value),
-        totalFee: prev.totalFee - serviceFee
+        bookingtype: newServices.join(', ')
       }));
     }
   };const nextStep = () => {
@@ -547,6 +550,45 @@ export default function ExaminationSchedule() {
     // time: 'HH:mm'
     return new Date(`${date}T${time}:00`).toISOString();
   }
+
+  // Hàm kiểm tra lịch trùng
+  const checkScheduleConflict = (selectedDate, selectedTime, doctorId) => {
+    // Kiểm tra trong localStorage trước
+    const stored = localStorage.getItem('appointments');
+    if (stored) {
+      const currentAppointments = JSON.parse(stored);
+      const conflict = currentAppointments.find(app => 
+        app.appointmentDate === selectedDate && 
+        app.appointmentTime === selectedTime && 
+        app.doctorId === doctorId.toString() &&
+        app.status !== 'cancelled'
+      );
+      
+      if (conflict) {
+        return {
+          hasConflict: true,
+          message: 'Lịch khám này đã được đặt bởi người khác. Vui lòng chọn lịch khám khác.'
+        };
+      }
+    }
+
+    // Kiểm tra trong state appointments hiện tại
+    const stateConflict = appointments.find(app => 
+      app.appointmentDate === selectedDate && 
+      app.appointmentTime === selectedTime && 
+      app.doctorId === doctorId.toString() &&
+      app.status !== 'cancelled'
+    );
+    
+    if (stateConflict) {
+      return {
+        hasConflict: true,
+        message: 'Lịch khám này đã được đặt. Vui lòng chọn lịch khám khác.'
+      };
+    }
+
+    return { hasConflict: false };
+  };
 
   return (
     <>
@@ -1004,6 +1046,17 @@ export default function ExaminationSchedule() {
                       {form.appointmentDate && doctorScheduleData.filter(item => item.DateWork && item.DateWork.slice(0,10) === form.appointmentDate).length === 0 && (
                         <p className="note">Không có khung giờ trống cho ngày đã chọn</p>
                       )}
+                      {form.appointmentDate && form.appointmentTime && (
+                        (() => {
+                          const conflictCheck = checkScheduleConflict(form.appointmentDate, form.appointmentTime, selectedDoctor?.id);
+                          return conflictCheck.hasConflict ? (
+                            <p className="note conflict-warning">
+                              <i className="fas fa-exclamation-triangle"></i>
+                              {conflictCheck.message}
+                            </p>
+                          ) : null;
+                        })()
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1026,16 +1079,57 @@ export default function ExaminationSchedule() {
                   
                   <div className="form-group">
                     <label>Dịch vụ cần khám:</label>
-                    <div className="form-group">
-                      <input
-                        type="text"
-                        id="bookingtype"
-                        name="bookingtype"
-                        value={form.bookingtype}
-                        onChange={handleChange}
-                        placeholder="Nhập dịch vụ cần khám (ví dụ: Khám Tổng Quát)"
-                        required
-                      />
+                    <div className="services-checkbox-group">
+                      <div className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          id="service-hivtest"
+                          value="Xét nghiệm HIV"
+                          checked={form.bookingtype.includes('Xét nghiệm HIV')}
+                          onChange={handleServiceChange}
+                        />
+                        <label htmlFor="service-hivtest">Xét nghiệm HIV</label>
+                      </div>
+                      <div className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          id="service-arv"
+                          value="Điều trị ARV"
+                          checked={form.bookingtype.includes('Điều trị ARV')}
+                          onChange={handleServiceChange}
+                        />
+                        <label htmlFor="service-arv">Điều trị ARV</label>
+                      </div>
+                      <div className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          id="service-consult"
+                          value="Tư vấn HIV"
+                          checked={form.bookingtype.includes('Tư vấn HIV')}
+                          onChange={handleServiceChange}
+                        />
+                        <label htmlFor="service-consult">Tư vấn HIV</label>
+                      </div>
+                      <div className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          id="service-recheck"
+                          value="Tái khám định kỳ"
+                          checked={form.bookingtype.includes('Tái khám định kỳ')}
+                          onChange={handleServiceChange}
+                        />
+                        <label htmlFor="service-recheck">Tái khám định kỳ</label>
+                      </div>
+                      <div className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          id="service-general"
+                          value="Khám tổng quát"
+                          checked={form.bookingtype.includes('Khám tổng quát')}
+                          onChange={handleServiceChange}
+                        />
+                        <label htmlFor="service-general">Khám tổng quát</label>
+                      </div>
                     </div>
                   </div>
                   <div className="form-group">
@@ -1058,7 +1152,15 @@ export default function ExaminationSchedule() {
                         return;
                       }
                       if (!form.bookingtype || form.bookingtype.trim() === "") {
-                        alert('Vui lòng nhập dịch vụ cần khám!');
+                        alert('Vui lòng chọn ít nhất một dịch vụ cần khám!');
+                        return;
+                      }
+                      
+                      // Kiểm tra lịch trùng trước khi gửi yêu cầu
+                      const conflictCheck = checkScheduleConflict(form.appointmentDate, form.appointmentTime, selectedDoctor.id);
+                      if (conflictCheck.hasConflict) {
+                        setConflictErrorMessage(conflictCheck.message);
+                        setShowConflictErrorPopup(true);
                         return;
                       }
                       
@@ -1072,11 +1174,28 @@ export default function ExaminationSchedule() {
                         });
                       } catch (e) {
                         allSuccess = false;
+                        // Kiểm tra xem có phải lỗi lịch trùng không
+                        if (e.response && e.response.status === 409) {
+                          // Lỗi 409 thường là Conflict - lịch đã bị đặt
+                          setConflictErrorMessage('Lịch khám này đã bị trùng! Vui lòng chọn lịch khám khác.');
+                          setShowConflictErrorPopup(true);
+                        } else if (e.response && e.response.data && e.response.data.message) {
+                          // Hiển thị thông báo lỗi từ server
+                          setConflictErrorMessage(`Lỗi: ${e.response.data.message}`);
+                          setShowConflictErrorPopup(true);
+                        } else if (e.message && e.message.includes('conflict') || e.message.includes('trùng')) {
+                          // Kiểm tra message có chứa từ khóa về lịch trùng
+                          setConflictErrorMessage('Lịch khám này đã bị trùng! Vui lòng chọn lịch khám khác.');
+                          setShowConflictErrorPopup(true);
+                        } else {
+                          // Lỗi chung
+                          setConflictErrorMessage('Có lỗi khi đặt lịch khám! Vui lòng thử lại.');
+                          setShowConflictErrorPopup(true);
+                        }
+                        console.error('Lỗi đặt lịch:', e);
                       }
                       if (allSuccess) {
                         setShowServiceSuccessPopup(true);
-                      } else {
-                        alert('Có lỗi khi đặt lịch khám !');
                       }
                     }}
                   >
@@ -1173,6 +1292,51 @@ export default function ExaminationSchedule() {
               <p className="success-message">Bạn đã đăng ký dịch vụ thành công. Vui lòng chờ xác nhận từ phòng khám.</p>
               <div className="success-actions">
                 <button onClick={() => { setShowServiceSuccessPopup(false); setShowForm(false); navigate('/appointments'); }} className="done-btn">Đóng</button>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Popup thông báo lỗi lịch trùng */}
+        {showConflictErrorPopup && (
+          <div className="popup-overlay">
+            <div className="popup-form conflict-error-popup">
+              <div className="error-icon">
+                <i className="fas fa-exclamation-triangle"></i>
+              </div>
+              <h2>Lịch khám bị trùng!</h2>
+              <p className="error-message">{conflictErrorMessage}</p>
+              <div className="error-actions">
+                <button 
+                  onClick={() => { 
+                    setShowConflictErrorPopup(false); 
+                    setConflictErrorMessage('');
+                    // Refresh lại danh sách lịch khám có sẵn
+                    if (form.appointmentDate && selectedDoctor) {
+                      const slots = generateTimeSlots(form.appointmentDate, selectedDoctor.id);
+                      setAvailableSlots(slots);
+                      // Reset thời gian đã chọn
+                      setForm(prev => ({
+                        ...prev,
+                        appointmentTime: '',
+                        bookdate: ''
+                      }));
+                    }
+                  }} 
+                  className="retry-btn"
+                >
+                  Thử lại
+                </button>
+                <button 
+                  onClick={() => { 
+                    setShowConflictErrorPopup(false); 
+                    setConflictErrorMessage('');
+                    setShowForm(false);
+                  }} 
+                  className="close-btn"
+                >
+                  Đóng
+                </button>
               </div>
             </div>
           </div>
