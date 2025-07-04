@@ -7,8 +7,9 @@ import {xemdanhsachlichduocduyet} from '../api/auth';
 import {bacsilaytreatmentplan} from '../api/auth';
 import {bacsilaydanhsachbenhnhan} from '../api/auth';
 import { cancelAppointment } from '../api/auth';
-import { checkin, checkout } from '../api/auth';
-// import { PrescriptionByTreatmentPlan } from '../api/auth';
+import { checkout } from '../api/auth';
+import { checkin } from '../api/auth';
+
 
 
 
@@ -36,6 +37,11 @@ const Doctor = () => {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [showRequireCheckin, setShowRequireCheckin] = useState(true);
+  const [showLikeCheckinModal, setShowLikeCheckinModal] = useState(false);
+  const [likeCheckinBookID, setLikeCheckinBookID] = useState(null);
+  const [showTickCheckoutModal, setShowTickCheckoutModal] = useState(false);
+  const [tickCheckoutBookID, setTickCheckoutBookID] = useState(null);
+  const [showTickErrorPopup, setShowTickErrorPopup] = useState(false);
 
   const patientNameMap = {
     'PT000001': 'Trịnh Bá khá',
@@ -191,6 +197,53 @@ const Doctor = () => {
     setShowSuccessPopup(true);
   };
 
+  const handleLikeCheckinClick = (bookID) => {
+    setLikeCheckinBookID(bookID);
+    setShowLikeCheckinModal(true);
+  };
+
+  const handleLikeCheckinConfirm = async () => {
+    if (!likeCheckinBookID) return;
+    try {
+      await checkin(likeCheckinBookID);
+      setShowLikeCheckinModal(false);
+      setLikeCheckinBookID(null);
+      setSuccessMessage('Check-in lịch hẹn thành công!');
+      setShowSuccessPopup(true);
+      // Refresh danh sách lịch hẹn
+      const data = await xemdanhsachlichduocduyet();
+      setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+    } catch (error) {
+      alert('Không thể check-in. Vui lòng thử lại.');
+    }
+  };
+
+  const handleTickCheckoutClick = (bookID) => {
+    setTickCheckoutBookID(bookID);
+    setShowTickCheckoutModal(true);
+  };
+
+  const handleTickCheckoutConfirm = async () => {
+    if (!tickCheckoutBookID) return;
+    try {
+      await checkout(tickCheckoutBookID);
+      setShowTickCheckoutModal(false);
+      setTickCheckoutBookID(null);
+      setSuccessMessage('Lịch hẹn đã được hoàn tất!');
+      setShowSuccessPopup(true);
+      // Refresh danh sách lịch hẹn
+      const data = await xemdanhsachlichduocduyet();
+      setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+    } catch (error) {
+      if (error?.response?.status === 400) {
+        setShowTickCheckoutModal(false);
+        setShowTickErrorPopup(true);
+      } else {
+        alert('Không thể xác nhận hoàn tất. Vui lòng thử lại.');
+      }
+    }
+  };
+
   return (
     <div className="doctor-container">
       <aside className="doctor-sidebar">
@@ -291,7 +344,15 @@ const Doctor = () => {
                             : 'status-badge-2'}>{item.Status || ''}
                         </td>
                         <td>
-                          <button onClick={() => handleCancelClick(item)} className="doctor-cancel-btn">Hủy lịch</button>
+                          <button onClick={() => handleCancelClick(item)} className="doctor-action-btn doctor-trash-btn" title="Hủy lịch">
+                            <i className="fas fa-trash-alt"></i>
+                          </button>
+                          <button className="doctor-action-btn doctor-tick-btn" title="Xác nhận hoàn thành" style={{marginLeft: 8}} onClick={() => handleTickCheckoutClick(item.BookID)}>
+                            <i className="fas fa-check"></i>
+                          </button>
+                          <button className="doctor-action-btn doctor-like-btn" title="Like" style={{marginLeft: 8}} onClick={() => handleLikeCheckinClick(item.BookID)}>
+                            <i className="fas fa-thumbs-up"></i>
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -479,6 +540,38 @@ const Doctor = () => {
             <div className="require-icon"><i className="fas fa-user-check"></i></div>
             <div className="require-message">Bạn cần <span style={{color:'#28a745', fontWeight:600}}>check-in</span> để sử dụng các chức năng!</div>
             <button className="require-checkin-btn" onClick={() => { setDoctorStatus('checked-in'); setShowRequireCheckin(false); setSuccessMessage('Bạn đã check-in thành công!'); setShowSuccessPopup(true); }}>Check-in ngay</button>
+          </div>
+        </div>
+      )}
+      {showLikeCheckinModal && (
+        <div className="doctor-cancel-modal">
+          <div className="doctor-cancel-container">
+            <div className="success-icon" style={{fontSize:'2.5rem', color:'#28a745', marginBottom:8}}><i className="fas fa-check-circle"></i></div>
+            <h3 style={{color:'#28a745', marginBottom:12}}>Bạn xác nhận check-in lịch hẹn này?</h3>
+            <div style={{marginTop: 16, display: 'flex', gap: 12, justifyContent: 'center'}}>
+              <button onClick={() => setShowLikeCheckinModal(false)} className="doctor-cancel-close" style={{background:'#e53935', color:'#fff', fontWeight:600}}>Hủy</button>
+              <button onClick={handleLikeCheckinConfirm} className="doctor-cancel-confirm" style={{background:'#28a745'}}>Có</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showTickCheckoutModal && (
+        <div className="doctor-cancel-modal">
+          <div className="doctor-cancel-container">
+            <div className="success-icon" style={{fontSize:'2.5rem', color:'#28a745', marginBottom:8}}><i className="fas fa-check-circle"></i></div>
+            <h3 style={{color:'#28a745', marginBottom:12}}>Lịch hẹn đã được hoàn tất? Xác nhận?</h3>
+            <div style={{marginTop: 16, display: 'flex', gap: 12, justifyContent: 'center'}}>
+              <button onClick={() => setShowTickCheckoutModal(false)} className="doctor-cancel-close" style={{background:'#e53935', color:'#fff', fontWeight:600}}>Hủy</button>
+              <button onClick={handleTickCheckoutConfirm} className="doctor-cancel-confirm" style={{background:'#28a745'}}>Xác nhận</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showTickErrorPopup && (
+        <div className="doctor-cancel-modal">
+          <div className="doctor-cancel-container">
+            <h3 style={{color:'#e53935', marginBottom:12}}>Bạn không thể hoàn thành lịch chưa được xác nhận</h3>
+            <button onClick={() => setShowTickErrorPopup(false)} className="doctor-cancel-close" style={{background:'#e53935', color:'#fff', fontWeight:600, marginTop:16}}>Đóng</button>
           </div>
         </div>
       )}

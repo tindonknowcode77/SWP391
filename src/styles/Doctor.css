@@ -914,3 +914,42 @@
   background: #218838;
   transform: scale(1.03);
 }
+
+.doctor-action-btn {
+  border: none;
+  outline: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.doctor-trash-btn {
+  background: #e53935;
+  color: #fff;
+}
+.doctor-trash-btn:hover, .doctor-trash-btn:focus {
+  background: #b71c1c;
+  transform: scale(1.08);
+}
+.doctor-tick-btn {
+  background: #b1cb2f;
+  color: #fff;
+}
+.doctor-tick-btn:hover, .doctor-tick-btn:focus {
+  background: #c0d02e;
+  transform: scale(1.08);
+}
+
+.doctor-like-btn {
+  background: #28a745;
+  color: #fff;
+}
+.doctor-like-btn:hover, .doctor-like-btn:focus {
+  background: #218838;
+  transform: scale(1.08);
+}
