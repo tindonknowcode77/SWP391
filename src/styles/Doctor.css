@@ -861,3 +861,56 @@
   50% { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
+
+.doctor-require-checkin-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2100;
+  backdrop-filter: blur(4px);
+}
+.doctor-require-checkin-popup {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(40, 167, 69, 0.18);
+  padding: 44px 38px 32px 38px;
+  min-width: 340px;
+  max-width: 90vw;
+  text-align: center;
+  animation: popup-fade-in 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.require-icon {
+  color: #28a745;
+  font-size: 3.2rem;
+  margin-bottom: 16px;
+  animation: bounce 0.4s ease;
+}
+.require-message {
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 22px;
+}
+.require-checkin-btn {
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 36px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.15s;
+  box-shadow: 0 4px 14px rgba(40, 167, 69, 0.18);
+}
+.require-checkin-btn:hover,
+.require-checkin-btn:focus {
+  background: #218838;
+  transform: scale(1.03);
+}
