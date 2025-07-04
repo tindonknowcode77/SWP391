@@ -772,3 +772,13 @@
     justify-content: center;
   }
 }
+
+.status-green {
+  color: #28a745; /* xanh lá */
+  font-weight: 600;
+}
+
+.status-red {
+  color: #dc3545; /* đỏ */
+  font-weight: 600;
+}

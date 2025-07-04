@@ -193,7 +193,12 @@ const Doctor = () => {
             {/* Check-in/Check-out Status Section */}
             <div className="checkin-status-section">
               <div className="status-header">
-                <h3>Trạng thái: {doctorStatus === 'checked-in' ? 'Đã check-in' : ' Đã check-out'}</h3>
+              <h3>
+      Trạng thái:{" "}
+      <span className={doctorStatus === 'checked-in' ? 'status-green' : 'status-red'}>
+        {doctorStatus === 'checked-in' ? 'Đã check-in' : 'Đã check-out'}
+      </span>
+    </h3>
                 <p>Check-out lúc: {lastCheckoutTime}</p>
               </div>
               <div className="checkin-buttons">
