@@ -1,78 +1,111 @@
+/* ===== Prescription Form - Modern Hospital Style ===== */
+
 .prescription-container {
-  max-width: 420px;
-  margin: 40px auto;
+  max-width: 480px;
+  margin: 48px auto;
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-  padding: 32px 28px 24px 28px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(25, 118, 210, 0.13), 0 1.5px 8px rgba(25, 118, 210, 0.07);
+  padding: 40px 36px 28px 36px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  border: 1.5px solid #e3eafc;
 }
 .prescription-form {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-top: 16px;
+  gap: 18px;
+  margin-top: 18px;
 }
-.prescription-form input {
-  padding: 10px 12px;
-  border: 1px solid #bdbdbd;
-  border-radius: 6px;
-  font-size: 16px;
-  outline: none;
-  transition: border 0.2s;
-}
-
+.prescription-form input,
 .prescription-form select {
-  padding: 10px 12px;
-  border: 1px solid #bdbdbd;
-  border-radius: 6px;
-  font-size: 16px;
+  padding: 13px 16px;
+  border: 1.7px solid #bdbdbd;
+  border-radius: 8px;
+  font-size: 1.08rem;
   outline: none;
-  transition: border 0.2s;
+  transition: border 0.2s, box-shadow 0.18s;
+  background: #fafdff;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.04);
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
 }
-
-.prescription-form input:focus {
-  border: 1.5px solid #1976d2;
+.prescription-form input:focus,
+.prescription-form select:focus {
+  border: 1.7px solid #1769aa;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
 }
 .prescription-form button {
-  background: #1976d2;
+  background: linear-gradient(90deg, #1769aa 0%, #43a047 100%);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 10px 0;
-  font-size: 17px;
-  font-weight: 500;
+  border-radius: 8px;
+  padding: 13px 0;
+  font-size: 1.13rem;
+  font-weight: 700;
   cursor: pointer;
-  margin-top: 8px;
-  transition: background 0.2s;
+  margin-top: 10px;
+  transition: background 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
 }
 .prescription-form button:hover {
-  background: #1256a3;
+  background: linear-gradient(90deg, #43a047 0%, #1769aa 100%);
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
 }
 .success-msg {
   color: #388e3c;
-  margin-top: 16px;
-  font-weight: 500;
+  margin-top: 18px;
+  font-weight: 700;
+  font-size: 1.08rem;
+  background: #eafaf1;
+  border-radius: 6px;
+  padding: 8px 16px;
+  border-left: 4px solid #43a047;
 }
 .error-msg {
   color: #d32f2f;
-  margin-top: 16px;
-  font-weight: 500;
+  margin-top: 18px;
+  font-weight: 700;
+  font-size: 1.08rem;
+  background: #fff0f0;
+  border-radius: 6px;
+  padding: 8px 16px;
+  border-left: 4px solid #d32f2f;
 }
 .back-btn {
-  background: #eee;
-  color: #333;
+  background: linear-gradient(90deg, #e3eafc 0%, #fafdff 100%);
+  color: #1769aa;
   border: none;
-  border-radius: 6px;
-  padding: 7px 16px;
-  font-size: 15px;
-  margin-bottom: 18px;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 1.08rem;
+  margin-bottom: 22px;
   cursor: pointer;
-  transition: background 0.2s;
+  font-weight: 600;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
 }
 .back-btn:hover {
-  background: #d1e0f7;
+  background: #1769aa;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
+}
+
+@media (max-width: 600px) {
+  .prescription-container {
+    padding: 18px 4vw;
+    max-width: 98vw;
+  }
+  .prescription-form input,
+  .prescription-form select {
+    font-size: 0.98rem;
+    padding: 9px 7px;
+  }
+  .prescription-form button, .back-btn {
+    font-size: 1rem;
+    padding: 10px 0;
+  }
 } 

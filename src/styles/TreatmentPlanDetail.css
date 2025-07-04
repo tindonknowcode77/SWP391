@@ -1,14 +1,14 @@
-/* ===== Doctor Patient Profile - Treatment Detail Styles ===== */
+/* ===== Doctor Patient Profile - Treatment Detail Styles (Modern Hospital Style) ===== */
 
 /* Toàn trang: nền dịu, căn giữa nội dung */
 .treatment-plan-detail-page {
   min-height: 100vh;
   width: 100vw;
-  background: linear-gradient(135deg, #e3f0ff 0%, #f8fbff 100%);
+  background: linear-gradient(135deg, #eaf4fb 0%, #fafdff 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px 12px;
+  padding: 40px 0;
   box-sizing: border-box;
   overflow-y: auto;
 }
@@ -16,8 +16,8 @@
 /* Khung chính: rộng hơn, bo tròn, shadow nhẹ, padding thoải mái */
 .treatment-plan-detail-center {
   background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(25, 118, 210, 0.13);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(25, 118, 210, 0.10), 0 1.5px 8px rgba(25, 118, 210, 0.07);
   padding: 56px 54px 36px 54px;
   max-width: 1100px;
   width: 100%;
@@ -25,17 +25,20 @@
   flex-direction: column;
   align-items: flex-start;
   box-sizing: border-box;
+  border: 1.5px solid #e3eafc;
 }
 
 /* Tiêu đề hồ sơ */
 .tpd-title {
-  font-size: 2.5rem;
-  margin-bottom: 28px;
-  color: #1976d2;
+  font-size: 2.7rem;
+  margin-bottom: 32px;
+  color: #1769aa;
   font-weight: 900;
   letter-spacing: 0.8px;
   text-align: center;
   width: 100%;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  text-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
 }
 
 /* Khối thông tin bệnh nhân */
@@ -44,48 +47,51 @@
   margin-bottom: 36px;
   font-size: 1.18rem;
   line-height: 1.8;
-  color: #222;
+  color: #1a2a3a;
   width: 100%;
-  background: #f4f8fb;
-  border-radius: 10px;
-  padding: 20px 22px;
-  box-shadow: 0 1px 8px rgba(25, 118, 210, 0.09);
+  background: #f6fafd;
+  border-radius: 16px;
+  padding: 24px 28px 24px 28px;
+  box-shadow: 0 2px 12px rgba(25, 118, 210, 0.07);
   font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
   position: relative;
+  border: 1.5px solid #e3eafc;
 }
 .tpd-info-block strong,
 .treatment-detail-container strong {
-  color: #1976d2;
+  color: #1769aa;
 }
 .tpd-info-block .patient-avatar {
   position: absolute;
-  right: 20px;
-  top: 22px;
-  width: 72px;
-  height: 72px;
+  right: 32px;
+  top: 32px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2.5px solid #1976d2;
+  border: 3px solid #1769aa;
   background: #e3f0ff;
-  box-shadow: 0 1px 4px rgba(25,118,210,0.08);
+  box-shadow: 0 2px 8px rgba(25,118,210,0.10);
 }
 
 /* Nút quay lại */
 .tpd-back-btn, .treatment-detail-container .back-btn {
-  background: #e3eafc;
-  color: #1976d2;
+  background: linear-gradient(90deg, #e3eafc 0%, #fafdff 100%);
+  color: #1769aa;
   border: none;
-  border-radius: 7px;
-  padding: 8px 22px;
-  font-size: 1rem;
-  margin-bottom: 18px;
+  border-radius: 8px;
+  padding: 10px 28px;
+  font-size: 1.08rem;
+  margin-bottom: 22px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background 0.18s, color 0.18s;
+  font-weight: 600;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
 }
 .tpd-back-btn:hover, .treatment-detail-container .back-btn:hover {
-  background: #1976d2;
+  background: #1769aa;
   color: #fff;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
 }
 
 /* Vùng điều trị (ARV...) */
@@ -94,10 +100,10 @@
   width: 100%;
 }
 .tpd-section-title {
-  font-size: 1.18rem;
+  font-size: 1.22rem;
   font-weight: 700;
-  margin-bottom: 14px;
-  color: #1976d2;
+  margin-bottom: 16px;
+  color: #1769aa;
   letter-spacing: 0.2px;
 }
 .tpd-arv-row {
@@ -108,97 +114,117 @@
   margin-bottom: 14px;
 }
 .tpd-arv-select {
-  padding: 11px 16px;
-  border: 1.6px solid #bdbdbd;
-  border-radius: 6px;
+  padding: 13px 18px;
+  border: 1.7px solid #bdbdbd;
+  border-radius: 8px;
   outline: none;
   min-width: 220px;
   font-size: 1.08rem;
-  background: #f9fbfd;
-  transition: border 0.19s;
+  background: #fafdff;
+  transition: border 0.19s, box-shadow 0.18s;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.04);
 }
 .tpd-arv-select:focus {
-  border: 1.6px solid #1976d2;
+  border: 1.7px solid #1769aa;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
 }
 .tpd-update-arv-btn {
-  background: #1976d2;
+  background: linear-gradient(90deg, #1769aa 0%, #43a047 100%);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 10px 28px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  border-radius: 8px;
+  padding: 12px 32px;
+  font-size: 1.13rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.18s;
+  transition: background 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
 }
 .tpd-update-arv-btn:hover {
-  background: #1256a3;
+  background: linear-gradient(90deg, #43a047 0%, #1769aa 100%);
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
 }
 .tpd-arv-detail {
-  background: #f7fafc;
-  border-radius: 9px;
-  padding: 16px 20px;
-  margin: 18px 0 24px 0;
-  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.06);
-  font-size: 1.05rem;
+  background: #fafdff;
+  border-radius: 12px;
+  padding: 18px 24px;
+  margin: 20px 0 28px 0;
+  box-shadow: 0 1.5px 6px rgba(25, 118, 210, 0.06);
+  font-size: 1.07rem;
+  border: 1.2px solid #e3eafc;
 }
 .tpd-arv-detail p { margin: 4px 0; }
 
 /* Thông báo */
 .tpd-success-msg, .treatment-detail-container .success-msg {
   color: #388e3c;
-  margin-top: 10px;
-  font-weight: 600;
+  margin-top: 12px;
+  font-weight: 700;
+  font-size: 1.08rem;
+  background: #eafaf1;
+  border-radius: 6px;
+  padding: 8px 16px;
+  border-left: 4px solid #43a047;
 }
 .tpd-error-msg, .treatment-detail-container .error-msg {
   color: #d32f2f;
-  margin-top: 10px;
-  font-weight: 600;
+  margin-top: 12px;
+  font-weight: 700;
+  font-size: 1.08rem;
+  background: #fff0f0;
+  border-radius: 6px;
+  padding: 8px 16px;
+  border-left: 4px solid #d32f2f;
 }
 
 /* Đơn thuốc & Chỉ định */
 .tpd-prescription-section {
-  margin-top: 10px;
+  margin-top: 18px;
   width: 100%;
 }
 .tpd-add-prescription-btn {
-  background: #43a047;
+  background: linear-gradient(90deg, #43a047 0%, #1769aa 100%);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 12px 28px;
-  font-size: 1.12rem;
-  font-weight: 600;
+  border-radius: 8px;
+  padding: 13px 32px;
+  font-size: 1.13rem;
+  font-weight: 700;
   cursor: pointer;
-  margin-top: 12px;
-  transition: background 0.18s;
+  margin-top: 16px;
+  transition: background 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
 }
 .tpd-add-prescription-btn:hover {
-  background: #2e7031;
+  background: linear-gradient(90deg, #1769aa 0%, #43a047 100%);
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
 }
 .tpd-prescription-table {
   width: 100%;
-  border-collapse: collapse;
-  background: #f4f8fb;
-  margin-top: 18px;
-  border-radius: 7px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fafdff;
+  margin-top: 22px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 1px 4px rgba(25,118,210,0.07);
+  box-shadow: 0 2px 12px rgba(25,118,210,0.07);
+  border: 1.5px solid #e3eafc;
 }
 .tpd-prescription-table th,
 .tpd-prescription-table td {
-  padding: 10px 12px;
-  border-bottom: 1px solid #e3eafc;
-  font-size: 1.03rem;
+  padding: 14px 16px;
+  border-bottom: 1.2px solid #e3eafc;
+  font-size: 1.07rem;
 }
 .tpd-prescription-table th {
-  color: #1976d2;
-  background: #e3f0ff;
-  font-weight: 700;
+  color: #1769aa;
+  background: #eaf4fb;
+  font-weight: 800;
   text-align: left;
+  letter-spacing: 0.2px;
+  border-bottom: 2.5px solid #b5d0f7;
 }
 .tpd-prescription-table tr:last-child td { border-bottom: none; }
-
 
 /* Input, select, button chung */
 .tpd-arv-select, .tpd-update-arv-btn, .tpd-add-prescription-btn,
@@ -221,6 +247,10 @@
     font-size: 1.03rem;
     padding: 14px 7px;
   }
+  .tpd-prescription-table th, .tpd-prescription-table td {
+    padding: 8px 6px;
+    font-size: 0.98rem;
+  }
 }
 
 /* Một số chỉnh cho detail container cũ nếu có dùng lồng */
@@ -233,4 +263,4 @@
   font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
 }
 
-/* Giao diện tổng thể hiện đại, sạch sẽ, cảm giác chuyên nghiệp cho hồ sơ bác sĩ */
+/* Modern, clean, professional hospital profile style */
