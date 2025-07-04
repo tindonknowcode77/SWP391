@@ -37,6 +37,29 @@ const Doctor = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [showRequireCheckin, setShowRequireCheckin] = useState(true);
 
+  const patientNameMap = {
+    'PT000001': 'Trịnh Bá khá',
+    'PT000002': 'Trần Thị Thắm',
+    'PT000003': 'Lê Văn Anh',
+    'PT000004': 'Phạm Thị Bích',
+    'PT000005': 'Hoàng Văn Cảnh',
+    'PT000006': 'Đỗ Thị Diệp',
+    'PT000007': 'Vũ Văn Em',
+    'PT000008': 'Đặng Thị Phúc',
+    'PT000009': 'Mai Văn Giáp',
+    'PT000010': 'Trịnh Thị Hòa',
+    'PT000011': 'Nguyễn Thị Hồng',
+    'PT000012': 'Phạm Văn Cường',
+    'PT000013': 'Lê Thị Mai',
+    'PT000014': 'Đỗ Mạnh Hùng',
+    'PT000015': 'Trần Văn Bình',
+    'PT000016': 'Huỳnh Thị Ngọc',
+    'PT000017': 'Bùi Văn Long',
+    'PT000018': 'Võ Thị Lan',
+    'PT000019': 'Tạ Minh Đức',
+    'PT000020': 'Ngô Quỳnh Anh',
+  };
+
   useEffect(() => {
     if (selected === 'appointments') {
       setLoading(true);
@@ -317,7 +340,7 @@ const Doctor = () => {
                             <div className="summary-details">
                               <h3>Mã hồ sơ</h3>
                               <p>{plan.TreatmentPlanID}</p>
-                              <span>Bác sĩ: {plan.DoctorID || '---'}</span>
+                              <span>Bác sĩ: {currentUser?.name || '---'}</span>
                             </div>
                           </div>
                           <div className="summary-item">
@@ -352,6 +375,9 @@ const Doctor = () => {
                             <div className="overview-card">
                               <h3><i className="fas fa-id-card"></i> Mã bệnh nhân</h3>
                               <p>{plan.Patient?.PatientID || '---'}</p>
+                              <span style={{color:'#1976d2', fontWeight:500}}>
+                                {plan.Patient?.PatientID && patientNameMap[plan.Patient.PatientID] ? `(${patientNameMap[plan.Patient.PatientID]})` : ''}
+                              </span>
                             </div>
                             <div className="overview-card">
                               <h3><i className="fas fa-birthday-cake"></i> Ngày sinh</h3>
