@@ -782,3 +782,82 @@
   color: #dc3545; /* đỏ */
   font-weight: 600;
 }
+
+.doctor-success-popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px); /* hiệu ứng mờ nền */
+}
+
+.doctor-success-popup {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(40, 167, 69, 0.25);
+  padding: 48px 40px 36px 40px;
+  min-width: 380px;
+  max-width: 90vw;
+  text-align: center;
+  animation: popup-fade-in 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateY(0);
+  transition: transform 0.25s ease;
+}
+
+.success-icon {
+  color: #28a745;
+  font-size: 4rem; /* lớn hơn */
+  margin-bottom: 18px;
+  animation: bounce 0.4s ease;
+}
+
+.success-message {
+  font-size: 1.5rem; /* lớn hơn */
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 24px;
+}
+
+.success-close-btn {
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 36px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.15s;
+  box-shadow: 0 4px 14px rgba(40, 167, 69, 0.25);
+}
+
+.success-close-btn:hover,
+.success-close-btn:focus {
+  background: #218838;
+  transform: scale(1.03);
+}
+
+/* Hiệu ứng mở popup */
+@keyframes popup-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hiệu ứng bounce icon */
+@keyframes bounce {
+  0% { transform: scale(0.9); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}

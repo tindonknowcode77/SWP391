@@ -33,6 +33,8 @@ const Doctor = () => {
   const [checkingOut, setCheckingOut] = useState({}); // Track check-out loading state
   const [doctorStatus, setDoctorStatus] = useState('checked-out'); // Doctor's current status
   const [lastCheckoutTime, setLastCheckoutTime] = useState(new Date().toLocaleString('vi-VN'));
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     if (selected === 'appointments') {
@@ -146,15 +148,15 @@ const Doctor = () => {
 
   const handleMainCheckin = () => {
     setDoctorStatus('checked-in');
-    // Có thể thêm logic gọi API để cập nhật trạng thái bác sĩ
-    alert('Bạn đã check-in thành công!');
+    setSuccessMessage('Bạn đã check-in thành công!');
+    setShowSuccessPopup(true);
   };
 
   const handleMainCheckout = () => {
     setDoctorStatus('checked-out');
     setLastCheckoutTime(new Date().toLocaleString('vi-VN'));
-    // Có thể thêm logic gọi API để cập nhật trạng thái bác sĩ
-    alert('Bạn đã check-out thành công!');
+    setSuccessMessage('Bạn đã check-out thành công!');
+    setShowSuccessPopup(true);
   };
 
   return (
@@ -427,6 +429,15 @@ const Doctor = () => {
           </div>
         )}
       </main>
+      {showSuccessPopup && (
+        <div className="doctor-success-popup-overlay">
+          <div className="doctor-success-popup">
+            <div className="success-icon"><i className="fas fa-check-circle"></i></div>
+            <div className="success-message">{successMessage}</div>
+            <button className="success-close-btn" onClick={() => setShowSuccessPopup(false)}>Đóng</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
