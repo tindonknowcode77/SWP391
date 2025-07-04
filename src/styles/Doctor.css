@@ -264,6 +264,14 @@
   color: #218838;
 }
 
+.status-checkedin-3 {
+  color: #ff9800;
+}
+
+.status-completed-3 {
+  color: #4caf50;
+}
+
 /* --- Treatment Plan Section (Doctor View) --- */
 .plan-container {
   background: #fff;
@@ -614,4 +622,153 @@
 .doctor-cancel-close:hover,
 .doctor-cancel-close:focus {
   background: #e0e0e0;
+}
+
+/* Check-in and Check-out buttons */
+.doctor-checkin-btn {
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 90px;
+}
+
+.doctor-checkin-btn:hover {
+  background: #43a047;
+}
+
+.doctor-checkin-btn:disabled {
+  background: #a5d6a7;
+  cursor: not-allowed;
+}
+
+.doctor-checkout-btn {
+  background: #ff9800;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 90px;
+}
+
+.doctor-checkout-btn:hover {
+  background: #f57c00;
+}
+
+.doctor-checkout-btn:disabled {
+  background: #ffcc80;
+  cursor: not-allowed;
+}
+
+/* Update cancel button to match new layout */
+.doctor-cancel-btn {
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 90px;
+}
+
+.doctor-cancel-btn:hover {
+  background: #d32f2f;
+}
+
+/* Check-in/Check-out Status Section */
+.checkin-status-section {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.status-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  color: #495057;
+  font-weight: 500;
+}
+
+.status-header p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.checkin-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.checkin-btn-main {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.checkin-btn-main:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.checkin-btn-main:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.checkout-btn-main {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.checkout-btn-main:hover:not(:disabled) {
+  background: #c82333;
+}
+
+.checkout-btn-main:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .checkin-status-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .checkin-buttons {
+    width: 100%;
+    justify-content: center;
+  }
 }

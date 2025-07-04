@@ -238,3 +238,18 @@ export const cancelAppointment = (id, reason) =>{
 export const nguoidunglayhosodieutri = () => {
   return axiosClient.get('/TreatmentPlan/patient');
 };
+export const checkin =(id ) =>{
+  return axiosClient.put(`/Appointment/confirm-checkin/${id}`, null, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
+export const checkout =(id ) =>{
+  return axiosClient.put(`/Appointment/complete/${id}`, null, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}

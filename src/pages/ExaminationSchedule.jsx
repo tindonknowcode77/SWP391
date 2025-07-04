@@ -1076,11 +1076,11 @@ export default function ExaminationSchedule() {
                       if (allSuccess) {
                         setShowServiceSuccessPopup(true);
                       } else {
-                        alert('Có lỗi khi đăng ký dịch vụ!');
+                        alert('Có lỗi khi đặt lịch khám !');
                       }
                     }}
                   >
-                    Đăng ký dịch vụ
+                    Đặt lịch khám 
                   </button>
                 </div>
               </form>

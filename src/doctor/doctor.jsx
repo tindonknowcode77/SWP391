@@ -7,6 +7,7 @@ import {xemdanhsachlichduocduyet} from '../api/auth';
 import {bacsilaytreatmentplan} from '../api/auth';
 import {bacsilaydanhsachbenhnhan} from '../api/auth';
 import { cancelAppointment } from '../api/auth';
+import { checkin, checkout } from '../api/auth';
 // import { PrescriptionByTreatmentPlan } from '../api/auth';
 
 
@@ -28,6 +29,10 @@ const Doctor = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [appointmentToCancel, setAppointmentToCancel] = useState(null);
   const [planPage, setPlanPage] = useState(0); // Pagination for treatment plans
+  const [checkingIn, setCheckingIn] = useState({}); // Track check-in loading state
+  const [checkingOut, setCheckingOut] = useState({}); // Track check-out loading state
+  const [doctorStatus, setDoctorStatus] = useState('checked-out'); // Doctor's current status
+  const [lastCheckoutTime, setLastCheckoutTime] = useState(new Date().toLocaleString('vi-VN'));
 
   useEffect(() => {
     if (selected === 'appointments') {
@@ -109,6 +114,49 @@ const Doctor = () => {
       });
   };
 
+  const handleCheckin = async (appointment) => {
+    setCheckingIn(prev => ({...prev, [appointment.BookID]: true}));
+    try {
+      await checkin(appointment.BookID);
+      // Refresh danh sách lịch hẹn
+      const data = await xemdanhsachlichduocduyet();
+      setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+    } catch (error) {
+      console.error('Check-in failed:', error);
+      alert('Không thể check-in. Vui lòng thử lại.');
+    } finally {
+      setCheckingIn(prev => ({...prev, [appointment.BookID]: false}));
+    }
+  };
+
+  const handleCheckout = async (appointment) => {
+    setCheckingOut(prev => ({...prev, [appointment.BookID]: true}));
+    try {
+      await checkout(appointment.BookID);
+      // Refresh danh sách lịch hẹn
+      const data = await xemdanhsachlichduocduyet();
+      setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+    } catch (error) {
+      console.error('Check-out failed:', error);
+      alert('Không thể check-out. Vui lòng thử lại.');
+    } finally {
+      setCheckingOut(prev => ({...prev, [appointment.BookID]: false}));
+    }
+  };
+
+  const handleMainCheckin = () => {
+    setDoctorStatus('checked-in');
+    // Có thể thêm logic gọi API để cập nhật trạng thái bác sĩ
+    alert('Bạn đã check-in thành công!');
+  };
+
+  const handleMainCheckout = () => {
+    setDoctorStatus('checked-out');
+    setLastCheckoutTime(new Date().toLocaleString('vi-VN'));
+    // Có thể thêm logic gọi API để cập nhật trạng thái bác sĩ
+    alert('Bạn đã check-out thành công!');
+  };
+
   return (
     <div className="doctor-container">
       <aside className="doctor-sidebar">
@@ -142,6 +190,30 @@ const Doctor = () => {
       <main className="doctor-main">
         {selected === 'appointments' && (
           <div className="doctor-content">
+            {/* Check-in/Check-out Status Section */}
+            <div className="checkin-status-section">
+              <div className="status-header">
+                <h3>Trạng thái: {doctorStatus === 'checked-in' ? 'Đã check-in' : ' Đã check-out'}</h3>
+                <p>Check-out lúc: {lastCheckoutTime}</p>
+              </div>
+              <div className="checkin-buttons">
+                <button 
+                  className="checkin-btn-main" 
+                  onClick={handleMainCheckin}
+                  disabled={doctorStatus === 'checked-in'}
+                >
+                  Check-in
+                </button>
+                <button 
+                  className="checkout-btn-main" 
+                  onClick={handleMainCheckout}
+                  disabled={doctorStatus === 'checked-out'}
+                >
+                  Check-out
+                </button>
+              </div>
+            </div>
+            
             <h2 className="doctor-table-title">Lịch hẹn của tôi</h2>
             {loading && <div>Đang tải...</div>}
             {error && <div style={{color: 'red'}}>{error}</div>}
