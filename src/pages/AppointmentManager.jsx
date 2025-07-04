@@ -72,6 +72,14 @@ const Doctor = () => {
     }
   };
 
+  // Sắp xếp lịch hẹn: chưa hủy/thành công lên trên, đã hủy/rejected xuống dưới
+  const sortedAppointments = [...appointments].sort((a, b) => {
+    const isCancelledA = a.Status === 'Đã hủy' || a.Status === 'rejected';
+    const isCancelledB = b.Status === 'Đã hủy' || b.Status === 'rejected';
+    if (isCancelledA === isCancelledB) return 0;
+    return isCancelledA ? 1 : -1;
+  });
+
   return (
     <>
       <Navbar />
@@ -113,7 +121,7 @@ const Doctor = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {appointments.map((item, idx) => (
+                      {sortedAppointments.map((item, idx) => (
                         <tr key={item.BookID || idx}>
                           <td>{item.BookID}</td>
                           <td>{item.PatientFullname}</td>
@@ -163,7 +171,7 @@ const Doctor = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {appointments.map((item, idx) => (
+                      {sortedAppointments.map((item, idx) => (
                         <tr key={item.BookID || idx}>
                           <td>{item.BookID}</td>
                           <td>{item.PatientFullname}</td>
