@@ -7,6 +7,7 @@ import {capnhatprofile} from '../api/auth';
 import {pantient} from '../api/auth';
 import { nguoidunglayhosodieutri } from  '../api/auth';
 import { nguoidunglaytoathuoc } from  '../api/auth';
+import { nguoidunglayAVR } from  '../api/auth';
 
 const Profile = () => {  
   const { currentUser, loading, updateProfile, logout, setCurrentUser } = useAuth();
@@ -126,6 +127,11 @@ const Profile = () => {
   const [prescriptionLoading, setPrescriptionLoading] = useState(false);
   const [prescriptionError, setPrescriptionError] = useState(null);
   const [prescriptionPage, setPrescriptionPage] = useState(0);
+
+  const [showARVResultPopup, setShowARVResultPopup] = useState(false);
+  const [arvResultData, setArvResultData] = useState(null);
+  const [arvResultLoading, setArvResultLoading] = useState(false);
+  const [arvResultError, setArvResultError] = useState(null);
 
   // Lấy dữ liệu profile từ API khi vào trang hoặc khi currentUser thay đổi
   useEffect(() => {
@@ -577,7 +583,21 @@ const Profile = () => {
                           <span>Xem toa thuốc</span>
                         </button>
                         
-                        <button className="record-btn">
+                        <button className="record-btn" onClick={async () => {
+                          setShowARVResultPopup(true);
+                          setArvResultLoading(true);
+                          setArvResultError(null);
+                          setArvResultData(null);
+                          try {
+                            const res = await nguoidunglayAVR(record.PatientID);
+                            setArvResultData(Array.isArray(res) ? res : []);
+                          } catch (err) {
+                            setArvResultError('Không thể lấy dữ liệu ARV.');
+                            setArvResultData(null);
+                          } finally {
+                            setArvResultLoading(false);
+                          }
+                        }}>
                           <i className="fas fa-file-medical-alt"></i>
                           <span>Xem kết quả xét nghiệm</span>
                         </button>
@@ -793,6 +813,59 @@ const Profile = () => {
   </div>
 )}
 
+{showARVResultPopup && (
+  <div className="prescription-popup-overlay">
+    <div className="prescription-popup">
+      <div className="prescription-popup-header">
+        <h3>🧪 Kết quả ARV</h3>
+        <button className="close-btn" onClick={() => { setShowARVResultPopup(false); setArvResultData(null); }}>
+          ❌
+        </button>
+      </div>
+      <div className="prescription-popup-body">
+        {arvResultLoading ? (
+          <div>Đang tải kết quả...</div>
+        ) : arvResultError ? (
+          <div style={{color: 'red'}}>{arvResultError}</div>
+        ) : (
+          Array.isArray(arvResultData) && arvResultData.length > 0 ? (
+            <>
+              <div className="prescription-medicine-list">
+                <h4>Danh sách ARV</h4>
+                <table className="prescription-table">
+                  <thead>
+                    <tr>
+                      <th>Mã ARV</th>
+                      <th>Tên ARV</th>
+                      <th>Phác đồ</th>
+                      <th>Mô tả</th>
+                      <th>Độ tuổi</th>
+                      <th>Nhóm</th>
+                      <th>Chẩn đoán</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {arvResultData.map((item, idx) => (
+                      <tr key={idx}>
+                        <td>{item.ARVCode || ''}</td>
+                        <td>{item.ARVName || ''}</td>
+                        <td>{item.ARVProtocol || item.ARVID || ''}</td>
+                        <td>{item.Description || ''}</td>
+                        <td>{item.AgeRange || ''}</td>
+                        <td>{item.ForGroup || ''}</td>
+                        <td>{item.Diagnosis || ''}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          ) : <div>Không có dữ liệu kết quả ARV.</div>
+        )}
+      </div>
+    </div>
+  </div>
+)}
 
     </>
   );
