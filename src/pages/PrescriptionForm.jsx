@@ -52,7 +52,7 @@ const PrescriptionForm = () => {
       .then(() => {
         setSuccess('Thêm đơn thuốc thành công!');
         setError('');
-        setPrescription({ ...prescription, MedicationID: '', DoctorID: '', StartDate: '', EndDate: '', Dosage: '', LineOfTreatment: '' });
+        setPrescription({ ...prescription, MedicationId: '', DoctorID: '', StartDate: '', EndDate: '', Dosage: '', LineOfTreatment: '' });
       })
       .catch(() => {
         setError('Thêm đơn thuốc thất bại!');
