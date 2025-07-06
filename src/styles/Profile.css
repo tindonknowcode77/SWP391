@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 /* Profile.css */
 .profile-container {
   display: flex;
@@ -932,3 +933,124 @@
 .profile-success-btn:hover {
   background: #2e7031;
 }
+
+.prescription-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Roboto', sans-serif;
+}
+
+.prescription-popup {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 32px;
+  position: relative;
+  animation: popup-fade-in 0.25s ease;
+  border: 1px solid #d0e2f2;
+}
+
+@keyframes popup-fade-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.prescription-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 12px;
+}
+
+.prescription-popup-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #aaa;
+  transition: color 0.2s;
+}
+.close-btn:hover {
+  color: #e74c3c;
+}
+
+.prescription-popup-body {
+  font-size: 1rem;
+  color: #333;
+}
+
+.prescription-info > div {
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+.prescription-medicine-list {
+  margin: 22px 0 14px 0;
+}
+
+.prescription-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.prescription-table th, .prescription-table td {
+  border: 1px solid #dfe6ec;
+  padding: 10px 12px;
+  text-align: left;
+}
+.prescription-table th {
+  background: #eaf4fb;
+  font-weight: 600;
+  color: #2a5d9f;
+}
+.prescription-table td {
+  background-color: #fbfdff;
+}
+
+.prescription-message {
+  margin-top: 20px;
+  color: #2980b9;
+  font-style: italic;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.prescription-info-2 {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #cfe2f3;
+  border-radius: 8px;
+  background-color: #ebf5ff;
+  font-size: 1.4rem;           /* tăng cỡ chữ */
+  color: #2c3e50;
+  font-style: italic;
+  text-align: center;          /* căn giữa nội dung */
+}
+
+.prescription-info-2 strong {
+  font-weight: 600;
+  color: #1f4e79;
+}
+
+.prescription-info-2 p {
+  margin: 6px 0;
+}
+

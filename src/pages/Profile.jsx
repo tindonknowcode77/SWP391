@@ -6,6 +6,7 @@ import '../styles/Profile.css';
 import {capnhatprofile} from '../api/auth';
 import {pantient} from '../api/auth';
 import { nguoidunglayhosodieutri } from  '../api/auth';
+import { nguoidunglaytoathuoc } from  '../api/auth';
 
 const Profile = () => {  
   const { currentUser, loading, updateProfile, logout, setCurrentUser } = useAuth();
@@ -119,6 +120,13 @@ const Profile = () => {
   const [tpLoading, setTpLoading] = useState(false);
   const [tpError, setTpError] = useState(null);
 
+  const [showPrescriptionPopup, setShowPrescriptionPopup] = useState(false);
+  const [selectedPrescription, setSelectedPrescription] = useState(null);
+  const [prescriptionData, setPrescriptionData] = useState(null);
+  const [prescriptionLoading, setPrescriptionLoading] = useState(false);
+  const [prescriptionError, setPrescriptionError] = useState(null);
+  const [prescriptionPage, setPrescriptionPage] = useState(0);
+
   // Lấy dữ liệu profile từ API khi vào trang hoặc khi currentUser thay đổi
   useEffect(() => {
     if (currentUser?.id) {
@@ -172,10 +180,11 @@ const Profile = () => {
         const arr = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [res]);
         const mapped = arr.map(item => ({
           id: item.TreatmentPlanID,
-          doctor: item.DoctorID, 
+          doctor: item.DoctorID,
           diagnosis: item.Diagnosis,
           arv: item.TreatmentLine,
-          notes: item.TreatmentResult
+          notes: item.TreatmentResult,
+          PatientID: item.PatientID
         }));
         setMedicalHistory(mapped);
       })
@@ -545,7 +554,25 @@ const Profile = () => {
                       </div>
                       
                       <div className="record-actions">
-                        <button className="record-btn">
+                        <button className="record-btn" onClick={async () => {
+                          setSelectedPrescription(record);
+                          setShowPrescriptionPopup(true);
+                          setPrescriptionLoading(true);
+                          setPrescriptionError(null);
+                          setPrescriptionPage(0);
+                          try {
+                            console.log('PatientID gửi lên:', record.PatientID);
+                            const res = await nguoidunglaytoathuoc(record.PatientID);
+                            console.log('API response:', res);
+                            setPrescriptionData(Array.isArray(res) ? res : []);
+                            console.log('Set prescriptionData:', Array.isArray(res) ? res : []);
+                          } catch (err) {
+                            setPrescriptionError('Không thể lấy dữ liệu đơn thuốc.');
+                            setPrescriptionData([]);
+                          } finally {
+                            setPrescriptionLoading(false);
+                          }
+                        }}>
                           <i className="fas fa-file-pdf"></i>
                           <span>Xem toa thuốc</span>
                         </button>
@@ -681,17 +708,92 @@ const Profile = () => {
           </div>
         </div>
       </div>
-      {showSuccessPopup && (
-        <div className="profile-success-popup-overlay">
-          <div className="profile-success-popup">
-            <div className="profile-success-icon-wrapper">
-              <i className="fas fa-check-circle profile-success-icon"></i>
-            </div>
-            <div className="profile-success-title">Bạn đã thay đổi thông tin thành công!</div>
-            <button className="profile-success-btn" onClick={() => setShowSuccessPopup(false)}>OK</button>
-          </div>
-        </div>
-      )}
+      {showPrescriptionPopup && (
+  <div className="prescription-popup-overlay">
+    <div className="prescription-popup">
+      {/* Header */}
+      <div className="prescription-popup-header">
+        <h3>🩺 Toa thuốc</h3>
+          <button
+           className="close-btn"
+           onClick={() => {
+            setShowPrescriptionPopup(false);
+            setPrescriptionData([]);
+          }}
+              >
+             ❌
+        </button>
+      </div>
+
+      {/* Body */}
+      <div className="prescription-popup-body">
+        {prescriptionLoading ? (
+          <div className="text-gray-600">Đang tải đơn thuốc...</div>
+        ) : prescriptionError ? (
+          <div className="text-red-500">{prescriptionError}</div>
+        ) : (
+          Array.isArray(prescriptionData) &&
+          prescriptionData.length > 0 &&
+          prescriptionData[0] &&
+          typeof prescriptionData[0] === "object" ? (
+            <>
+              {/* Thông tin chung */}
+              <div className="prescription-info">
+                <div><strong>Mã đơn thuốc:</strong> {prescriptionData[0].PrescriptionID}</div>
+                <div><strong>Mã hồ sơ:</strong> {prescriptionData[0].MedicalRecordID}</div>
+                <div><strong>Mã phác đồ:</strong> {prescriptionData[0].TreatmentPlanID}</div>
+                <div><strong>Bệnh nhân:</strong> {prescriptionData[0].FullnameDoctor}</div>
+                <div><strong>Bác sĩ:</strong> {prescriptionData[0].FullnamePatient}</div>
+                <div><strong>Phác đồ điều trị:</strong> {prescriptionData[0].LineOfTreatment}</div>
+              </div>
+
+              {/* Danh sách thuốc */}
+              <div className="prescription-medicine-list">
+                <h4 className="text-md font-semibold mb-2">💊 Danh sách thuốc</h4>
+                <div className="overflow-x-auto">
+                  <table className="prescription-table">
+                    <thead>
+                      <tr>
+                        <th>Tên thuốc</th>
+                        <th>Liều lượng</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Ngày kết thúc</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {prescriptionData.map((item, idx) => (
+                        <tr key={idx}>
+                          <td>{item.MedicalName || ''}</td>
+                          <td>{item.Dosage || ''}</td>
+                          <td>{item.StartDate?.split('T')[0] || ''}</td>
+                          <td>{item.EndDate?.split('T')[0] || ''}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="prescription-info-2">
+              <div><strong>Kết quả điều trị:</strong> {prescriptionData[0].TreatmentResult}</div>
+              <div><strong>Chẩn đoán:</strong> {prescriptionData[0].Diagnosis}</div>
+              </div>
+
+              {/* Ghi chú */}
+              <div className="prescription-message">
+                Bệnh nhân vui lòng sử dụng thuốc đúng liều lượng và thời gian theo chỉ định của bác sĩ.
+              </div>
+            </>
+          ) : (
+            <div>Không có dữ liệu đơn thuốc.</div>
+          )
+        )}
+      </div>
+    </div>
+  </div>
+)}
+
+
     </>
   );
 };

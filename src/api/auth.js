@@ -253,3 +253,7 @@ export const checkout =(id ) =>{
     }
   });
 }
+
+export const nguoidunglaytoathuoc = (patientId) => {
+  return axiosClient.get(`/TreatmentPlan/GetPrescriptionByPatient/${patientId}`);
+};
