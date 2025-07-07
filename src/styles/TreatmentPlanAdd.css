@@ -1,0 +1,99 @@
+.tp-add-container {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  padding: 32px 16px;
+  background: #f7fafd;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #0001;
+  max-width: 900px;
+  margin: 32px auto;
+  flex-wrap: wrap;
+}
+.tp-add-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: #fff;
+  padding: 28px 36px;
+  border-radius: 12px;
+  box-shadow: 0 1px 8px #0002;
+  min-width: 320px;
+}
+.tp-add-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tp-add-row label {
+  font-weight: 600;
+  color: #1976d2;
+  margin-bottom: 2px;
+  letter-spacing: 0.5px;
+}
+.tp-add-row input, .tp-add-row select {
+  padding: 9px 12px;
+  border: 1.5px solid #bcd;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #fafdff;
+  transition: border 0.2s;
+}
+.tp-add-row input:focus, .tp-add-row select:focus {
+  border: 1.5px solid #1976d2;
+  outline: none;
+  background: #f0f7ff;
+}
+.tp-add-btn {
+  margin-top: 16px;
+  padding: 12px 0;
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 7px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px #1976d220;
+}
+.tp-add-btn:disabled {
+  background: #bcd;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.tp-patient-info {
+  min-width: 260px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 8px #0002;
+  padding: 28px 24px;
+  margin-top: 8px;
+  flex: none;
+}
+.tp-patient-info h3 {
+  color: #1976d2;
+  margin-bottom: 14px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.tp-patient-info p {
+  margin: 7px 0;
+  font-size: 1rem;
+  color: #222;
+}
+@media (max-width: 900px) {
+  .tp-add-container {
+    flex-direction: column;
+    gap: 18px;
+    padding: 18px 4px;
+    max-width: 98vw;
+  }
+  .tp-add-form, .tp-patient-info {
+    min-width: unset;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // import { storage } from './utils/firebase-config';
 // import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
 import ChatButton from './components/ChatButton';
@@ -35,6 +35,7 @@ import Staff from './staff/Staff';
 import Doctor from './doctor/doctor';
 import TreatmentPlanDetail from './pages/TreatmentPlanDetail';
 import PrescriptionForm from './pages/PrescriptionForm';
+import TreatmentPlanAdd from './pages/TreatmentPlanAdd';
 
 function App() {
   // const [file, setFile] = useState(null);
@@ -94,10 +95,12 @@ function App() {
           <Route path="/hiv-department" element={<HIVDepartment />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/treatment-plan" element={<TreatmentPlan />} />
+          <Route path="/treatment-plan/add" element={<TreatmentPlanAdd />} />
           <Route path="/treatment-plan/:id" element={<TreatmentPlanDetail />} />
           <Route path="/medication" element={<MedicationManager />} />
           <Route path="/appointments" element={<AppointmentManager />} />
           <Route path="/prescription/:treatmentPlanId" element={<PrescriptionForm />} />
+          
 
           {/* Trang staff */}
           <Route path="/staff" element={<Staff />} />

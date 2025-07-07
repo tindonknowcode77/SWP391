@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Doctor.css';
 import '../styles/TreatmentPlan.css';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {xemdanhsachlichduocduyet} from '../api/auth';
 import {bacsilaytreatmentplan} from '../api/auth';
 import {bacsilaydanhsachbenhnhan} from '../api/auth';
@@ -17,6 +17,7 @@ const Doctor = () => {
   const [selected, setSelected] = useState('appointments');
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null); 
@@ -254,6 +255,27 @@ const Doctor = () => {
       seenPatientKeys.add(key);
     }
   });
+
+  const handlePatientClick = async (patient) => {
+    try {
+      const patientId = patient.Patient?.PatientID || patient.PatientID;
+      if (!patientId) {
+        alert('Không tìm thấy mã bệnh nhân!');
+        return;
+      }
+      const res = await bacsilaytreatmentplan();
+      const plans = Array.isArray(res) ? res : (res?.data || []);
+      const plan = plans.find(pl => pl.Patient?.PatientID === patientId || pl.PatientID === patientId);
+      if (plan) {
+        navigate(`/treatment-plan/${plan.TreatmentPlanID}`);
+      } else {
+        const doctorId = currentUser?.id;
+        navigate(`/treatment-plan/add?patientId=${patientId}&doctorId=${doctorId}`);
+      }
+    } catch (error) {
+      alert('Lỗi khi kiểm tra hồ sơ điều trị!');
+    }
+  };
 
   return (
     <div className="doctor-container">
@@ -527,6 +549,13 @@ const Doctor = () => {
                         <div className="patient-row"><span className="patient-label">Nhóm máu:</span> {p.Patient?.BloodType || '---'}</div>
                         <div className="patient-row"><span className="patient-label">Ghi chú:</span> {p.Note || '---'}</div>
                         <div className="patient-row"><span className="patient-label">Dị ứng:</span> {p.Patient?.Allergy || '---'}</div>
+                        <button
+                          onClick={() => handlePatientClick(p)}
+                          className="doctor-action-btn"
+                          style={{marginTop: 8}}
+                        >
+                          Xem hồ sơ điều trị
+                        </button>
                       </div>
                     </div>
                   </div>

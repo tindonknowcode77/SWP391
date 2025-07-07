@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTreatmentPlanById, AllARVProtocol, addPrescription, UpdateTreatmentPlan } from '../api/auth';
+import {
+  getTreatmentPlanById,
+  AllARVProtocol,
+  addPrescription,
+  UpdateTreatmentPlan,
+  bacsilaydanhsachbenhnhan,
+  getAllDoctors,
+  AddTreatmentPlan
+} from '../api/auth';
 import {updateARVProtocol} from '../api/auth';
+
+
 import '../styles/TreatmentPlanDetail.css';
 const TreatmentPlanDetail = () => {
   const { id } = useParams();

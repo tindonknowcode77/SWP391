@@ -30,15 +30,12 @@
 
 /* Tiêu đề hồ sơ */
 .tpd-title {
-  font-size: 2.7rem;
-  margin-bottom: 32px;
-  color: #1769aa;
-  font-weight: 900;
-  letter-spacing: 0.8px;
+  font-size: 1.3rem;
+  margin-bottom: 18px;
+  color: #1976d2;
+  font-weight: 700;
   text-align: center;
-  width: 100%;
-  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-  text-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
+  letter-spacing: 0.5px;
 }
 
 /* Khối thông tin bệnh nhân */
@@ -76,7 +73,7 @@
 
 /* Nút quay lại */
 .tpd-back-btn, .treatment-detail-container .back-btn {
-  background: linear-gradient(90deg, #e3eafc 0%, #fafdff 100%);
+  background:    #4da2e7;
   color: #1769aa;
   border: none;
   border-radius: 8px;
@@ -129,7 +126,7 @@
   box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
 }
 .tpd-update-arv-btn {
-  background: linear-gradient(90deg, #1769aa 0%, #43a047 100%);
+  background:  #64afec ;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -141,7 +138,7 @@
   box-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
 }
 .tpd-update-arv-btn:hover {
-  background: linear-gradient(90deg, #43a047 0%, #1769aa 100%);
+  background:  #147bcf ;
   box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
 }
 .tpd-arv-detail {
@@ -179,11 +176,11 @@
 
 /* Đơn thuốc & Chỉ định */
 .tpd-prescription-section {
-  margin-top: 18px;
+  margin-top: 100px;
   width: 100%;
 }
 .tpd-add-prescription-btn {
-  background: linear-gradient(90deg, #43a047 0%, #1769aa 100%);
+  background:  #55a7eb ;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -196,7 +193,7 @@
   box-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
 }
 .tpd-add-prescription-btn:hover {
-  background: linear-gradient(90deg, #1769aa 0%, #43a047 100%);
+  background:  #1d7fcf ;
   box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
 }
 .tpd-prescription-table {
@@ -264,3 +261,75 @@
 }
 
 /* Modern, clean, professional hospital profile style */
+
+.treatment-plan-detail-center label {
+  font-weight: 500;
+  color: #222;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.treatment-plan-detail-center input,
+.treatment-plan-detail-center select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.2px solid #b5d0f7;
+  border-radius: 7px;
+  background: #f7fafd;
+  margin-bottom: 14px;
+  font-size: 1rem;
+  transition: border 0.18s;
+  outline: none;
+}
+
+.treatment-plan-detail-center input:focus,
+.treatment-plan-detail-center select:focus {
+  border: 1.2px solid #1976d2;
+  background: #e3f0fc;
+}
+
+.treatment-plan-detail-center .tp-add-btn,
+.treatment-plan-detail-center button[type="submit"] {
+  width: 100%;
+  background: linear-gradient(90deg, #1976d2 0%, #42a5f5 100%);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 12px 0;
+  font-size: 1.08rem;
+  font-weight: 600;
+  margin-top: 10px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px #1976d220;
+  transition: background 0.18s, box-shadow 0.18s;
+}
+
+.treatment-plan-detail-center .tp-add-btn:hover,
+.treatment-plan-detail-center button[type="submit"]:hover {
+  background: linear-gradient(90deg, #1565c0 0%, #1976d2 100%);
+  box-shadow: 0 2px 8px #1976d220;
+}
+
+.treatment-plan-detail-center .tpd-back-btn,
+.treatment-plan-detail-center .tp-add-form > button[type="button"] {
+  background: #e3f0fc;
+  color: #1976d2;
+  border: none;
+  border-radius: 7px;
+  padding: 8px 18px;
+  font-weight: bold;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px #1976d220;
+  margin-bottom: 18px;
+  transition: background 0.18s, color 0.18s;
+}
+
+.treatment-plan-detail-center .tpd-back-btn:hover,
+.treatment-plan-detail-center .tp-add-form > button[type="button"]:hover {
+  background: #1976d2;
+  color: #fff;
+}

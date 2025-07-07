@@ -143,7 +143,7 @@ export const getTreatmentPlanById = (treatmentPlanId) => {
   return axiosClient.get(`/TreatmentPlan/GetTreatmentPlanById/${treatmentPlanId}`);
 }; 
 export const  AddTreatmentPlan = (data) => {
-  return axiosClient.post('/TreatmentPlan/add', data, {
+  return axiosClient.post('/TreatmentPlan/AddTreatmentPlan', data, {
     headers: {
       'Content-Type': 'application/json'
     }
@@ -261,3 +261,6 @@ export const nguoidunglaytoathuoc = (patientId) => {
 export const nguoidunglayAVR = (patientId) => {
   return axiosClient.get(`/TreatmentPlan/GetARVByPatient/${patientId}`);
 };
+export const suaidbenhnhan = (patientId) => {
+  return axiosClient.get(`/EditProfileUser/patient/${patientId}`);
+}
