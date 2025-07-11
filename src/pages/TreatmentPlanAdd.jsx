@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { getAllDoctors, AllARVProtocol, AddTreatmentPlan, bacsilaydanhsachbenhnhan, loginInfor } from "../api/auth";
+import { useNavigate } from 'react-router-dom';
+import { getAllDoctors, AllARVProtocol, AddTreatmentPlan, TreatmentPlansByPatient, bacsilaydanhsachbenhnhan } from "../api/auth";
 import '../styles/TreatmentPlanAdd.css';
+import { useLocation } from 'react-router-dom';
 
 const TreatmentPlanAdd = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-  const query = new URLSearchParams(location.search);
-  const patientIdFromUrl = query.get('patientId');
-  const doctorIdFromUrl = query.get('doctorId');
+  const location = useLocation();
 
   const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
@@ -24,59 +22,47 @@ const TreatmentPlanAdd = () => {
   const [loading, setLoading] = useState(false);
   const [patientInfo, setPatientInfo] = useState(null);
   const [selectedARVObj, setSelectedARVObj] = useState(null);
-  const [currentDoctor, setCurrentDoctor] = useState(null);
-  const [isDoctor, setIsDoctor] = useState(false);
 
-  // Lấy thông tin user đang đăng nhập
-  useEffect(() => {
-    loginInfor().then(res => {
-      const user = res?.data || res;
-      if (user && user.RoleId === 'R003') { // bác sĩ
-        setIsDoctor(true);
-        setCurrentDoctor(user);
-        setForm(f => ({ ...f, DoctorID: user.UserId }));
-      }
-    }).catch(() => {
-      setIsDoctor(false);
-      setCurrentDoctor(null);
-    });
-  }, []);
 
-  // Lấy danh sách bệnh nhân, bác sĩ, phác đồ ARV
+
+  // Lấy danh sách bác sĩ, phác đồ ARV, danh sách bệnh nhân
   useEffect(() => {
-    bacsilaydanhsachbenhnhan().then(res => {
-      setPatients(res?.data || res);
-    }).catch(() => setPatients([]));
     getAllDoctors().then(res => {
-      setDoctors(res?.data || res);
+      const doctorsData = res?.data || res;
+      console.log('Doctors data:', doctorsData);
+      setDoctors(doctorsData);
     }).catch(() => setDoctors([]));
     AllARVProtocol().then(res => {
       setArvProtocols(res?.data || res);
     }).catch(() => setArvProtocols([]));
+    bacsilaydanhsachbenhnhan().then(res => {
+      setPatients(res?.data || res);
+    }).catch(() => setPatients([]));
   }, []);
 
-  // Nếu có patientId/doctorId trên URL thì set vào form
+  // Lấy patientId từ URL và set vào form
   useEffect(() => {
-    if (patientIdFromUrl || doctorIdFromUrl) {
-      setForm(f => ({
-        ...f,
-        PatientID: patientIdFromUrl || f.PatientID,
-        DoctorID: doctorIdFromUrl || f.DoctorID
-      }));
+    const query = new URLSearchParams(location.search);
+    const patientIdFromUrl = query.get('patientId');
+    console.log('patientId from URL:', patientIdFromUrl); // Log ra để kiểm tra
+    if (patientIdFromUrl) {
+      setForm(f => ({ ...f, PatientID: patientIdFromUrl }));
     }
-  }, [patientIdFromUrl, doctorIdFromUrl]);
+  }, [location.search]);
 
   // Khi chọn bệnh nhân thì lấy thông tin chi tiết
   useEffect(() => {
     if (form.PatientID) {
-      const found = patients.find(
-        p => String(p.PatientID || p.id) === String(form.PatientID)
-      );
-      setPatientInfo(found || null);
+      TreatmentPlansByPatient(form.PatientID)
+        .then(res => {
+          // Giả sử res.data là thông tin bệnh nhân
+          setPatientInfo(res?.data || res);
+        })
+        .catch(() => setPatientInfo(null));
     } else {
       setPatientInfo(null);
     }
-  }, [form.PatientID, patients]);
+  }, [form.PatientID]);
 
   // Khi chọn ARV thì lấy chi tiết ARV
   useEffect(() => {
@@ -88,18 +74,31 @@ const TreatmentPlanAdd = () => {
     }
   }, [form.ARVProtocol, arvProtocols]);
 
+  useEffect(() => {
+    const doctorId = localStorage.getItem('DoctorId');
+    if (doctorId) {
+      setForm(f => ({ ...f, DoctorID: doctorId }));
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await AddTreatmentPlan({
-        ...form,
-        DoctorID: isDoctor && currentDoctor ? currentDoctor.UserId : form.DoctorID
+      console.log("Dữ liệu gửi lên:", form);
+      const response = await AddTreatmentPlan({
+        PatientID: form.PatientID,
+        DoctorID: form.DoctorID,
+        ARVProtocol: form.ARVProtocol,
+        TreatmentLine: form.TreatmentLine,
+        Diagnosis: form.Diagnosis,
+        TreatmentResult: form.TreatmentResult
       });
+      console.log("API Response:", response);
       alert('Thêm mới hồ sơ điều trị thành công!');
       setForm({
         PatientID: '',
-        DoctorID: isDoctor && currentDoctor ? currentDoctor.UserId : form.DoctorID,
+        DoctorID: '',
         ARVProtocol: '',
         TreatmentLine: '',
         Diagnosis: '',
@@ -108,6 +107,7 @@ const TreatmentPlanAdd = () => {
       setPatientInfo(null);
       setSelectedARVObj(null);
     } catch (error) {
+      console.log("Lỗi:", error);
       alert('Có lỗi xảy ra khi thêm mới!');
     }
     setLoading(false);
@@ -139,19 +139,27 @@ const TreatmentPlanAdd = () => {
         </button>
         <div className="tp-add-row">
           <label>Chọn bệnh nhân</label>
-          <select
-            value={form.PatientID}
-            onChange={e => setForm({ ...form, PatientID: e.target.value })}
-            required
-            disabled={!!form.PatientID}
-          >
-            <option value="">Chọn bệnh nhân</option>
-            {Array.isArray(patients) && patients.map((p, idx) => (
-              <option key={p.PatientID || p.id || idx} value={p.PatientID || p.id}>
-                {p.PatientFullname || p.fullName}
-              </option>
-            ))}
-          </select>
+          {form.PatientID ? (
+            <input
+              type="text"
+              value={form.PatientID}
+              disabled
+              style={{ background: '#f7fafd', fontWeight: 'bold' }}
+            />
+          ) : (
+            <select
+              value={form.PatientID}
+              onChange={e => setForm({ ...form, PatientID: e.target.value })}
+              required
+            >
+              <option value="">Chọn bệnh nhân</option>
+              {patients.map((p, idx) => (
+                <option key={p.PatientID || idx} value={p.PatientID}>
+                  {p.PatientID}
+                </option>
+              ))}
+            </select>
+          )}
           {form.PatientID && (
             <button
               type="button"
@@ -167,10 +175,10 @@ const TreatmentPlanAdd = () => {
         </div>
         <div className="tp-add-row">
           <label>Bác sĩ phụ trách</label>
-          {isDoctor && currentDoctor ? (
+          {form.DoctorID ? (
             <input
               type="text"
-              value={currentDoctor.Fullname}
+              value={form.DoctorID}
               disabled
               style={{ background: '#f7fafd', fontWeight: 'bold' }}
             />
@@ -182,7 +190,9 @@ const TreatmentPlanAdd = () => {
             >
               <option value="">Chọn bác sĩ</option>
               {Array.isArray(doctors) && doctors.map((d, idx) => (
-                <option key={d.id || idx} value={d.id}>{d.fullName}</option>
+                <option key={d.DoctorId || idx} value={d.DoctorId}>
+                  {d.Fullname} - {d.DoctorId}
+                </option>
               ))}
             </select>
           )}

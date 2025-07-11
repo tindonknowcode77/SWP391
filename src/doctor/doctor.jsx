@@ -270,7 +270,7 @@ const Doctor = () => {
         navigate(`/treatment-plan/${plan.TreatmentPlanID}`);
       } else {
         // Thử lấy tất cả trường có thể là mã bác sĩ
-        const doctorId = currentUser?.DoctorID || currentUser?.doctorId ;
+        const doctorId = currentUser?.DoctorId || currentUser?.DoctorID || currentUser?.doctorId || localStorage.getItem('DoctorId');
         console.log('doctorId:', doctorId);
         
         navigate(`/treatment-plan/add?patientId=${patientId}&doctorId=${doctorId}`);
