@@ -269,7 +269,10 @@ const Doctor = () => {
       if (plan) {
         navigate(`/treatment-plan/${plan.TreatmentPlanID}`);
       } else {
-        const doctorId = currentUser?.id;
+        // Thử lấy tất cả trường có thể là mã bác sĩ
+        const doctorId = currentUser?.DoctorID || currentUser?.doctorId ;
+        console.log('doctorId:', doctorId);
+        
         navigate(`/treatment-plan/add?patientId=${patientId}&doctorId=${doctorId}`);
       }
     } catch (error) {

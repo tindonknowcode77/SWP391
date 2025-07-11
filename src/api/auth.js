@@ -264,3 +264,6 @@ export const nguoidunglayAVR = (patientId) => {
 export const suaidbenhnhan = (patientId) => {
   return axiosClient.get(`/EditProfileUser/patient/${patientId}`);
 }
+export const infordoctor = (doctorId) => {
+  return axiosClient.get(`/Doctor/InfoDoctor/${doctorId}`);
+}

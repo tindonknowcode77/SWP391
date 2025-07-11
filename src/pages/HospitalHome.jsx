@@ -375,7 +375,7 @@ const HospitalHome = () => {
       </section>
       
       {/* Testimonials Section */}
-      <section className="testimonials-section">
+      {/* <section className="testimonials-section">
         <div className="container">
           <div className="section-header-home">
             <h2>Ý kiến bệnh nhân</h2>
@@ -429,14 +429,14 @@ const HospitalHome = () => {
           </div>
         </div>
       </section>
-      
+       */}
       {/* Contact Section */}
       <section className="contact-section">
         <div className="container">
           <div className="contact-grid">
             <div className="contact-info">
               <h2>Liên hệ với chúng tôi</h2>
-              <p>Hãy liên hệ nếu bạn có bất kỳ câu hỏi nào về dịch vụ của chúng tôi.</p>
+              <p></p>
               
               <div className="contact-details">
                 <div className="contact-item">
