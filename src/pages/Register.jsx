@@ -87,10 +87,10 @@ const Register = () => {
         Address: formData.address,
       };
   
-      // Tạo bản sao và ẩn password khi log
+    
       const safePayload = { ...payload, Password: '******' };
       console.log('Sending payload:', safePayload);
-  
+      
       const success = await dangky(payload); 
   
       if (success) {
