@@ -8,6 +8,8 @@ import {pantient} from '../api/auth';
 import { nguoidunglayhosodieutri } from  '../api/auth';
 import { nguoidunglaytoathuoc } from  '../api/auth';
 import { nguoidunglayAVR } from  '../api/auth';
+import { datlichkham } from '../api/auth';
+import { patientcheckin } from '../api/auth';
 
 const Profile = () => {  
   const { currentUser, loading, updateProfile, logout, setCurrentUser } = useAuth();
@@ -133,6 +135,28 @@ const Profile = () => {
   const [arvResultLoading, setArvResultLoading] = useState(false);
   const [arvResultError, setArvResultError] = useState(null);
 
+  // Thay thế state lịch hẹn giả lập bằng state động
+  const [appointments, setAppointments] = useState([]);
+  const [appointmentsLoading, setAppointmentsLoading] = useState(false);
+  const [appointmentsError, setAppointmentsError] = useState(null);
+
+  const isToday = (bookDate) => {
+    const today = new Date().toISOString().split('T')[0];
+    const book = new Date(bookDate).toISOString().split('T')[0];
+    console.log('Today:', today, 'BookDate:', book, 'IsToday:', book === today);
+    return book === today;
+  };
+
+  // Hàm kiểm tra có phải hôm nay hoặc trong tương lai gần (để test)
+  const isTodayOrNear = (bookDate) => {
+    const today = new Date();
+    const book = new Date(bookDate);
+    const diffDays = Math.ceil((book - today) / (1000 * 60 * 60 * 24));
+    console.log('BookDate:', book, 'Today:', today, 'DiffDays:', diffDays);
+    // Cho phép check-in trong vòng 2 ngày (hôm qua, hôm nay, ngày mai)
+    return diffDays >= -1 && diffDays <= 1;
+  };
+
   // Lấy dữ liệu profile từ API khi vào trang hoặc khi currentUser thay đổi
   useEffect(() => {
     if (currentUser?.id) {
@@ -196,6 +220,23 @@ const Profile = () => {
       })
       .catch(() => setMedicalHistory([]));
   }, []);
+
+  // Lấy lịch hẹn động khi vào tab 'appointments'
+  useEffect(() => {
+    if (activeTab === 'appointments' && currentUser?.id) {
+      setAppointmentsLoading(true);
+      setAppointmentsError(null);
+      datlichkham()
+        .then((data) => {
+          setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+          setAppointmentsLoading(false);
+        })
+        .catch((err) => {
+          setAppointmentsError('Không thể tải danh sách lịch hẹn');
+          setAppointmentsLoading(false);
+        });
+    }
+  }, [activeTab, currentUser]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -306,7 +347,14 @@ const Profile = () => {
               <i className="fas fa-notes-medical"></i>
               <span>Hồ sơ bệnh án</span>
             </button>
-            
+            {/* Thêm tab Lịch hẹn của tôi */}
+            <button 
+              className={`profile-nav-btn ${activeTab === 'appointments' ? 'active' : ''}`}
+              onClick={() => handleTabChange('appointments')}
+            >
+              <i className="fas fa-calendar-check"></i>
+              <span>Lịch hẹn của tôi</span>
+            </button>
             <button 
               className={`profile-nav-btn ${activeTab === 'medication' ? 'active' : ''}`}
               onClick={() => handleTabChange('medication')}
@@ -353,6 +401,7 @@ const Profile = () => {
             <h2>
               {activeTab === 'personal' && 'Thông tin cá nhân'}
               {activeTab === 'medical' && 'Hồ sơ bệnh án'}
+              {activeTab === 'appointments' && 'Lịch hẹn của tôi'}
               {activeTab === 'medication' && 'Thuốc đang dùng'}
               {activeTab === 'notifications' && 'Thông báo hệ thống'}
             </h2>
@@ -605,6 +654,105 @@ const Profile = () => {
                     </div>
                   ))}
                 </div>  
+              </div>
+            )}
+            
+            {activeTab === 'appointments' && (
+              <div className="appointment-list">
+                <div className="section-info">
+                  <p>Danh sách các lịch hẹn của bạn tại phòng khám.</p>
+                </div>
+                {appointmentsLoading ? (
+                  <div>Đang tải...</div>
+                ) : appointmentsError ? (
+                  <div style={{color: 'red'}}>{appointmentsError}</div>
+                ) : appointments.length === 0 ? (
+                  <div>Không có lịch hẹn nào.</div>
+                ) : (
+                  <div className="appointments-table-wrapper">
+                    <table className="appointments-table">
+                      <thead>
+                        <tr>
+                          <th>Mã đặt lịch</th>
+                          <th>Tên bệnh nhân</th>
+                          <th>Loại dịch vụ</th>
+                          <th>Thời gian</th>
+                          <th>Ghi chú</th>
+                          <th>Trạng thái</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[...appointments].sort((a, b) => {
+                          const isCancelledA = a.Status === 'Đã hủy' || a.Status === 'rejected';
+                          const isCancelledB = b.Status === 'Đã hủy' || b.Status === 'rejected';
+                          if (isCancelledA === isCancelledB) return 0;
+                          return isCancelledA ? 1 : -1;
+                        }).map((item, idx) => (
+                          <tr key={item.BookID || idx}>
+                            <td>{item.BookID}</td>
+                            <td>{item.PatientFullname || item.patientName || ''}</td>
+                            <td>{item.BookingType || ''}</td>
+                            <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
+                            <td>{item.Note || ''}</td>
+                            <td className={
+                              item.Status === 'Đang chờ'
+                                ? 'status-badge-2 status-pending-3'
+                                : item.Status === 'Đã xác nhận'
+                                ? 'status-badge-2 status-confirmed-3'
+                                : item.Status === 'rejected'
+                                ? 'status-badge-2 status-rejected-3'
+                                : item.Status === 'Đã hủy'
+                                ? 'status-badge-2 status-cancelled-3'
+                                : item.Status === 'Thành công'
+                                ? 'status-badge-2 status-thanhcong-3'
+                                : item.Status === 'Đã khám'
+                                ? 'status-badge-2 status-confirmed-3'
+                                : 'status-badge-2'
+                            }>
+                              {item.Status || ''}
+                              {/* Nút Check-in chỉ hiện ở trạng thái "Thành công" */}
+                              {isTodayOrNear(item.BookDate) && 
+                               item.Status && 
+                               item.Status.trim().toLowerCase() === 'thành công' && (
+                                <button
+                                  style={{
+                                    marginLeft: 8,
+                                    padding: '4px 12px',
+                                    background: '#4CAF50',
+                                    color: '#fff',
+                                    border: 'none',
+                                    borderRadius: 4,
+                                    cursor: 'pointer',
+                                    fontSize: '12px',
+                                    fontWeight: 'bold'
+                                  }}
+                                  onClick={async () => {
+                                    console.log('Check-in clicked for BookID:', item.BookID);
+                                    try {
+                                      await patientcheckin(item.BookID);
+                                      // Sau khi check-in thành công, chuyển status thành "Đã xác nhận"
+                                      setAppointments(prev =>
+                                        prev.map(app =>
+                                          app.BookID === item.BookID ? { ...app, Status: 'Đã xác nhận' } : app
+                                        )
+                                      );
+                                      alert('✅ Check-in thành công! Trạng thái đã được cập nhật.');
+                                    } catch (error) {
+                                      console.error('Check-in error:', error);
+                                      alert('❌ Check-in thất bại: ' + (error.response?.data || error.message));
+                                    }
+                                  }}
+                                >
+                                  ✅ Check-in
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             )}
             

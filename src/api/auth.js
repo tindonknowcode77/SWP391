@@ -267,3 +267,17 @@ export const suaidbenhnhan = (patientId) => {
 export const infordoctor = (doctorId) => {
   return axiosClient.get(`/Doctor/InfoDoctor/${doctorId}`);
 }
+export const patientcheckin = (id) => {
+  return axiosClient.put(`/Appointment/PatientCheckin/${id}`, null, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+};
+export const doctorcheckout =(id) =>{
+  return axiosClient.put(`/Appointment/DoctorCheckout/${id}`, null, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+};

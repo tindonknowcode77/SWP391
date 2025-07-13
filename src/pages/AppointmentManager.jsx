@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import {datlichkham} from '../api/auth';
 import Navbar from '../components/Navbar';
 import { huylichthanhcong } from  '../api/auth';
+import { patientcheckin } from '../api/auth';
+import { doctorcheckout } from '../api/auth';
 
 const SERVICE_NAME_MAP = {
   'SV000001': 'Khám tổng quát',
@@ -72,6 +74,28 @@ const Doctor = () => {
     }
   };
 
+  // Hàm check-in cho bệnh nhân
+  const handleCheckIn = async (bookId) => {
+    try {
+      await patientcheckin(bookId);
+      setAppointments(prev =>
+        prev.map(app =>
+          app.BookID === bookId ? { ...app, Status: 'Đã checkin' } : app
+        )
+      );
+      alert('✅ Check-in thành công!');
+    } catch (error) {
+      alert('❌ Check-in thất bại: ' + (error.response?.data || error.message));
+    }
+  };
+
+  // Hàm kiểm tra ngày hôm nay
+  const isToday = (bookDate) => {
+    const today = new Date().toISOString().split('T')[0];
+    const book = new Date(bookDate).toISOString().split('T')[0];
+    return book === today;
+  };
+
   // Sắp xếp lịch hẹn: chưa hủy/thành công lên trên, đã hủy/rejected xuống dưới
   const sortedAppointments = [...appointments].sort((a, b) => {
     const isCancelledA = a.Status === 'Đã hủy' || a.Status === 'rejected';
@@ -97,6 +121,12 @@ const Doctor = () => {
               onClick={() => setSelected('patients')}
             >
              Hủy Lịch Khám
+            </li>
+            <li
+              className={selected === 'patients' ? 'active' : ''}
+              onClick={() => setSelected('patients')}
+            >
+            Checkin
             </li>
           </ul>
         </aside>
@@ -142,6 +172,24 @@ const Doctor = () => {
                               : 'status-badge-2'
                             }>
                             {item.Status || ''}
+
+                            {/* Nút Check-in cho lịch hẹn hôm nay */}
+                            {isToday(item.BookDate) && item.Status === 'Thành công' && (
+                              <button
+                                style={{
+                                  marginLeft: 8,
+                                  padding: '2px 8px',
+                                  background: '#4CAF50',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: 4,
+                                  cursor: 'pointer'
+                                }}
+                                onClick={() => handleCheckIn(item.BookID)}
+                              >
+                                ✅ Check-in
+                              </button>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -192,6 +240,26 @@ const Doctor = () => {
                               : 'status-badge-2'
                             }>
                             {item.Status || ''}
+
+                            {/* Nút Check-in cho lịch hẹn hôm nay */}
+                            {isToday(item.BookDate) && item.Status !== 'Đã checkin' && item.Status !== 'Đã hủy' && item.Status !== 'rejected' && (
+                              <button
+                                style={{
+                                  marginLeft: 8,
+                                  padding: '2px 8px',
+                                  background: '#4CAF50',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: 4,
+                                  cursor: 'pointer'
+                                }}
+                                onClick={() => handleCheckIn(item.BookID)}
+                              >
+                                ✅ Check-in
+                              </button>
+                            )}
+
+                            {/* Nút Hủy lịch */}
                             {(item.Status !== 'Đã hủy' && item.Status !== 'rejected') && (
                               <button
                                 style={{

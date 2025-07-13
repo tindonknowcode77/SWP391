@@ -9,6 +9,7 @@ import {bacsilaydanhsachbenhnhan} from '../api/auth';
 import { cancelAppointment } from '../api/auth';
 import { checkout } from '../api/auth';
 import { checkin } from '../api/auth';
+import { doctorcheckout } from '../api/auth';
 
 
 
