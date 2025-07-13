@@ -699,6 +699,8 @@ const Profile = () => {
                                 ? 'status-badge-2 status-pending-3'
                                 : item.Status === 'Đã xác nhận'
                                 ? 'status-badge-2 status-confirmed-3'
+                                : item.Status === 'Đã checkin'
+                                ? 'status-badge-2 status-checkedin-3'
                                 : item.Status === 'rejected'
                                 ? 'status-badge-2 status-rejected-3'
                                 : item.Status === 'Đã hủy'
@@ -730,10 +732,10 @@ const Profile = () => {
                                     console.log('Check-in clicked for BookID:', item.BookID);
                                     try {
                                       await patientcheckin(item.BookID);
-                                      // Sau khi check-in thành công, chuyển status thành "Đã xác nhận"
+                                      // Sau khi check-in thành công, chuyển status thành "Đã checkin"
                                       setAppointments(prev =>
                                         prev.map(app =>
-                                          app.BookID === item.BookID ? { ...app, Status: 'Đã xác nhận' } : app
+                                          app.BookID === item.BookID ? { ...app, Status: 'Đã checkin' } : app
                                         )
                                       );
                                       alert('✅ Check-in thành công! Trạng thái đã được cập nhật.');

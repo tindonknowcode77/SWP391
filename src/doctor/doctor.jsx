@@ -7,8 +7,6 @@ import {xemdanhsachlichduocduyet} from '../api/auth';
 import {bacsilaytreatmentplan} from '../api/auth';
 import {bacsilaydanhsachbenhnhan} from '../api/auth';
 import { cancelAppointment } from '../api/auth';
-import { checkout } from '../api/auth';
-import { checkin } from '../api/auth';
 import { doctorcheckout } from '../api/auth';
 
 
@@ -32,18 +30,14 @@ const Doctor = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [appointmentToCancel, setAppointmentToCancel] = useState(null);
   const [planPage, setPlanPage] = useState(0); // Pagination for treatment plans
-  const [checkingIn, setCheckingIn] = useState({}); // Track check-in loading state
-  const [checkingOut, setCheckingOut] = useState({}); // Track check-out loading state
   const [doctorStatus, setDoctorStatus] = useState('checked-out'); // Doctor's current status
   const [lastCheckoutTime, setLastCheckoutTime] = useState(new Date().toLocaleString('vi-VN'));
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [showRequireCheckin, setShowRequireCheckin] = useState(true);
-  const [showLikeCheckinModal, setShowLikeCheckinModal] = useState(false);
-  const [likeCheckinBookID, setLikeCheckinBookID] = useState(null);
-  const [showTickCheckoutModal, setShowTickCheckoutModal] = useState(false);
-  const [tickCheckoutBookID, setTickCheckoutBookID] = useState(null);
-  const [showTickErrorPopup, setShowTickErrorPopup] = useState(false);
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
 
   const patientNameMap = {
     'PT000001': 'Trịnh Bá khá',
@@ -156,36 +150,6 @@ const Doctor = () => {
       });
   };
 
-  const handleCheckin = async (appointment) => {
-    setCheckingIn(prev => ({...prev, [appointment.BookID]: true}));
-    try {
-      await checkin(appointment.BookID);
-      // Refresh danh sách lịch hẹn
-      const data = await xemdanhsachlichduocduyet();
-      setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
-    } catch (error) {
-      console.error('Check-in failed:', error);
-      alert('Không thể check-in. Vui lòng thử lại.');
-    } finally {
-      setCheckingIn(prev => ({...prev, [appointment.BookID]: false}));
-    }
-  };
-
-  const handleCheckout = async (appointment) => {
-    setCheckingOut(prev => ({...prev, [appointment.BookID]: true}));
-    try {
-      await checkout(appointment.BookID);
-      // Refresh danh sách lịch hẹn
-      const data = await xemdanhsachlichduocduyet();
-      setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
-    } catch (error) {
-      console.error('Check-out failed:', error);
-      alert('Không thể check-out. Vui lòng thử lại.');
-    } finally {
-      setCheckingOut(prev => ({...prev, [appointment.BookID]: false}));
-    }
-  };
-
   const handleMainCheckin = () => {
     setDoctorStatus('checked-in');
     setSuccessMessage('Bạn đã check-in thành công!');
@@ -199,50 +163,50 @@ const Doctor = () => {
     setShowSuccessPopup(true);
   };
 
-  const handleLikeCheckinClick = (bookID) => {
-    setLikeCheckinBookID(bookID);
-    setShowLikeCheckinModal(true);
-  };
-
-  const handleLikeCheckinConfirm = async () => {
-    if (!likeCheckinBookID) return;
+  // Xử lý khi bác sĩ click vào lịch hẹn
+  const handleAppointmentClick = async (appointment) => {
     try {
-      await checkin(likeCheckinBookID);
-      setShowLikeCheckinModal(false);
-      setLikeCheckinBookID(null);
-      setSuccessMessage('Check-in lịch hẹn thành công!');
-      setShowSuccessPopup(true);
-      // Refresh danh sách lịch hẹn
-      const data = await xemdanhsachlichduocduyet();
-      setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+      console.log('Clicked appointment:', appointment);
+      
+      // Kiểm tra trạng thái lịch hẹn
+      if (appointment.Status === 'Đã checkin') {
+        // Nếu đã check-in, chuyển sang tab "Bệnh nhân của tôi" 
+        setSelected('my-patients');
+        setSuccessMessage('✅ Chuyển đến danh sách bệnh nhân để khám!');
+        setShowSuccessPopup(true);
+      } else {
+        // Nếu chưa check-in, hiển thị thông báo
+        const today = new Date().toDateString();
+        const appointmentDate = new Date(appointment.BookDate).toDateString();
+        
+        if (appointmentDate > today) {
+          setModalMessage('❌ Chưa đến ngày hẹn. Vui lòng đợi đến ngày ' + new Date(appointment.BookDate).toLocaleDateString('vi-VN'));
+        } else if (appointment.Status !== 'Đã checkin') {
+          setModalMessage('❌ Bệnh nhân chưa xác nhận (check-in). Vui lòng yêu cầu bệnh nhân check-in trước khi khám.');
+        }
+        
+        setSelectedAppointment(appointment);
+        setShowAppointmentModal(true);
+      }
     } catch (error) {
-      alert('Không thể check-in. Vui lòng thử lại.');
+      console.error('Error handling appointment click:', error);
+      alert('Có lỗi xảy ra khi xử lý lịch hẹn!');
     }
   };
 
-  const handleTickCheckoutClick = (bookID) => {
-    setTickCheckoutBookID(bookID);
-    setShowTickCheckoutModal(true);
-  };
-
-  const handleTickCheckoutConfirm = async () => {
-    if (!tickCheckoutBookID) return;
+  // Xử lý hoàn tất khám bệnh
+  const handleExaminationComplete = async (bookId) => {
     try {
-      await checkout(tickCheckoutBookID);
-      setShowTickCheckoutModal(false);
-      setTickCheckoutBookID(null);
-      setSuccessMessage('Lịch hẹn đã được hoàn tất!');
+      await doctorcheckout(bookId);
+      setSuccessMessage('✅ Đã khám hoàn tất!');
       setShowSuccessPopup(true);
+      
       // Refresh danh sách lịch hẹn
       const data = await xemdanhsachlichduocduyet();
       setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
     } catch (error) {
-      if (error?.response?.status === 400) {
-        setShowTickCheckoutModal(false);
-        setShowTickErrorPopup(true);
-      } else {
-        alert('Không thể xác nhận hoàn tất. Vui lòng thử lại.');
-      }
+      console.error('Error completing examination:', error);
+      alert('Có lỗi khi hoàn tất khám bệnh!');
     }
   };
 
@@ -363,7 +327,12 @@ const Doctor = () => {
                   </thead>
                   <tbody>
                     {appointments.map((item, idx ) => (
-                      <tr key={item.BookID || idx}>
+                      <tr 
+                        key={item.BookID || idx}
+                        onClick={() => handleAppointmentClick(item)}
+                        style={{ cursor: 'pointer' }}
+                        className="appointment-row"
+                      >
                         <td>{item.BookID}</td>
                         <td>{item.PatientFullname}</td>
                         <td>{item.BookingType}</td>
@@ -374,22 +343,30 @@ const Doctor = () => {
                             ? 'status-badge-2 status-pending-3'
                             : item.Status === 'Đã xác nhận'
                             ? 'status-badge-2 status-confirmed-3'
+                            : item.Status === 'Đã checkin'
+                            ? 'status-badge-2 status-checkedin-3'
+                            : item.Status === 'Đã khám'
+                            ? 'status-badge-2 status-examined-3'
                             : item.Status === 'Rejected'
                             ? 'status-badge-2 status-rejected-3'
                             : item.Status === 'Thành công'
                             ? 'status-badge-2 status-thanhcong-3'
                             : 'status-badge-2'}>{item.Status || ''}
                         </td>
-                        <td>
+                        <td onClick={(e) => e.stopPropagation()}>
                           <button onClick={() => handleCancelClick(item)} className="doctor-action-btn doctor-trash-btn" title="Hủy lịch">
                             <i className="fas fa-trash-alt"></i>
                           </button>
-                          <button className="doctor-action-btn doctor-tick-btn" title="Xác nhận hoàn thành" style={{marginLeft: 8}} onClick={() => handleTickCheckoutClick(item.BookID)}>
-                            <i className="fas fa-check"></i>
-                          </button>
-                          <button className="doctor-action-btn doctor-like-btn" title="Like" style={{marginLeft: 8}} onClick={() => handleLikeCheckinClick(item.BookID)}>
-                            <i className="fas fa-thumbs-up"></i>
-                          </button>
+                          {item.Status === 'Đã checkin' && (
+                            <button 
+                              onClick={() => handleExaminationComplete(item.BookID)} 
+                              className="doctor-action-btn doctor-complete-btn" 
+                              title="Đã khám xong"
+                              style={{marginLeft: 8, background: '#28a745'}}
+                            >
+                              <i className="fas fa-check"></i>
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -587,35 +564,22 @@ const Doctor = () => {
           </div>
         </div>
       )}
-      {showLikeCheckinModal && (
+      {showAppointmentModal && (
         <div className="doctor-cancel-modal">
           <div className="doctor-cancel-container">
-            <div className="success-icon" style={{fontSize:'2.5rem', color:'#28a745', marginBottom:8}}><i className="fas fa-check-circle"></i></div>
-            <h3 style={{color:'#28a745', marginBottom:12}}>Bạn xác nhận check-in lịch hẹn này?</h3>
-            <div style={{marginTop: 16, display: 'flex', gap: 12, justifyContent: 'center'}}>
-              <button onClick={() => setShowLikeCheckinModal(false)} className="doctor-cancel-close" style={{background:'#e53935', color:'#fff', fontWeight:600}}>Hủy</button>
-              <button onClick={handleLikeCheckinConfirm} className="doctor-cancel-confirm" style={{background:'#28a745'}}>Có</button>
+            <div className="warning-icon" style={{fontSize:'2.5rem', color:'#ff9800', marginBottom:12}}>
+              <i className="fas fa-exclamation-triangle"></i>
             </div>
-          </div>
-        </div>
-      )}
-      {showTickCheckoutModal && (
-        <div className="doctor-cancel-modal">
-          <div className="doctor-cancel-container">
-            <div className="success-icon" style={{fontSize:'2.5rem', color:'#28a745', marginBottom:8}}><i className="fas fa-check-circle"></i></div>
-            <h3 style={{color:'#28a745', marginBottom:12}}>Lịch hẹn đã được hoàn tất? Xác nhận?</h3>
-            <div style={{marginTop: 16, display: 'flex', gap: 12, justifyContent: 'center'}}>
-              <button onClick={() => setShowTickCheckoutModal(false)} className="doctor-cancel-close" style={{background:'#e53935', color:'#fff', fontWeight:600}}>Hủy</button>
-              <button onClick={handleTickCheckoutConfirm} className="doctor-cancel-confirm" style={{background:'#28a745'}}>Xác nhận</button>
+            <h3 style={{color:'#333', marginBottom:16, textAlign:'center'}}>{modalMessage}</h3>
+            <div style={{textAlign:'center'}}>
+              <button 
+                onClick={() => setShowAppointmentModal(false)} 
+                className="doctor-cancel-close" 
+                style={{background:'#2196F3', color:'#fff', fontWeight:600}}
+              >
+                Đã hiểu
+              </button>
             </div>
-          </div>
-        </div>
-      )}
-      {showTickErrorPopup && (
-        <div className="doctor-cancel-modal">
-          <div className="doctor-cancel-container">
-            <h3 style={{color:'#e53935', marginBottom:12}}>Bạn không thể hoàn thành lịch chưa được xác nhận</h3>
-            <button onClick={() => setShowTickErrorPopup(false)} className="doctor-cancel-close" style={{background:'#e53935', color:'#fff', fontWeight:600, marginTop:16}}>Đóng</button>
           </div>
         </div>
       )}
