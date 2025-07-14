@@ -3,9 +3,8 @@ import '../styles/Doctor.css';
 import '../styles/TreatmentPlan.css';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {xemdanhsachlichduocduyet} from '../api/auth';
-import {bacsilaytreatmentplan} from '../api/auth';
 import {bacsilaydanhsachbenhnhan} from '../api/auth';
+import {bacsilaytreatmentplan} from '../api/auth';
 import { cancelAppointment } from '../api/auth';
 import { doctorcheckout } from '../api/auth';
 
@@ -66,7 +65,7 @@ const Doctor = () => {
     if (selected === 'appointments') {
       setLoading(true);
       setError(null);
-      xemdanhsachlichduocduyet()
+      bacsilaydanhsachbenhnhan()
         .then((data) => {
           setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
           setLoading(false);
@@ -110,6 +109,13 @@ const Doctor = () => {
     }
   }, [doctorStatus]);
 
+  useEffect(() => {
+    if (location.state && location.state.tab) {
+      setSelected(location.state.tab);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
   if (!currentUser || currentUser.role !== 'R003') {
     return (
       <div className="doctor-warning-banner" style={{flexDirection: 'column', gap: '18px'}}>
@@ -143,7 +149,7 @@ const Doctor = () => {
         setCancelReason('');
         setAppointmentToCancel(null);
         // Refresh danh sách lịch hẹn
-        xemdanhsachlichduocduyet()
+        bacsilaydanhsachbenhnhan()
           .then((data) => {
             setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
           });
@@ -166,14 +172,16 @@ const Doctor = () => {
   // Xử lý khi bác sĩ click vào lịch hẹn
   const handleAppointmentClick = async (appointment) => {
     try {
-      console.log('Clicked appointment:', appointment);
-      
-      // Kiểm tra trạng thái lịch hẹn
-      if (appointment.Status === 'Đã checkin') {
-        // Nếu đã check-in, chuyển sang tab "Bệnh nhân của tôi" 
-        setSelected('my-patients');
-        setSuccessMessage('✅ Chuyển đến danh sách bệnh nhân để khám!');
-        setShowSuccessPopup(true);
+      if (appointment.Status === 'Đã xác nhận') {
+        // Hiển thị confirm trước khi checkout
+        const confirmed = window.confirm('Bạn đã khám bệnh nhân này chưa?');
+        if (confirmed) {
+          await doctorcheckout(appointment.BookID);
+          // alert('Đã khám hoàn tất!');
+          const data = await bacsilaydanhsachbenhnhan();
+          setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+        }
+        // Nếu chọn Không thì không làm gì, vẫn giữ trạng thái Đã xác nhận
       } else {
         // Nếu chưa check-in, hiển thị thông báo
         const today = new Date().toDateString();
@@ -200,9 +208,10 @@ const Doctor = () => {
       await doctorcheckout(bookId);
       setSuccessMessage('✅ Đã khám hoàn tất!');
       setShowSuccessPopup(true);
-      
+      // Sau khi hoàn tất, chuyển về tab lịch hẹn của tôi
+      setSelected('appointments');
       // Refresh danh sách lịch hẹn
-      const data = await xemdanhsachlichduocduyet();
+      const data = await bacsilaydanhsachbenhnhan();
       setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
     } catch (error) {
       console.error('Error completing examination:', error);
@@ -278,34 +287,6 @@ const Doctor = () => {
       <main className="doctor-main" style={showRequireCheckin ? { pointerEvents: 'none', opacity: 0.5, filter: 'blur(2px)' } : {}}>
         {selected === 'appointments' && (
           <div className="doctor-content">
-            {/* Check-in/Check-out Status Section */}
-            <div className="checkin-status-section">
-              <div className="status-header">
-              <h3>
-      Trạng thái:{" "}
-      <span className={doctorStatus === 'checked-in' ? 'status-green' : 'status-red'}>
-        {doctorStatus === 'checked-in' ? 'Đã check-in' : 'Đã check-out'}
-      </span>
-    </h3>
-                <p>Check-out lúc: {lastCheckoutTime}</p>
-              </div>
-              <div className="checkin-buttons">
-                <button 
-                  className="checkin-btn-main" 
-                  onClick={handleMainCheckin}
-                  disabled={doctorStatus === 'checked-in'}
-                >
-                  Check-in
-                </button>
-                <button 
-                  className="checkout-btn-main" 
-                  onClick={handleMainCheckout}
-                  disabled={doctorStatus === 'checked-out'}
-                >
-                  Check-out
-                </button>
-              </div>
-            </div>
             
             <h2 className="doctor-table-title">Lịch hẹn của tôi</h2>
             {loading && <div>Đang tải...</div>}
@@ -323,6 +304,7 @@ const Doctor = () => {
                       <th>Số điện thoại</th>
                       <th>Trạng thái</th>
                       <th>Hành động</th>
+                      <th>Đã khám</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -357,16 +339,16 @@ const Doctor = () => {
                           <button onClick={() => handleCancelClick(item)} className="doctor-action-btn doctor-trash-btn" title="Hủy lịch">
                             <i className="fas fa-trash-alt"></i>
                           </button>
-                          {item.Status === 'Đã checkin' && (
-                            <button 
-                              onClick={() => handleExaminationComplete(item.BookID)} 
-                              className="doctor-action-btn doctor-complete-btn" 
-                              title="Đã khám xong"
-                              style={{marginLeft: 8, background: '#28a745'}}
-                            >
-                              <i className="fas fa-check"></i>
-                            </button>
-                          )}
+                        </td>
+                        <td style={{textAlign:'center'}}>
+                          <input
+                            type="checkbox"
+                            checked={item.Status === 'Đã khám'}
+                            disabled={item.Status !== 'Đã checkin'}
+                            onChange={e => {
+                              if (e.target.checked) handleExaminationComplete(item.BookID);
+                            }}
+                          />
                         </td>
                       </tr>
                     ))}

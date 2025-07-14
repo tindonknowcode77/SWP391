@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   getTreatmentPlanById,
   AllARVProtocol,
@@ -16,6 +16,7 @@ import '../styles/TreatmentPlanDetail.css';
 const TreatmentPlanDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [plan, setPlan] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -160,7 +161,18 @@ const TreatmentPlanDetail = () => {
         </section>
         <section className="tpd-prescription-section">
           <h3 className="tpd-section-title">Đơn thuốc</h3>
-          <button className="tpd-add-prescription-btn" onClick={() => navigate(`/prescription/${plan.TreatmentPlanID}`)}>
+          <button
+            className="tpd-add-prescription-btn"
+            onClick={() => {
+              if (location.state && location.state.fromDoctor && location.state.BookID) {
+                navigate(`/prescription/${plan.TreatmentPlanID}`, { state: { fromDoctor: true, BookID: location.state.BookID } });
+              } else if (location.state && location.state.fromDoctor) {
+                navigate(`/prescription/${plan.TreatmentPlanID}`, { state: { fromDoctor: true } });
+              } else {
+                navigate(`/prescription/${plan.TreatmentPlanID}`);
+              }
+            }}
+          >
             Thêm đơn thuốc
           </button>
         </section>

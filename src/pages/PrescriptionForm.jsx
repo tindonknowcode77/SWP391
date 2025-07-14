@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { addPrescription } from '../api/auth';
+import { doctorcheckout } from '../api/auth';
 import '../styles/PrescriptionForm.css';
 import { getAllMedications } from '../api/auth';
 import { getTreatmentPlanById } from '../api/auth';
@@ -8,6 +9,7 @@ import { getTreatmentPlanById } from '../api/auth';
 const PrescriptionForm = () => {
   const { treatmentPlanId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [prescription, setPrescription] = useState({
     MedicalRecordID: treatmentPlanId,
     MedicationId: '',
@@ -49,10 +51,21 @@ const PrescriptionForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     addPrescription(prescription)
-      .then(() => {
+      .then(async () => {
         setSuccess('Thêm đơn thuốc thành công!');
         setError('');
         setPrescription({ ...prescription, MedicationId: '', DoctorID: '', StartDate: '', EndDate: '', Dosage: '', LineOfTreatment: '' });
+        // Nếu đến từ trang bác sĩ thì gọi doctorcheckout và quay về tab lịch hẹn
+        if (location.state && location.state.fromDoctor) {
+          try {
+            await doctorcheckout(treatmentPlanId); // Gọi API cập nhật trạng thái
+          } catch (err) {
+            // Có thể log lỗi nếu cần
+          }
+          setTimeout(() => {
+            navigate('/doctor', { state: { tab: 'appointments' } });
+          }, 800); // Cho phép hiển thị thông báo thành công ngắn
+        }
       })
       .catch(() => {
         setError('Thêm đơn thuốc thất bại!');
