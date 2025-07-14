@@ -238,6 +238,15 @@ const Profile = () => {
     }
   }, [activeTab, currentUser]);
 
+  // Cái này để navigate qua activeTab bên phần Profile nha
+  useEffect(() => {
+    if (location.state?.tab && location.state.tab !== activeTab) {
+      setActiveTab(location.state.tab);
+     
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state, activeTab]);
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
@@ -376,7 +385,7 @@ const Profile = () => {
           <div className="profile-actions">
             <Link to="/appointments" className="profile-action-btn appointments">
               <i className="fas fa-calendar-check"></i>
-              <span>Đặt lịch khám</span>
+              <span>Hủy Lịch Khám</span>
             </Link>
             
             <button className="profile-action-btn logout" onClick={handleLogout}>

@@ -1237,7 +1237,7 @@ export default function ExaminationSchedule() {
                 )}
               </div>
               <div className="success-actions">
-                <button onClick={() => { setShowServiceSuccessPopup(false); setShowForm(false); navigate('/appointments'); }} className="done-btn">Đóng</button>
+                <button onClick={() => { setShowServiceSuccessPopup(false); setShowForm(false); navigate('/appointments', { state: { tab: 'appointments' } }); }} className="done-btn">Đóng</button>
                 
               </div>
             </div>
@@ -1280,9 +1280,9 @@ export default function ExaminationSchedule() {
                 <i className="fas fa-check-circle"></i>
               </div>
               <h2>Đăng ký dịch vụ thành công!</h2>
-              <p className="success-message">Bạn đã đăng ký dịch vụ thành công. Vui lòng chờ xác nhận từ phòng khám.</p>
+              <p className="success-message">Bạn đã đăng ký dịch vụ thành công. Vui lòng nhấn <span style={{color: 'red', fontWeight: 600}}>Check-In</span> vào ngày khám để xác nhận với Bác Sĩ.</p>
               <div className="success-actions">
-                <button onClick={() => { setShowServiceSuccessPopup(false); setShowForm(false); navigate('/appointments'); }} className="done-btn">Đóng</button>
+                <button onClick={() => { setShowServiceSuccessPopup(false); setShowForm(false); navigate('/Profile', { state: { tab: 'appointments' } }); }} className="done-btn">Đóng</button>
               </div>
             </div>
           </div>
