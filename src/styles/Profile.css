@@ -1056,3 +1056,69 @@
   margin: 6px 0;
 }
 
+/* Popup xác nhận check-in */
+.profile-checkin-popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.profile-checkin-popup {
+  background: #fff;
+  border-radius: 18px;
+  padding: 36px 32px 32px 32px;
+  box-shadow: 0 8px 40px rgba(56, 160, 71, 0.12), 0 2px 8px rgba(0,0,0,0.08);
+  min-width: 320px;
+  max-width: 370px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid #43a04722;
+}
+.profile-checkin-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  display: block;
+}
+.profile-checkin-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  color: #222;
+}
+.profile-checkin-message {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.profile-checkin-btn {
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  margin: 0 8px;
+  min-width: 90px;
+  transition: background 0.2s;
+}
+.profile-checkin-btn.close {
+  background: #f44336;
+  color: #fff;
+}
+.profile-checkin-btn.close:hover {
+  background: #c62828;
+}
+.profile-checkin-btn.confirm {
+  background: #4CAF50;
+  color: #fff;
+}
+.profile-checkin-btn.confirm:hover {
+  background: #388e3c;
+}
+

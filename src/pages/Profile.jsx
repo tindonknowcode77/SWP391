@@ -140,6 +140,10 @@ const Profile = () => {
   const [appointmentsLoading, setAppointmentsLoading] = useState(false);
   const [appointmentsError, setAppointmentsError] = useState(null);
 
+  const [showCheckinConfirm, setShowCheckinConfirm] = useState(false);
+  const [checkinBookId, setCheckinBookId] = useState(null);
+  const [checkinResult, setCheckinResult] = useState(null); // {success: true/false, message: ''}
+
   const isToday = (bookDate) => {
     const today = new Date().toISOString().split('T')[0];
     const book = new Date(bookDate).toISOString().split('T')[0];
@@ -740,21 +744,9 @@ const Profile = () => {
                                       fontSize: '12px',
                                       fontWeight: 'bold'
                                     }}
-                                    onClick={async () => {
-                                      console.log('Check-in clicked for BookID:', item.BookID);
-                                      try {
-                                        await patientcheckin(item.BookID);
-                                        // Sau khi check-in thành công, chuyển status thành "Đã checkin"
-                                        setAppointments(prev =>
-                                          prev.map(app =>
-                                            app.BookID === item.BookID ? { ...app, Status: 'Đã checkin' } : app
-                                          )
-                                        );
-                                        alert('✅ Check-in thành công! Trạng thái đã được cập nhật.');
-                                      } catch (error) {
-                                        console.error('Check-in error:', error);
-                                        alert('❌ Check-in thất bại: ' + (error.response?.data || error.message));
-                                      }
+                                    onClick={() => {
+                                      setCheckinBookId(item.BookID);
+                                      setShowCheckinConfirm(true);
                                     }}
                                   >
                                     ✅ Check-in
@@ -1027,7 +1019,47 @@ const Profile = () => {
       </div>
     </div>
   </div>
-)}
+)} 
+      {showCheckinConfirm && (
+        <div className="profile-checkin-popup-overlay">
+          <div className="profile-checkin-popup">
+            <div className="profile-checkin-icon" style={{color: checkinResult?.success ? '#4CAF50' : '#ff4d4f'}}>
+              <i className={checkinResult ? (checkinResult.success ? 'fas fa-check-circle' : 'fas fa-times-circle') : 'fas fa-question-circle'}></i>
+            </div>
+            {!checkinResult && <h3 className="profile-checkin-title">Bạn xác nhận Check-in lịch hẹn này?</h3>}
+            {checkinResult && <div className="profile-checkin-message" style={{color: checkinResult.success ? '#388e3c' : '#d32f2f'}}>{checkinResult.message}</div>}
+            <div style={{display: 'flex', justifyContent: 'center', gap: 18, marginTop: 8}}>
+              <button
+                className="profile-checkin-btn close"
+                onClick={() => { setShowCheckinConfirm(false); setCheckinBookId(null); setCheckinResult(null); }}
+              >
+                Đóng
+              </button>
+              {!checkinResult && (
+                <button
+                  className="profile-checkin-btn confirm"
+                  onClick={async () => {
+                    try {
+                      await patientcheckin(checkinBookId);
+                      setAppointments(prev =>
+                        prev.map(app =>
+                          app.BookID === checkinBookId ? { ...app, Status: 'Đã checkin' } : app
+                        )
+                      );
+                      setCheckinResult({ success: true, message: '✅ Check-in thành công! Trạng thái đã được cập nhật.' });
+                    } catch (error) {
+                      console.error('Check-in error:', error);
+                      setCheckinResult({ success: false, message: '❌ Check-in thất bại: ' + (error.response?.data || error.message) });
+                    }
+                  }}
+                >
+                  Xác Nhận
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
     </>
   );
