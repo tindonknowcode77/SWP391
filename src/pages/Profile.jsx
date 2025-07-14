@@ -669,7 +669,7 @@ const Profile = () => {
             {activeTab === 'appointments' && (
               <div className="appointment-list">
                 <div className="section-info">
-                  <p>Danh sách các lịch hẹn của bạn tại phòng khám.</p>
+                  <p>Danh sách các lịch hẹn đã đặt của quý khách tại phòng khám , quý khách vui lòng nhấn <span style={{color: 'green'}}>Check-in</span> để xác nhận với Bác Sĩ .</p>
                 </div>
                 {appointmentsLoading ? (
                   <div>Đang tải...</div>
@@ -691,75 +691,78 @@ const Profile = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {[...appointments].sort((a, b) => {
-                          const isCancelledA = a.Status === 'Đã hủy' || a.Status === 'rejected';
-                          const isCancelledB = b.Status === 'Đã hủy' || b.Status === 'rejected';
-                          if (isCancelledA === isCancelledB) return 0;
-                          return isCancelledA ? 1 : -1;
-                        }).map((item, idx) => (
-                          <tr key={item.BookID || idx}>
-                            <td>{item.BookID}</td>
-                            <td>{item.PatientFullname || item.patientName || ''}</td>
-                            <td>{item.BookingType || ''}</td>
-                            <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
-                            <td>{item.Note || ''}</td>
-                            <td className={
-                              item.Status === 'Đang chờ'
-                                ? 'status-badge-2 status-pending-3'
-                                : item.Status === 'Đã xác nhận'
-                                ? 'status-badge-2 status-confirmed-3'
-                                : item.Status === 'Đã checkin'
-                                ? 'status-badge-2 status-checkedin-3'
-                                : item.Status === 'rejected'
-                                ? 'status-badge-2 status-rejected-3'
-                                : item.Status === 'Đã hủy'
-                                ? 'status-badge-2 status-cancelled-3'
-                                : item.Status === 'Thành công'
-                                ? 'status-badge-2 status-thanhcong-3'
-                                : item.Status === 'Đã khám'
-                                ? 'status-badge-2 status-confirmed-3'
-                                : 'status-badge-2'
-                            }>
-                              {item.Status || ''}
-                              {/* Nút Check-in chỉ hiện ở trạng thái "Thành công" */}
-                              {isTodayOrNear(item.BookDate) && 
-                               item.Status && 
-                               item.Status.trim().toLowerCase() === 'thành công' && (
-                                <button
-                                  style={{
-                                    marginLeft: 8,
-                                    padding: '4px 12px',
-                                    background: '#4CAF50',
-                                    color: '#fff',
-                                    border: 'none',
-                                    borderRadius: 4,
-                                    cursor: 'pointer',
-                                    fontSize: '12px',
-                                    fontWeight: 'bold'
-                                  }}
-                                  onClick={async () => {
-                                    console.log('Check-in clicked for BookID:', item.BookID);
-                                    try {
-                                      await patientcheckin(item.BookID);
-                                      // Sau khi check-in thành công, chuyển status thành "Đã checkin"
-                                      setAppointments(prev =>
-                                        prev.map(app =>
-                                          app.BookID === item.BookID ? { ...app, Status: 'Đã checkin' } : app
-                                        )
-                                      );
-                                      alert('✅ Check-in thành công! Trạng thái đã được cập nhật.');
-                                    } catch (error) {
-                                      console.error('Check-in error:', error);
-                                      alert('❌ Check-in thất bại: ' + (error.response?.data || error.message));
-                                    }
-                                  }}
-                                >
-                                  ✅ Check-in
-                                </button>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
+                        {[...appointments]
+                          .filter(item => item.Status && item.Status.trim().toLowerCase() === 'thành công')
+                          .sort((a, b) => {
+                            const isCancelledA = a.Status === 'Đã hủy' || a.Status === 'rejected';
+                            const isCancelledB = b.Status === 'Đã hủy' || b.Status === 'rejected';
+                            if (isCancelledA === isCancelledB) return 0;
+                            return isCancelledA ? 1 : -1;
+                          })
+                          .map((item, idx) => (
+                            <tr key={item.BookID || idx}>
+                              <td>{item.BookID}</td>
+                              <td>{item.PatientFullname || item.patientName || ''}</td>
+                              <td>{item.BookingType || ''}</td>
+                              <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
+                              <td>{item.Note || ''}</td>
+                              <td className={
+                                item.Status === 'Đang chờ'
+                                  ? 'status-badge-2 status-pending-3'
+                                  : item.Status === 'Đã xác nhận'
+                                  ? 'status-badge-2 status-confirmed-3'
+                                  : item.Status === 'Đã checkin'
+                                  ? 'status-badge-2 status-checkedin-3'
+                                  : item.Status === 'rejected'
+                                  ? 'status-badge-2 status-rejected-3'
+                                  : item.Status === 'Đã hủy'
+                                  ? 'status-badge-2 status-cancelled-3'
+                                  : item.Status === 'Thành công'
+                                  ? 'status-badge-2 status-thanhcong-3'
+                                  : item.Status === 'Đã khám'
+                                  ? 'status-badge-2 status-confirmed-3'
+                                  : 'status-badge-2'
+                              }>
+                                {item.Status || ''}
+                                {/* Nút Check-in chỉ hiện ở trạng thái "Thành công" */}
+                                {isTodayOrNear(item.BookDate) && 
+                                 item.Status && 
+                                 item.Status.trim().toLowerCase() === 'thành công' && (
+                                  <button
+                                    style={{
+                                      marginLeft: 8,
+                                      padding: '4px 12px',
+                                      background: '#4CAF50',
+                                      color: '#fff',
+                                      border: 'none',
+                                      borderRadius: 4,
+                                      cursor: 'pointer',
+                                      fontSize: '12px',
+                                      fontWeight: 'bold'
+                                    }}
+                                    onClick={async () => {
+                                      console.log('Check-in clicked for BookID:', item.BookID);
+                                      try {
+                                        await patientcheckin(item.BookID);
+                                        // Sau khi check-in thành công, chuyển status thành "Đã checkin"
+                                        setAppointments(prev =>
+                                          prev.map(app =>
+                                            app.BookID === item.BookID ? { ...app, Status: 'Đã checkin' } : app
+                                          )
+                                        );
+                                        alert('✅ Check-in thành công! Trạng thái đã được cập nhật.');
+                                      } catch (error) {
+                                        console.error('Check-in error:', error);
+                                        alert('❌ Check-in thất bại: ' + (error.response?.data || error.message));
+                                      }
+                                    }}
+                                  >
+                                    ✅ Check-in
+                                  </button>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
                       </tbody>
                     </table>
                   </div>

@@ -412,12 +412,14 @@
   padding: 12px 15px;
   border-radius: 8px;
   margin-bottom: 25px;
+  /* font-weight: bold ; */
+  font-style: italic;
 }
 
 .section-info p {
   margin: 0;
-  color: #3498db;
-  font-size: 14px;
+  color: #d40303;
+  font-size: 15px;
 }
 
 .medical-history-list {
