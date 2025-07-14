@@ -122,12 +122,12 @@ const Doctor = () => {
             >
              Hủy Lịch Khám
             </li>
-            <li
+            {/* <li
               className={selected === 'patients' ? 'active' : ''}
               onClick={() => setSelected('patients')}
             >
             Checkin
-            </li>
+            </li> */}
           </ul>
         </aside>
         <main className="doctor-main">
@@ -260,7 +260,7 @@ const Doctor = () => {
                             )}
 
                             {/* Nút Hủy lịch */}
-                            {(item.Status !== 'Đã hủy' && item.Status !== 'rejected') && (
+                            {(item.Status !== 'Đã hủy' && item.Status !== 'rejected' && item.Status !== 'Đã xác nhận') && (
                               <button
                                 style={{
                                   marginLeft: 8,
