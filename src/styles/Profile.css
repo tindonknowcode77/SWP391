@@ -6,7 +6,7 @@
   min-height: calc(100vh - 80px);
   background-color: #f8f9fa;
   padding-top: 20px;
-  margin-top: 0px;
+  margin-top: -72px;
 }
 
 /* Sidebar Styles */
@@ -20,7 +20,7 @@
   height: calc(100vh - 100px);
   display: flex;
   flex-direction: column;
-  margin-top: 170px;
+  margin-top: 150px;
 }
 
 .profile-user-info {
