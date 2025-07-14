@@ -24,6 +24,9 @@ const Doctor = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showCancelPopup, setShowCancelPopup] = useState(false);
+  const [cancelBookId, setCancelBookId] = useState(null);
+  const [notification, setNotification] = useState({ open: false, message: '', type: 'success' });
 
   useEffect(() => {
     if (selected === 'appointments') {
@@ -40,6 +43,15 @@ const Doctor = () => {
         });
     }
   }, [selected]);
+
+  useEffect(() => {
+    if (notification.open) {
+      const timer = setTimeout(() => {
+        setNotification(n => ({ ...n, open: false }));
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification.open]);
 
   if (!currentUser || currentUser.role !== 'R005') {
     return (
@@ -68,9 +80,9 @@ const Doctor = () => {
           app.BookID === bookId ? { ...app, Status: 'Đã hủy' } : app
         )
       );
-      alert('Hủy lịch thành công!');
+      setNotification({ open: true, message: 'Hủy lịch thành công!', type: 'success' });
     } catch (error) {
-      alert('Hủy lịch thất bại!');
+      setNotification({ open: true, message: 'Hủy lịch thất bại!', type: 'error' });
     }
   };
 
@@ -257,7 +269,10 @@ const Doctor = () => {
                                     borderRadius: 4,
                                     cursor: 'pointer'
                                   }}
-                                  onClick={() => handleCancelAppointment(item.BookID)}
+                                  onClick={() => {
+                                    setCancelBookId(item.BookID);
+                                    setShowCancelPopup(true);
+                                  }}
                                 >
                                   Hủy lịch
                                 </button>
@@ -273,6 +288,38 @@ const Doctor = () => {
           )}
         </main>
       </div>
+      {showCancelPopup && (
+  <div className="popup-overlay1">
+    <div className="popup-form1">
+      <div className="popup-icon">?</div>
+      <h3 className="popup-title1">Bạn xác nhận hủy lịch hẹn này?</h3>
+      <div className="popup-buttons1">
+        <button className="btn-close1" onClick={() => setShowCancelPopup(false)}>
+          Đóng
+        </button>
+        <button
+          className="btn-confirm1"
+          onClick={async () => {
+            await handleCancelAppointment(cancelBookId);
+            setShowCancelPopup(false);
+            setCancelBookId(null);
+          }}
+        >
+          Xác Nhận
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{notification.open && (
+  <div className={`custom-toast ${notification.type}`}>
+    <span className="toast-icon">
+      {notification.type === 'success' ? '✔️' : '❌'}
+    </span>
+    <span className="toast-message">{notification.message}</span>
+  </div>
+)}
     </>
   );
 };
