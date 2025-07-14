@@ -33,7 +33,6 @@ const Doctor = () => {
   const [lastCheckoutTime, setLastCheckoutTime] = useState(new Date().toLocaleString('vi-VN'));
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  const [showRequireCheckin, setShowRequireCheckin] = useState(true);
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -101,13 +100,13 @@ const Doctor = () => {
     }
   }, [selected]);
 
-  useEffect(() => {
-    if (doctorStatus !== 'checked-in') {
-      setShowRequireCheckin(true);
-    } else {
-      setShowRequireCheckin(false);
-    }
-  }, [doctorStatus]);
+  // useEffect(() => {
+  //   if (doctorStatus !== 'checked-in') {
+  //     setShowRequireCheckin(true);
+  //   } else {
+  //     setShowRequireCheckin(false);
+  //   }
+  // }, [doctorStatus]);
 
   useEffect(() => {
     if (location.state && location.state.tab) {
@@ -154,19 +153,6 @@ const Doctor = () => {
             setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
           });
       });
-  };
-
-  const handleMainCheckin = () => {
-    setDoctorStatus('checked-in');
-    setSuccessMessage('Bạn đã check-in thành công!');
-    setShowSuccessPopup(true);
-  };
-
-  const handleMainCheckout = () => {
-    setDoctorStatus('checked-out');
-    setLastCheckoutTime(new Date().toLocaleString('vi-VN'));
-    setSuccessMessage('Bạn đã check-out thành công!');
-    setShowSuccessPopup(true);
   };
 
   // Xử lý khi bác sĩ click vào lịch hẹn
@@ -284,7 +270,7 @@ const Doctor = () => {
           </li>
         </ul>
       </aside>
-      <main className="doctor-main" style={showRequireCheckin ? { pointerEvents: 'none', opacity: 0.5, filter: 'blur(2px)' } : {}}>
+      <main className="doctor-main">
         {selected === 'appointments' && (
           <div className="doctor-content">
             
@@ -534,15 +520,6 @@ const Doctor = () => {
             <div className="success-icon"><i className="fas fa-check-circle"></i></div>
             <div className="success-message">{successMessage}</div>
             <button className="success-close-btn" onClick={() => setShowSuccessPopup(false)}>Đóng</button>
-          </div>
-        </div>
-      )}
-      {showRequireCheckin && (
-        <div className="doctor-require-checkin-overlay">
-          <div className="doctor-require-checkin-popup">
-            <div className="require-icon"><i className="fas fa-user-check"></i></div>
-            <div className="require-message">Bạn cần <span style={{color:'#28a745', fontWeight:600}}>check-in</span> để sử dụng các chức năng!</div>
-            <button className="require-checkin-btn" onClick={() => { setDoctorStatus('checked-in'); setShowRequireCheckin(false); setSuccessMessage('Bạn đã check-in thành công!'); setShowSuccessPopup(true); }}>Check-in ngay</button>
           </div>
         </div>
       )}
