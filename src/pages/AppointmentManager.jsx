@@ -114,7 +114,7 @@ const Doctor = () => {
               className={selected === 'appointments' ? 'active' : ''}
               onClick={() => setSelected('appointments')}
             >
-              Danh Sách Lịch Hẹn
+              Danh Sách Lịch Hẹn Đã Xác Nhận
             </li>
             <li
               className={selected === 'patients' ? 'active' : ''}
@@ -136,7 +136,7 @@ const Doctor = () => {
               <h2 className="doctor-table-title">Lịch Hẹn Của Tôi</h2>
               {loading && <div>Đang tải...</div>}
               {error && <div style={{color: 'red'}}>{error}</div>}
-              {!loading && !error && appointments.length === 0 && <div>Bác sĩ chưa có lịch hẹn nào.</div>}
+              {!loading && !error && appointments.length === 0 && <div>Chưa có lịch hẹn nào.</div>}
               {!loading && !error && appointments.length > 0 && (
                 <div className="appointments-table-wrapper">
                   <table className="appointments-table">
@@ -151,48 +151,50 @@ const Doctor = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {sortedAppointments.map((item, idx) => (
-                        <tr key={item.BookID || idx}>
-                          <td>{item.BookID}</td>
-                          <td>{item.PatientFullname}</td>
-                          <td>{ item.BookingType}</td>
-                          <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
-                          <td>{item.Note || ''}</td>
-                          <td className={
-                              item.Status === 'Đang chờ'
-                              ? 'status-badge-2 status-pending-3'
-                              : item.Status === 'Đã xác nhận'
-                              ? 'status-badge-2 status-confirmed-3'
-                              : item.Status === 'rejected'
-                              ? 'status-badge-2 status-rejected-3'
-                              : item.Status === 'Đã hủy'
-                              ? 'status-badge-2 status-cancelled-3'
-                              : item.Status === 'Thành công'
-                              ? 'status-badge-2 status-thanhcong-3'
-                              : 'status-badge-2'
-                            }>
-                            {item.Status || ''}
+                      {sortedAppointments
+                        .filter(item => item.Status === 'Đã khám' || item.Status === 'Đã xác nhận')
+                        .map((item, idx) => (
+                          <tr key={item.BookID || idx}>
+                            <td>{item.BookID}</td>
+                            <td>{item.PatientFullname}</td>
+                            <td>{ item.BookingType}</td>
+                            <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
+                            <td>{item.Note || ''}</td>
+                            <td className={
+                                item.Status === 'Đã khám'
+                                ? 'status-badge-2 status-pending-3'
+                                : item.Status === 'Đã xác nhận'
+                                ? 'status-badge-2 status-confirmed-3'
+                                : item.Status === 'rejected'
+                                ? 'status-badge-2 status-rejected-3'
+                                : item.Status === 'Đã hủy'
+                                ? 'status-badge-2 status-cancelled-3'
+                                : item.Status === 'Thành công'
+                                ? 'status-badge-2 status-thanhcong-3'
+                                : 'status-badge-2'
+                              }>
+                              {item.Status || ''}
 
-                            {/* Nút Check-in cho lịch hẹn hôm nay */}
-                            {isToday(item.BookDate) && item.Status === 'Thành công' && (
-                              <button
-                                style={{
-                                  marginLeft: 8,
-                                  padding: '2px 8px',
-                                  background: '#4CAF50',
-                                  color: '#fff',
-                                  border: 'none',
-                                  borderRadius: 4,
-                                  cursor: 'pointer'
-                                }}
-                                onClick={() => handleCheckIn(item.BookID)}
-                              >
-                                ✅ Check-in
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
+                              {/* Nút Check-in cho lịch hẹn hôm nay */}
+                              {isToday(item.BookDate) && item.Status === 'Thành công' && (
+                                <button
+                                  style={{
+                                    marginLeft: 8,
+                                    padding: '2px 8px',
+                                    background: '#4CAF50',
+                                    color: '#fff',
+                                    border: 'none',
+                                    borderRadius: 4,
+                                    cursor: 'pointer'
+                                  }}
+                                  onClick={() => handleCheckIn(item.BookID)}
+                                >
+                                  ✅ Check-in
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
@@ -201,7 +203,7 @@ const Doctor = () => {
           )}
           {selected === 'patients' && (
             <div className="doctor-content">
-              <h2 className="doctor-table-title">Lịch Hẹn Của Tôi</h2>
+              <h2 className="doctor-table-title">Danh sách lịch hẹn có thể hủy</h2>
               {loading && <div>Đang tải...</div>}
               {error && <div style={{color: 'red'}}>{error}</div>}
               {!loading && !error && appointments.length === 0 && <div>Bác sĩ chưa có lịch hẹn nào.</div>}
@@ -219,66 +221,50 @@ const Doctor = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {sortedAppointments.map((item, idx) => (
-                        <tr key={item.BookID || idx}>
-                          <td>{item.BookID}</td>
-                          <td>{item.PatientFullname}</td>
-                          <td>{ item.BookingType}</td>
-                          <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
-                          <td>{item.Note || ''}</td>
-                          <td className={
-                              item.Status === 'Đang chờ'
-                              ? 'status-badge-2 status-pending-3'
-                              : item.Status === 'Đã xác nhận'
-                              ? 'status-badge-2 status-confirmed-3'
-                              : item.Status === 'rejected'
-                              ? 'status-badge-2 status-rejected-3'
-                              : item.Status === 'Đã hủy'
-                              ? 'status-badge-2 status-cancelled-3'
-                              : item.Status === 'Thành công'
-                              ? 'status-badge-2 status-thanhcong-3'
-                              : 'status-badge-2'
-                            }>
-                            {item.Status || ''}
+                      {sortedAppointments
+                        .filter(item => item.Status === 'Thành công' || item.Status === 'Đã hủy')
+                        .map((item, idx) => (
+                          <tr key={item.BookID || idx}>
+                            <td>{item.BookID}</td>
+                            <td>{item.PatientFullname}</td>
+                            <td>{ item.BookingType}</td>
+                            <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
+                            <td>{item.Note || ''}</td>
+                            <td className={
+                                item.Status === 'Đã khám'
+                                ? 'status-badge-2 status-pending-3'
+                                : item.Status === 'Đã xác nhận'
+                                ? 'status-badge-2 status-confirmed-3'
+                                : item.Status === 'rejected'
+                                ? 'status-badge-2 status-rejected-3'
+                                : item.Status === 'Đã hủy'
+                                ? 'status-badge-2 status-cancelled-3'
+                                : item.Status === 'Thành công'
+                                ? 'status-badge-2 status-thanhcong-3'
+                                : 'status-badge-2'
+                              }>
+                              {item.Status || ''}
 
-                            {/* Nút Check-in cho lịch hẹn hôm nay */}
-                            {isToday(item.BookDate) && item.Status !== 'Đã checkin' && item.Status !== 'Đã hủy' && item.Status !== 'rejected' && (
-                              <button
-                                style={{
-                                  marginLeft: 8,
-                                  padding: '2px 8px',
-                                  background: '#4CAF50',
-                                  color: '#fff',
-                                  border: 'none',
-                                  borderRadius: 4,
-                                  cursor: 'pointer'
-                                }}
-                                onClick={() => handleCheckIn(item.BookID)}
-                              >
-                                ✅ Check-in
-                              </button>
-                            )}
-
-                            {/* Nút Hủy lịch */}
-                            {(item.Status !== 'Đã hủy' && item.Status !== 'rejected' && item.Status !== 'Đã xác nhận') && (
-                              <button
-                                style={{
-                                  marginLeft: 8,
-                                  padding: '2px 8px',
-                                  background: '#ff4d4f',
-                                  color: '#fff',
-                                  border: 'none',
-                                  borderRadius: 4,
-                                  cursor: 'pointer'
-                                }}
-                                onClick={() => handleCancelAppointment(item.BookID)}
-                              >
-                                Hủy lịch
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
+                              {/* Nút Hủy lịch */}
+                              {(item.Status !== 'Đã hủy' && item.Status !== 'rejected' && item.Status !== 'Đã xác nhận') && (
+                                <button
+                                  style={{
+                                    marginLeft: 8,
+                                    padding: '2px 8px',
+                                    background: '#ff4d4f',
+                                    color: '#fff',
+                                    border: 'none',
+                                    borderRadius: 4,
+                                    cursor: 'pointer'
+                                  }}
+                                  onClick={() => handleCancelAppointment(item.BookID)}
+                                >
+                                  Hủy lịch
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
