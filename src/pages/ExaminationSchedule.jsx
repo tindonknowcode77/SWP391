@@ -628,7 +628,22 @@ export default function ExaminationSchedule() {
                 </div>
                 <div className="doctor-schedule-info">
                   <h3>Xem lịch bác sĩ ngày</h3>
-                  <button className="book-doctor-btn" onClick={() => setShowForm(true)}>
+                  <button className="book-doctor-btn" onClick={async () => {
+                    
+                    if (selectedDoctorInfo && selectedDoctorInfo.id) {
+                      try {
+                        const res = await getDoctorWorkScheduleById(selectedDoctorInfo.id);
+                        if (res && Array.isArray(res)) {
+                          setDoctorScheduleData(res);
+                        } else if (res && res.data && Array.isArray(res.data)) {
+                          setDoctorScheduleData(res.data);
+                        }
+                        setShowForm(true);
+                      } catch (e) {
+                        alert('Không lấy được lịch khám!');
+                      }
+                    }
+                  }}>
                     Đặt lịch với bác sĩ này
                   </button>
                   <button className="book-doctor-btn" onClick={async () => {
@@ -1160,7 +1175,7 @@ export default function ExaminationSchedule() {
                         await nguoidungdatlich({
                           DoctorID: selectedDoctor.id,
                           BookingType: form.bookingtype,
-                          BookDate: form.bookdate,
+                          BookDate: form.appointmentDate + 'T' + form.appointmentTime, 
                           Note: form.notes || '',
                         });
                       } catch (e) {
