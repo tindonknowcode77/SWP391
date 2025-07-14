@@ -912,8 +912,8 @@ const Profile = () => {
                 <div><strong>Mã đơn thuốc:</strong> {prescriptionData[0].PrescriptionID}</div>
                 <div><strong>Mã hồ sơ:</strong> {prescriptionData[0].MedicalRecordID}</div>
                 <div><strong>Mã phác đồ:</strong> {prescriptionData[0].TreatmentPlanID}</div>
-                <div><strong>Bệnh nhân:</strong> {prescriptionData[0].FullnameDoctor}</div>
-                <div><strong>Bác sĩ:</strong> {prescriptionData[0].FullnamePatient}</div>
+                <div><strong>Bệnh nhân:</strong> {prescriptionData[0].FullnamePatient}</div>
+                <div><strong>Bác sĩ:</strong> {prescriptionData[0].FullnameDoctor}</div>
                 <div><strong>Phác đồ điều trị:</strong> {prescriptionData[0].LineOfTreatment}</div>
               </div>
 
