@@ -1122,3 +1122,9 @@
   background: #388e3c;
 }
 
+.divider {
+  border: none;
+  border-top: 2px solid #ccc;
+  margin: 8px 0;
+}
+

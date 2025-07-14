@@ -214,7 +214,9 @@ const Profile = () => {
         const arr = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [res]);
         const mapped = arr.map(item => ({
           id: item.TreatmentPlanID,
-          doctor: item.DoctorID,
+          doctor: item.Doctor?.User?.Fullname,
+          patient : item.Patient?.User?.Fullname,
+          patientInfor : item.Patient,
           diagnosis: item.Diagnosis,
           arv: item.TreatmentLine,
           notes: item.TreatmentResult,
@@ -222,7 +224,7 @@ const Profile = () => {
         }));
         setMedicalHistory(mapped);
       })
-      .catch(() => setMedicalHistory([]));
+      .catch(() => setMedicalHistory([]));  
   }, []);
 
   // Lấy lịch hẹn động khi vào tab 'appointments'
@@ -600,16 +602,42 @@ const Profile = () => {
                   {medicalHistory.map(record => (
                     <div className="medical-record" key={record.id}>
                       <div className="record-header">
-                      <div className="record-doctor">{record.id}</div>
-                        <div className="record-doctor">{record.doctor}</div>
+                      <div className="record-doctor">Mã hồ sơ : {record.id}</div>
+                        <div className="record-doctor">Bác sĩ : {record.doctor}</div>
                       </div>
                       
                       <div className="record-body">
+                      <div className="record-item">
+                          <span className="label">Tên bệnh nhân :</span>
+                          <span className="value">{record.patient}</span>
+                        </div>
+                        <div className="record-item">
+                          <span className="label">Giới tính :</span>
+                          <span className="value">{record.patientInfor?.Gender}</span>
+                        </div>
+                        <div className="record-item">
+                          <span className="label">Ngày sinh :</span>
+                          <span className="value">{record.patientInfor?.DateOfBirth?.split('T')[0]}</span>
+                        </div>
+                        <div className="record-item">
+                          <span className="label">Nhóm máu :</span>
+                          <span className="value">{record.patientInfor?.BloodType}</span>
+                        </div>
+                        <div className="record-item">
+                          <span className="label">Dị ứng :</span>
+                          <span className="value">{record.patientInfor?.Allergy}</span>
+                        </div>
+                        <div className="record-item">
+                          <span className="label">Điện thoại :</span>
+                          <span className="value">{record.patientInfor?.Phone}</span>
+                        </div>
+
+                        <hr className="divider" />
+                        
                         <div className="record-item">
                           <span className="label">Chẩn đoán:</span>
                           <span className="value">{record.diagnosis}</span>
                         </div>
-                        
                         <div className="record-item">
                           <span className="label">Ghi chú:</span>
                           <span className="value">{record.notes}</span>
