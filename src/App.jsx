@@ -36,6 +36,7 @@ import Doctor from './doctor/doctor';
 import TreatmentPlanDetail from './pages/TreatmentPlanDetail';
 import PrescriptionForm from './pages/PrescriptionForm';
 import TreatmentPlanAdd from './pages/TreatmentPlanAdd';
+import Manager from '../src/manager/manager';
 
 function App() {
   // const [file, setFile] = useState(null);
@@ -106,6 +107,8 @@ function App() {
           <Route path="/staff" element={<Staff />} />
           {/* Trang doctor */}
           <Route path="/doctor" element={<Doctor />} />
+          {/* Trang manager */}
+          <Route path="/manager" element={<Manager />} />
 
           {/* Chuyển hướng cho các URL không hợp lệ */}
           <Route path="*" element={<Navigate to="/" replace />} />
