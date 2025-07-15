@@ -38,8 +38,14 @@ const HIVTesting = () => {
       <Navbar />
       <div className="testing-page">
         <div className="testing-header">
-          <h1>Xét nghiệm HIV</h1>
-          <p>Dịch vụ xét nghiệm HIV nhanh, chính xác và bảo mật với công nghệ tiên tiến</p>
+          
+          <div className="cta-box-header">
+            <h3>Bạn muốn xét nghiệm HIV?</h3>
+            <p>Hãy đến với chúng tôi để được tư vấn và xét nghiệm bảo mật, chính xác</p>
+            <Link to="/hospital/lich-kham" className="cta-btn-header">
+              <i className="fas fa-calendar-check"></i> Đặt lịch xét nghiệm ngay
+            </Link>
+          </div>
         </div>
 
         <div className="testing-content">
@@ -249,12 +255,6 @@ const HIVTesting = () => {
               ))}
             </div>
           </section>
-
-          <div className="cta-box">
-            <h3>Bạn muốn xét nghiệm HIV?</h3>
-            <p>Hãy đến với chúng tôi để được tư vấn và xét nghiệm bảo mật, chính xác</p>
-            <Link to="/hospital/lich-kham" className="cta-btn">Đặt lịch xét nghiệm ngay</Link>
-          </div>
         </div>
       </div>
     </>

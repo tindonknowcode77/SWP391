@@ -351,7 +351,6 @@ const Doctor = () => {
                       <th>Thời gian</th>
                       <th>Số điện thoại</th>
                       <th>Trạng thái</th>
-                      <th>Đã khám</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -369,20 +368,33 @@ const Doctor = () => {
                           <td>{item.BookingType}</td>
                           <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
                           <td>{item.Patient?.Phone || ''}</td>
-                          <td className={
-                            item.Status === 'Đang chờ'
-                              ? 'status-badge-2 status-pending-3'
-                              : item.Status === 'Đã xác nhận'
-                              ? 'status-badge-2 status-confirmed-3'
-                              : item.Status === 'Đã checkin'
-                              ? 'status-badge-2 status-checkedin-3'
-                              : item.Status === 'Đã khám'
-                              ? 'status-badge-2 status-examined-3'
-                              : item.Status === 'Rejected'
-                              ? 'status-badge-2 status-rejected-3'
-                              : item.Status === 'Thành công'
-                              ? 'status-badge-2 status-thanhcong-3'
-                              : 'status-badge-2'}>{item.Status || ''}
+                          <td
+                            className={
+                              item.Status === 'Đang chờ'
+                                ? 'status-badge-2 status-pending-3'
+                                : item.Status === 'Đã xác nhận'
+                                ? 'status-badge-2 status-confirmed-3'
+                                : item.Status === 'Đã checkin'
+                                ? 'status-badge-2 status-checkedin-3'
+                                : item.Status === 'Rejected'
+                                ? 'status-badge-2 status-rejected-3'
+                                : item.Status === 'Thành công'
+                                ? 'status-badge-2 status-thanhcong-3'
+                                : item.Status === 'Đã khám'
+                                ? 'status-badge-2 status-examined-3'
+                                : item.Status === 'Đã hủy'
+                                ? 'status-badge-2 status-cancelled-3'
+                                : 'status-badge-2'
+                            }
+                            style={
+                              item.Status === 'Đã khám'
+                                ? { color: '#FFD600', fontWeight: 'bold' }
+                                : item.Status === 'Đã hủy'
+                                ? { color: '#FF1744', fontWeight: 'bold' }
+                                : {}
+                            }
+                          >
+                            {item.Status || ''}
                             {item.Status === 'Đã xác nhận' && (
                               <button
                                 onClick={e => {
@@ -396,16 +408,6 @@ const Doctor = () => {
                                 Checkout
                               </button>
                             )}
-                          </td>
-                          <td style={{textAlign:'center'}}>
-                            <input
-                              type="checkbox"
-                              checked={item.Status === 'Đã khám'}
-                              disabled={item.Status !== 'Đã checkin'}
-                              onChange={e => {
-                                if (e.target.checked) handleExaminationComplete(item.BookID);
-                              }}
-                            />
                           </td>
                         </tr>
                       ))}

@@ -38,8 +38,13 @@ const ARVTreatment = () => {
       <Navbar />
       <div className="arv-page">
         <div className="arv-header">
-          <h1>Điều trị ARV</h1>
-          <p>Phác đồ điều trị ARV hiện đại giúp kiểm soát virus HIV hiệu quả và nâng cao chất lượng cuộc sống</p>
+          <div className="cta-box-header">
+            <h3>Bạn muốn điều trị ARV?</h3>
+            <p>Hãy đến với chúng tôi để được tư vấn và điều trị ARV hiện đại, bảo mật, hiệu quả</p>
+            <Link to="/hospital/lich-kham" className="cta-btn-header">
+              <i className="fas fa-calendar-check"></i> Đặt lịch điều trị
+            </Link>
+          </div>
         </div>
 
         <div className="arv-content">
@@ -261,11 +266,6 @@ const ARVTreatment = () => {
             </div>
           </section>
 
-          <div className="cta-box">
-            <h3>Bạn cần tư vấn về điều trị ARV?</h3>
-            <p>Đội ngũ y bác sĩ chuyên khoa của chúng tôi luôn sẵn sàng hỗ trợ bạn</p>
-            <Link to="/hospital/lich-kham" className="cta-btn">Đặt lịch khám ngay</Link>
-          </div>
         </div>
       </div>
     </>
