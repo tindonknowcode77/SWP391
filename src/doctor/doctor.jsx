@@ -36,6 +36,12 @@ const Doctor = () => {
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  // State cho modal xác nhận checkin
+  const [showCheckinModal, setShowCheckinModal] = useState(false);
+  const [checkinAppointmentId, setCheckinAppointmentId] = useState(null);
+  // Thêm state cho tab tất cả lịch hẹn
+  const [allAppointments, setAllAppointments] = useState([]);
+
 
   const patientNameMap = {
     'PT000001': 'Trịnh Bá khá',
@@ -71,6 +77,30 @@ const Doctor = () => {
         })
         .catch((err) => {
           setError('Không thể tải danh sách lịch hẹn');
+          setLoading(false);
+        });
+    } else if (selected === 'all-appointments') {
+      setLoading(true);
+      setError(null);
+      bacsilaydanhsachbenhnhan()
+        .then((data) => {
+          setAllAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError('Không thể tải tất cả lịch hẹn');
+          setLoading(false);
+        });
+    } else if (selected === 'cancelled-appointments') {
+      setLoading(true);
+      setError(null);
+      bacsilaydanhsachbenhnhan()
+        .then((data) => {
+          setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError('Không thể tải danh sách lịch hẹn đã hủy');
           setLoading(false);
         });
     } else if (selected === 'patients') {
@@ -240,6 +270,26 @@ const Doctor = () => {
     }
   };
 
+  const handleCheckin = async (bookId) => {
+    const appointment = appointments.find(a => a.BookID === bookId);
+    if (appointment && appointment.Status === 'Đã khám') {
+      setModalMessage('✅ Bác sĩ đã khám bệnh nhân này rồi!');
+      setShowAppointmentModal(true);
+      return;
+    }
+    try {
+      // Gọi API checkout ở đây
+      await doctorcheckout(bookId);
+      // Sau khi thành công, cập nhật lại danh sách lịch hẹn
+      const data = await bacsilaydanhsachbenhnhan();
+      setAppointments(Array.isArray(data) ? data : (data?.appointments || []));
+      setSuccessMessage('✅ Đã khám hoàn tất!');
+      setShowSuccessPopup(true);
+    } catch (error) {
+      alert('Có lỗi khi checkin!');
+    }
+  };
+
   return (
     <div className="doctor-container">
       <aside className="doctor-sidebar">
@@ -255,6 +305,18 @@ const Doctor = () => {
             onClick={() => setSelected('appointments')}
           >
             Lịch hẹn của tôi
+          </li>
+          <li
+            className={selected === 'all-appointments' ? 'active' : ''}
+            onClick={() => setSelected('all-appointments')}
+          >
+            Tất cả lịch hẹn
+          </li>
+          <li
+            className={selected === 'cancelled-appointments' ? 'active' : ''}
+            onClick={() => setSelected('cancelled-appointments')}
+          >
+            Hủy lịch hẹn 
           </li>
           <li
             className={selected === 'patients' ? 'active' : ''}
@@ -289,12 +351,106 @@ const Doctor = () => {
                       <th>Thời gian</th>
                       <th>Số điện thoại</th>
                       <th>Trạng thái</th>
-                      <th>Hành động</th>
                       <th>Đã khám</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {appointments.map((item, idx ) => (
+                    {appointments
+                      .filter(item => item.Status === 'Thành công' || item.Status === 'Đã xác nhận')
+                      .map((item, idx ) => (
+                        <tr 
+                          key={item.BookID || idx}
+                          onClick={() => handleAppointmentClick(item)}
+                          style={{ cursor: 'pointer' }}
+                          className="appointment-row"
+                        >
+                          <td>{item.BookID}</td>
+                          <td>{item.PatientFullname}</td>
+                          <td>{item.BookingType}</td>
+                          <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
+                          <td>{item.Patient?.Phone || ''}</td>
+                          <td className={
+                            item.Status === 'Đang chờ'
+                              ? 'status-badge-2 status-pending-3'
+                              : item.Status === 'Đã xác nhận'
+                              ? 'status-badge-2 status-confirmed-3'
+                              : item.Status === 'Đã checkin'
+                              ? 'status-badge-2 status-checkedin-3'
+                              : item.Status === 'Đã khám'
+                              ? 'status-badge-2 status-examined-3'
+                              : item.Status === 'Rejected'
+                              ? 'status-badge-2 status-rejected-3'
+                              : item.Status === 'Thành công'
+                              ? 'status-badge-2 status-thanhcong-3'
+                              : 'status-badge-2'}>{item.Status || ''}
+                            {item.Status === 'Đã xác nhận' && (
+                              <button
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  setCheckinAppointmentId(item.BookID);
+                                  setShowCheckinModal(true);
+                                }}
+                                style={{ color: 'green', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500, marginLeft: 8 }}
+                                title="Checkout"
+                              >
+                                Checkout
+                              </button>
+                            )}
+                          </td>
+                          <td style={{textAlign:'center'}}>
+                            <input
+                              type="checkbox"
+                              checked={item.Status === 'Đã khám'}
+                              disabled={item.Status !== 'Đã checkin'}
+                              onChange={e => {
+                                if (e.target.checked) handleExaminationComplete(item.BookID);
+                              }}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {showCancelModal && (
+              <div className="doctor-cancel-modal">
+                <div className="doctor-cancel-container">
+                  <h3>Hủy lịch hẹn</h3>
+                  <p>Nhập lý do hủy:</p>
+                  <textarea value={cancelReason} onChange={e => setCancelReason(e.target.value)} rows={3} />
+                  <div style={{marginTop: 16, display: 'flex', gap: 12, justifyContent: 'center'}}>
+                    <button onClick={handleCancelConfirm} className="doctor-cancel-confirm">Xác nhận hủy</button>
+                    <button onClick={() => setShowCancelModal(false)} className="doctor-cancel-close">Hủy bỏ</button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+        {/* Tab tất cả lịch hẹn */}
+        {selected === 'all-appointments' && (
+          <div className="doctor-content">
+            <h2 className="doctor-table-title">Tất cả lịch hẹn</h2>
+            {loading && <div>Đang tải...</div>}
+            {error && <div style={{color: 'red'}}>{error}</div>}
+            {!loading && !error && allAppointments.length === 0 && <div>Không có lịch hẹn nào.</div>}
+            {!loading && !error && allAppointments.length > 0 && (
+              <div className="appointments-table-wrapper">
+                <table className="appointments-table">
+                  <thead>
+                    <tr>
+                      <th>Mã đặt lịch</th>
+                      <th>Tên bệnh nhân</th>
+                      <th>Loại dịch vụ</th>
+                      <th>Thời gian</th>
+                      <th>Số điện thoại</th>
+                      <th>Trạng thái</th>
+                      <th>Đã khám</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {allAppointments.map((item, idx ) => (
                       <tr 
                         key={item.BookID || idx}
                         onClick={() => handleAppointmentClick(item)}
@@ -306,25 +462,46 @@ const Doctor = () => {
                         <td>{item.BookingType}</td>
                         <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
                         <td>{item.Patient?.Phone || ''}</td>
-                        <td className={
-                          item.Status === 'Đang chờ'
-                            ? 'status-badge-2 status-pending-3'
-                            : item.Status === 'Đã xác nhận'
-                            ? 'status-badge-2 status-confirmed-3'
-                            : item.Status === 'Đã checkin'
-                            ? 'status-badge-2 status-checkedin-3'
-                            : item.Status === 'Đã khám'
-                            ? 'status-badge-2 status-examined-3'
-                            : item.Status === 'Rejected'
-                            ? 'status-badge-2 status-rejected-3'
-                            : item.Status === 'Thành công'
-                            ? 'status-badge-2 status-thanhcong-3'
-                            : 'status-badge-2'}>{item.Status || ''}
-                        </td>
-                        <td onClick={(e) => e.stopPropagation()}>
-                          <button onClick={() => handleCancelClick(item)} className="doctor-action-btn doctor-trash-btn" title="Hủy lịch">
-                            <i className="fas fa-trash-alt"></i>
-                          </button>
+                        <td
+                          className={
+                            item.Status === 'Đang chờ'
+                              ? 'status-badge-2 status-pending-3'
+                              : item.Status === 'Đã xác nhận'
+                              ? 'status-badge-2 status-confirmed-3'
+                              : item.Status === 'Đã checkin'
+                              ? 'status-badge-2 status-checkedin-3'
+                              : item.Status === 'Rejected'
+                              ? 'status-badge-2 status-rejected-3'
+                              : item.Status === 'Thành công'
+                              ? 'status-badge-2 status-thanhcong-3'
+                              : item.Status === 'Đã khám'
+                              ? 'status-badge-2 status-examined-3'
+                              : item.Status === 'Đã hủy'
+                              ? 'status-badge-2 status-cancelled-3'
+                              : 'status-badge-2'
+                          }
+                          style={
+                            item.Status === 'Đã khám'
+                              ? { color: '#FFD600', fontWeight: 'bold' }
+                              : item.Status === 'Đã hủy'
+                              ? { color: '#FF1744', fontWeight: 'bold' }
+                              : {}
+                          }
+                        >
+                          {item.Status || ''}
+                          {item.Status === 'Đã xác nhận' && (
+                            <button
+                              onClick={e => {
+                                e.stopPropagation();
+                                setCheckinAppointmentId(item.BookID);
+                                setShowCheckinModal(true);
+                              }}
+                              style={{ color: 'green', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500, marginLeft: 8 }}
+                              title="Checkout"
+                            >
+                              Checkout
+                            </button>
+                          )}
                         </td>
                         <td style={{textAlign:'center'}}>
                           <input
@@ -338,6 +515,73 @@ const Doctor = () => {
                         </td>
                       </tr>
                     ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+        {selected === 'cancelled-appointments' && (
+          <div className="doctor-content">
+            <h2 className="doctor-table-title">Danh sách lịch hẹn có thể hủy</h2>
+            {loading && <div>Đang tải...</div>}
+            {error && <div style={{color: 'red'}}>{error}</div>}
+            {!loading && !error && appointments.length === 0 && <div>Bác sĩ chưa có lịch hẹn nào.</div>}
+            {!loading && !error && appointments.length > 0 && (
+              <div className="appointments-table-wrapper">
+                <table className="appointments-table">
+                  <thead>
+                    <tr>
+                      <th>Mã đặt lịch</th>
+                      <th>Tên bệnh nhân</th>
+                      <th>Loại dịch vụ</th>
+                      <th>Thời gian</th>
+                      <th>Số điện thoại</th>
+                      <th>Ghi chú</th>
+                      <th>Trạng thái</th>
+                      <th>Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {appointments
+                      .filter(item => item.Status === 'Đã hủy' || item.Status === 'Thành công')
+                      .map((item, idx) => (
+                        <tr key={item.BookID || idx}>
+                          <td>{item.BookID}</td>
+                          <td>{item.PatientFullname}</td>
+                          <td>{item.BookingType}</td>
+                          <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
+                          <td>{item.Patient?.Phone || ''}</td>
+                          <td>{item.Note || ''}</td>
+                          <td className={
+                            item.Status === 'Đã hủy'
+                              ? 'status-badge-2 status-cancelled-3'
+                              : item.Status === 'Thành công'
+                              ? 'status-badge-2 status-thanhcong-3'
+                              : 'status-badge-2'
+                          }>
+                            {item.Status || ''}
+                          </td>
+                          <td>
+                            {item.Status !== 'Đã hủy' && (
+                              <button
+                                style={{
+                                  marginLeft: 8,
+                                  padding: '2px 8px',
+                                  background: '#ff4d4f',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: 4,
+                                  cursor: 'pointer'
+                                }}
+                                onClick={() => handleCancelClick(item)}
+                              >
+                                Hủy lịch
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
@@ -537,6 +781,31 @@ const Doctor = () => {
                 style={{background:'#2196F3', color:'#fff', fontWeight:600}}
               >
                 Đã hiểu
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showCheckinModal && (
+        <div className="doctor-cancel-modal">
+          <div className="doctor-cancel-container" style={{maxWidth: 350, textAlign: 'center'}}>
+            <div style={{fontSize: '2.5rem', color: '#f44336', marginBottom: 12}}>
+              <i className="fas fa-question-circle"></i>
+            </div>
+            <h3 style={{color:'#333', marginBottom:16, fontWeight:600}}>Bạn xác nhận Check-out lịch hẹn này?</h3>
+            <div style={{display: 'flex', gap: 16, justifyContent: 'center'}}>
+              <button
+                onClick={() => setShowCheckinModal(false)}
+                style={{background: '#f44336', color: '#fff', borderRadius: 6, padding: '8px 24px', fontWeight: 600, border: 'none'}}>
+                Đóng
+              </button>
+              <button
+                onClick={async () => {
+                  setShowCheckinModal(false);
+                  await handleCheckin(checkinAppointmentId);
+                }}
+                style={{background: '#4caf50', color: '#fff', borderRadius: 6, padding: '8px 24px', fontWeight: 600, border: 'none'}}>
+                Xác Nhận
               </button>
             </div>
           </div>
