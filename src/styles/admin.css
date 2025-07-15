@@ -30,13 +30,13 @@
 .admin-sidebar-logout-btn {
   background: none;
   border: none;
-  color: #fff;
+  color: #d10909;
   font-size: 1.2rem;
   cursor: pointer;
   transition: color 0.2s;
 }
 .admin-sidebar-logout-btn:hover {
-  color: #e74c3c;
+  color: #3c89e7;
 }
 
 .admin-sidebar-menu {

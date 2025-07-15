@@ -165,8 +165,9 @@ const Staff = () => {
     <div className="staff-container">
       <aside className="staff-sidebar">
         <div className="sidebar-user-row">
-          <span className="sidebar-user">{currentUser?.name || 'Nhân viên'}</span>
-          <button className="sidebar-logout-btn" onClick={handleLogout} title="Đăng xuất" aria-label="Đăng xuất">
+        <span className="sidebar-user">
+          <span style={{ color: '#9de0ad', fontWeight: 'bold' }}>STAFF</span> : {currentUser?.name || 'Nhân viên'}</span>
+          <button className="admin-sidebar-logout-btn" onClick={handleLogout} title="Đăng xuất" aria-label="Đăng xuất">
             <i className="fas fa-sign-out-alt"></i>
           </button>
         </div>

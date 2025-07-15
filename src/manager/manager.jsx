@@ -72,8 +72,9 @@ const Manager = () => {
     <div className="manager-container">
       <aside className="manager-sidebar">
         <div className="manager-sidebar-user-row">
-          <span className="manager-sidebar-user">{currentUser?.name || 'Quản Lý'}</span>
-          <button className="manager-sidebar-logout-btn" onClick={handleLogout} title="Đăng xuất" aria-label="Đăng xuất">
+        <span className="sidebar-user">
+        <span style={{ color: '#9de0ad', fontWeight: 'bold' }}>MANAGER</span> : {currentUser?.name || 'Quản lý'}</span>
+          <button className="admin-sidebar-logout-btn" onClick={handleLogout} title="Đăng xuất" aria-label="Đăng xuất">
             <i className="fas fa-sign-out-alt"></i>
           </button>
         </div>

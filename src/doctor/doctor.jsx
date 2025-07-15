@@ -294,8 +294,9 @@ const Doctor = () => {
     <div className="doctor-container">
       <aside className="doctor-sidebar">
         <div className="sidebar-user-row">
-          <span className="sidebar-user">{currentUser?.name || 'Bác sĩ'}</span>
-          <button className="sidebar-logout-btn" onClick={handleLogout} title="Đăng xuất" aria-label="Đăng xuất">
+          <span className="sidebar-user">
+          <span style={{ color: '#9de0ad', fontWeight: 'bold' }}>DOCTOR : </span> {currentUser?.name || 'Bác Sĩ'}</span>
+          <button className="admin-sidebar-logout-btn" onClick={handleLogout} title="Đăng xuất" aria-label="Đăng xuất">
             <i className="fas fa-sign-out-alt"></i>
           </button>
         </div>
