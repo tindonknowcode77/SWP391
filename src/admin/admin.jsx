@@ -11,7 +11,7 @@ import { addStaff } from '../api/auth';
 import { updateStaff } from '../api/auth';
 
 const Admin = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const [selected, setSelected] = useState('appointments');
   // Placeholder states for admin data
@@ -273,12 +273,26 @@ const Admin = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      alert('Đăng xuất thất bại!');
+    }
+  };
+
   return (
     <div className="admin-container">
       <aside className="admin-sidebar">
         <div className="admin-sidebar-user-row">
           <span className="admin-sidebar-user">Admin</span>
-          <button className="admin-sidebar-logout-btn" title="Đăng xuất" aria-label="Đăng xuất">
+          <button
+            className="admin-sidebar-logout-btn"
+            title="Đăng xuất"
+            aria-label="Đăng xuất"
+            onClick={handleLogout}
+          >
             <i className="fas fa-sign-out-alt"></i>
           </button>
         </div>
