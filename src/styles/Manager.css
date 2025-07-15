@@ -24,14 +24,13 @@
   padding: 0 32px 10px 32px;
   margin-bottom: 4px;
 }
-
 .manager-sidebar-user {
   font-size: 1.1rem;
   font-weight: 600;
   color: #fff;
   letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.08);
 }
-
 .manager-sidebar-logout-btn {
   background: #43a047;
   color: #fff;
@@ -51,6 +50,10 @@
 }
 .manager-sidebar-logout-btn:hover {
   background: #2e7031;
+}
+.manager-sidebar-logout-btn i {
+  font-size: 1.2rem;
+  line-height: 1;
 }
 
 .manager-sidebar-menu {
@@ -279,4 +282,117 @@
 }
 .manager-warning-btn:hover {
   background: #4a148c;
+}
+
+.manager-register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 18px;
+}
+.manager-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.manager-form-group label {
+  font-weight: 600;
+  color: #6a1b9a;
+  margin-bottom: 2px;
+}
+.manager-form-group input {
+  padding: 10px 12px;
+  border: 1px solid #d1c4e9;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+  background: #faf7fd;
+}
+.manager-form-group input:focus {
+  border-color: #6a1b9a;
+  background: #fff;
+}
+.manager-form-error {
+  color: #e53935;
+  background: #ffebee;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  text-align: center;
+}
+.manager-form-success {
+  color: #43a047;
+  background: #e8f5e9;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.manager-success-popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.manager-success-popup {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(106, 27, 154, 0.18);
+  padding: 48px 40px 36px 40px;
+  min-width: 340px;
+  max-width: 90vw;
+  text-align: center;
+  animation: popup-fade-in 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateY(0);
+  transition: transform 0.25s ease;
+}
+.manager-success-icon {
+  color: #43a047;
+  font-size: 3.5rem;
+  margin-bottom: 18px;
+  animation: bounce 0.4s ease;
+}
+.manager-success-message {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 24px;
+}
+.manager-success-close-btn {
+  background: #43a047;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 36px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.15s;
+  box-shadow: 0 4px 14px rgba(67, 160, 71, 0.18);
+}
+.manager-success-close-btn:hover,
+.manager-success-close-btn:focus {
+  background: #2e7031;
+  transform: scale(1.03);
+}
+@keyframes popup-fade-in {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes bounce {
+  0% { transform: scale(0.9); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
