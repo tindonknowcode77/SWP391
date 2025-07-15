@@ -281,3 +281,102 @@ export const doctorcheckout =(id) =>{
     }
   });
 };
+export const tatcacacuser =() =>{
+  return axiosClient.get('Manager/AllUsers')
+}
+
+export const getUserById = (userId) => {
+  return axiosClient.get(`Manager/User/${userId}`);
+}
+
+// Lấy danh sách tất cả bác sĩ
+export const getAllDoctorsManager = () => {
+  return axiosClient.get('Manager/AllDoctors');
+}
+
+// Lấy thông tin chi tiết bác sĩ
+export const getInfoDoctor = (doctorId) => {
+  return axiosClient.get(`Manager/InfoDoctor/${doctorId}`);
+}
+
+// Lấy lịch làm việc của bác sĩ
+export const getDoctorWorkSchedule = (doctorId) => {
+  return axiosClient.get(`Manager/DoctorWorkSchedule/${doctorId}`);
+}
+
+// Thêm mới bác sĩ
+export const addDoctor = (data) => {
+  return axiosClient.post('Manager/AddDoctor', data, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
+// Cập nhật thông tin bác sĩ
+export const updateDoctor = (doctorId, data) => {
+  return axiosClient.put(`Manager/UpdateDoctor/${doctorId}`, data, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
+export const getAllDoctorWorkSchedules = () => {
+  return axiosClient.get('Manager/AllDoctorWorkSchedules');
+}
+
+export const getDoctorWorkScheduleDetail = (scheduleId) => {
+  return axiosClient.get(`Manager/DoctorWorkScheduleDetail/${scheduleId}`);
+}
+
+export const addDoctorWorkSchedule = (data) => {
+  return axiosClient.post('Manager/AddDoctorWorkSchedule', data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+export const updateDoctorWorkSchedule = (scheduleId, data) => {
+  return axiosClient.put(`Manager/UpdateDoctorWorkSchedule/${scheduleId}`, data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+export const getAllARVProtocol = () => {
+  return axiosClient.get('Manager/AllARVProtocol');
+}
+
+export const getARVProtocolById = (ARVProtocolID) => {
+  return axiosClient.get(`Manager/ARVProtocol/${ARVProtocolID}`);
+}
+
+export const addARVProtocol = (data) => {
+  return axiosClient.post('Manager/AddARVProtocol', data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+export const capnhatARVProtocol = (data) => {
+  return axiosClient.put('Manager/UpdateARVProtocol', data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+export const getAllStaff = () => {
+  return axiosClient.get('Manager/AllStaff');
+}
+
+export const getStaffById = (userId) => {
+  return axiosClient.get(`Manager/Staff/${userId}`);
+}
+
+export const addStaff = (data) => {
+  return axiosClient.post('Manager/AddStaff', data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+export const updateStaff = (userId, data) => {
+  return axiosClient.put(`Manager/UpdateStaff/${userId}`, data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}

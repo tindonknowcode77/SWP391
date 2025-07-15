@@ -105,6 +105,8 @@ const Login = () => {
         navigate('/doctor', { replace: true });
       } else if (user.role === 'R002') {
         navigate('/manager', { replace: true });
+      } else if (user.role === 'R001'){
+        navigate('/admin', {replace: true} );
       } else {
         try {
           await pantient(user.id);

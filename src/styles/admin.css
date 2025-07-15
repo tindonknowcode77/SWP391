@@ -1,0 +1,187 @@
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f6fa;
+}
+
+.admin-sidebar {
+  width: 250px;
+  background: #2c3e50;
+  color: #fff;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-sidebar-user-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 24px 16px 24px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-bottom: 1px solid #34495e;
+}
+
+.admin-sidebar-user {
+  font-size: 1.1rem;
+}
+
+.admin-sidebar-logout-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.admin-sidebar-logout-btn:hover {
+  color: #e74c3c;
+}
+
+.admin-sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.admin-sidebar-menu li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 32px;
+  cursor: pointer;
+  font-size: 1.08rem;
+  border-left: 4px solid transparent;
+  transition: background 0.2s, border-color 0.2s;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.admin-sidebar-menu li i {
+  font-size: 1.2rem;
+  min-width: 22px;
+  text-align: center;
+}
+
+.admin-sidebar-menu li span {
+  flex: 1;
+  white-space: normal;
+  word-break: break-word;
+}
+.admin-sidebar-menu li.active, .admin-sidebar-menu li:hover {
+  background: #34495e;
+  border-left: 4px solid #3498db;
+}
+
+.admin-main {
+  flex: 1;
+  padding: 40px 32px;
+}
+
+.admin-content {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(44, 62, 80, 0.08);
+  padding: 32px 24px;
+  margin-bottom: 32px;
+}
+
+.admin-table-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 24px;
+}
+
+.admin-appointments-table-wrapper {
+  overflow-x: auto;
+}
+.admin-appointments-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+}
+.admin-appointments-table th, .admin-appointments-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #eaeaea;
+  text-align: left;
+}
+.admin-appointments-table th {
+  background: #f4f6fa;
+  color: #34495e;
+  font-weight: 600;
+}
+.admin-appointment-row:hover {
+  background: #f0f6ff;
+}
+.admin-status-badge {
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  display: inline-block;
+}
+.admin-status-đãxácnhận {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+.admin-status-đangchờ {
+  background: #fff3cd;
+  color: #b8860b;
+}
+.admin-status-đãkhám {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+.admin-status-đãhủy {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.admin-patient-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+.admin-patient-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+  padding: 20px 18px;
+  display: flex;
+  align-items: flex-start;
+}
+.admin-patient-avatar {
+  font-size: 2.2rem;
+  color: #3498db;
+  margin-right: 18px;
+  margin-top: 6px;
+}
+.admin-patient-details {
+  flex: 1;
+}
+.admin-patient-row {
+  margin-bottom: 7px;
+  font-size: 1.05rem;
+}
+.admin-patient-label {
+  font-weight: 600;
+  color: #34495e;
+  margin-right: 6px;
+}
+.admin-action-btn {
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.admin-action-btn:hover {
+  background: #1976d2;
+}
+
