@@ -2,89 +2,132 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Manager.css';
+import { taotaikhoanbasi } from '../api/auth';
+
+const initialForm = {
+  FullName: '',
+  Password: '',
+  Email: '',
+  Specialization: '',
+  LicenseNumber: '',
+  ExperienceYears: '',
+  Address: '',
+  Image: ''
+};
 
 const Manager = () => {
-  const { currentUser } = useAuth();
+  const { currentUser , logout } = useAuth();
   const navigate = useNavigate();
+  const [form, setForm] = useState(initialForm);
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [selected, setSelected] = useState('appointments');
-  // Placeholder states for manager data
-  const [appointments] = useState([
-    { id: 'A001', name: 'Nguyen Van A', type: 'Khám tổng quát', time: '2024-06-01 09:00', phone: '0123456789', status: 'Đã xác nhận' },
-    { id: 'A002', name: 'Tran Thi B', type: 'Xét nghiệm', time: '2024-06-02 10:00', phone: '0987654321', status: 'Đang chờ' },
-  ]);
-  const [patients] = useState([
-    { id: 'P001', name: 'Nguyen Van A', gender: 'Nam', dob: '1990-01-01', phone: '0123456789', note: 'Không dị ứng', blood: 'O', allergy: 'Không' },
-    { id: 'P002', name: 'Tran Thi B', gender: 'Nữ', dob: '1985-05-12', phone: '0987654321', note: 'Dị ứng penicillin', blood: 'A', allergy: 'Penicillin' },
-  ]);
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
 
+  if (!currentUser || currentUser.role !== 'R002') {
+    return (
+      <div className="manager-warning-banner" style={{flexDirection: 'column', gap: '18px'}}>
+        <div style={{display: 'flex', alignItems: 'center', gap: 18}}>
+          <span className="manager-warning-icon">&#9888;</span>
+          Không phận sự miễn vào !!!
+        </div>
+        <button className="manager-warning-btn" onClick={() => navigate('/hospital')}>
+          Quay lại trang chủ
+        </button>
+      </div>
+    );
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError('');
+    setSuccess(false);
+    try {
+      await taotaikhoanbasi({
+        ...form,
+        ExperienceYears: Number(form.ExperienceYears)
+      });
+      setSubmitting(false);
+      setSuccess(true);
+      setShowSuccessPopup(true);
+      setForm(initialForm);
+    } catch (err) {
+      setSubmitting(false);
+      setError('Tạo tài khoản thất bại. Vui lòng kiểm tra lại thông tin hoặc thử lại.');
+    }
+  };
 
   return (
     <div className="manager-container">
       <aside className="manager-sidebar">
         <div className="manager-sidebar-user-row">
-          <span className="manager-sidebar-user">Quản lý</span>
-          <button className="manager-sidebar-logout-btn" title="Đăng xuất" aria-label="Đăng xuất">
+          <span className="manager-sidebar-user">{currentUser?.name || 'Quản Lý'}</span>
+          <button className="manager-sidebar-logout-btn" onClick={handleLogout} title="Đăng xuất" aria-label="Đăng xuất">
             <i className="fas fa-sign-out-alt"></i>
           </button>
         </div>
-        <ul className="manager-sidebar-menu">
-          <li className={selected === 'appointments' ? 'active' : ''} onClick={() => setSelected('appointments')}>Lịch hẹn</li>
-          <li className={selected === 'patients' ? 'active' : ''} onClick={() => setSelected('patients')}>Bệnh nhân</li>
-        </ul>
+        <span className="manager-sidebar-user" style={{marginTop: 24, fontWeight: 700, fontSize: '1.1rem', display: 'block', textAlign: 'center'}}>Tạo tài khoản bác sĩ</span>
       </aside>
       <main className="manager-main">
-        {selected === 'appointments' && (
-          <div className="manager-content">
-            <h2 className="manager-table-title">Lịch hẹn</h2>
-            <div className="manager-appointments-table-wrapper">
-              <table className="manager-appointments-table">
-                <thead>
-                  <tr>
-                    <th>Mã đặt lịch</th>
-                    <th>Tên bệnh nhân</th>
-                    <th>Loại dịch vụ</th>
-                    <th>Thời gian</th>
-                    <th>Số điện thoại</th>
-                    <th>Trạng thái</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {appointments.map((item, idx) => (
-                    <tr key={item.id || idx} className="manager-appointment-row">
-                      <td>{item.id}</td>
-                      <td>{item.name}</td>
-                      <td>{item.type}</td>
-                      <td>{item.time}</td>
-                      <td>{item.phone}</td>
-                      <td className={`manager-status-badge manager-status-${item.status.replace(/\s/g, '').toLowerCase()}`}>{item.status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        <div className="manager-content" style={{maxWidth: 500, margin: '0 auto'}}>
+          <h2 className="manager-table-title">Tạo tài khoản bác sĩ</h2>
+          <form className="manager-register-form" onSubmit={handleSubmit} autoComplete="off">
+            <div className="manager-form-group">
+              <label htmlFor="FullName">Họ và tên Bác Sĩ</label>
+              <input type="text" id="FullName" name="FullName" value={form.FullName} onChange={handleChange} required />
             </div>
-          </div>
-        )}
-        {selected === 'patients' && (
-          <div className="manager-content">
-            <h2 className="manager-table-title">Bệnh nhân</h2>
-            <div className="manager-patient-list">
-              {patients.map((p) => (
-                <div className="manager-patient-card" key={p.id}>
-                  <div className="manager-patient-info">
-                    <div className="manager-patient-avatar"><i className="fas fa-user-injured"></i></div>
-                    <div className="manager-patient-details">
-                      <div className="manager-patient-row"><span className="manager-patient-label">Tên:</span> {p.name}</div>
-                      <div className="manager-patient-row"><span className="manager-patient-label">Giới tính:</span> {p.gender}</div>
-                      <div className="manager-patient-row"><span className="manager-patient-label">Ngày sinh:</span> {p.dob}</div>
-                      <div className="manager-patient-row"><span className="manager-patient-label">SĐT:</span> {p.phone}</div>
-                      <div className="manager-patient-row"><span className="manager-patient-label">Nhóm máu:</span> {p.blood}</div>
-                      <div className="manager-patient-row"><span className="manager-patient-label">Ghi chú:</span> {p.note}</div>
-                      <div className="manager-patient-row"><span className="manager-patient-label">Dị ứng:</span> {p.allergy}</div>
-                      <button className="manager-action-btn" style={{marginTop: 8}}>Xem chi tiết</button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div className="manager-form-group">
+              <label htmlFor="Password">Mật khẩu</label>
+              <input type="password" id="Password" name="Password" value={form.Password} onChange={handleChange} required />
+            </div>
+            <div className="manager-form-group">
+              <label htmlFor="Email">Email</label>
+              <input type="email" id="Email" name="Email" value={form.Email} onChange={handleChange} required />
+            </div>
+            <div className="manager-form-group">
+              <label htmlFor="Specialization">Chuyên khoa</label>
+              <input type="text" id="Specialization" name="Specialization" value={form.Specialization} onChange={handleChange} required />
+            </div>
+            <div className="manager-form-group">
+              <label htmlFor="LicenseNumber">Số giấy phép hành nghề</label>
+              <input type="text" id="LicenseNumber" name="LicenseNumber" value={form.LicenseNumber} onChange={handleChange} required />
+            </div>
+            <div className="manager-form-group">
+              <label htmlFor="ExperienceYears">Số năm kinh nghiệm</label>
+              <input type="number" id="ExperienceYears" name="ExperienceYears" value={form.ExperienceYears} onChange={handleChange} min="0" required />
+            </div>
+            <div className="manager-form-group">
+              <label htmlFor="Address">Địa chỉ</label>
+              <input type="text" id="Address" name="Address" value={form.Address} onChange={handleChange} required />
+            </div>
+            <div className="manager-form-group">
+               <label>Ảnh (URL)</label>
+              <input type="text" id="Image" name="Image" value={form.Image} onChange={handleChange} required />
+            </div>
+            {error && <div className="manager-form-error">{error}</div>}
+            {success && <div className="manager-form-success">Tạo tài khoản thành công!</div>}
+            <button className="manager-action-btn" type="submit" disabled={submitting} style={{width: '100%', marginTop: 18}}>
+              {submitting ? 'Đang tạo...' : 'Tạo tài khoản bác sĩ'}
+            </button>
+          </form>
+        </div>
+        {showSuccessPopup && (
+          <div className="manager-success-popup-overlay">
+            <div className="manager-success-popup">
+              <div className="manager-success-icon"><i className="fas fa-check-circle"></i></div>
+              <div className="manager-success-message">Bạn đã tạo tài khoản bác sĩ thành công</div>
+              <button className="manager-success-close-btn" onClick={() => setShowSuccessPopup(false)}>Đóng</button>
             </div>
           </div>
         )}

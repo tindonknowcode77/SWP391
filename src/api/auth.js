@@ -281,6 +281,7 @@ export const doctorcheckout =(id) =>{
     }
   });
 };
+
 export const tatcacacuser =() =>{
   return axiosClient.get('Manager/AllUsers')
 }
@@ -307,10 +308,23 @@ export const getDoctorWorkSchedule = (doctorId) => {
 // Thêm mới bác sĩ
 export const addDoctor = (data) => {
   return axiosClient.post('Manager/AddDoctor', data, {
+    
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+  
+
+
+export const taotaikhoanbasi = (data) => {
+  return axiosClient.post('/Manager/AddDoctor', data, {
+
     headers: {
       'Content-Type': 'application/json'
     }
   });
+
 }
 
 // Cập nhật thông tin bác sĩ
@@ -380,3 +394,4 @@ export const updateStaff = (userId, data) => {
     headers: { 'Content-Type': 'application/json' }
   });
 }
+
