@@ -397,3 +397,32 @@ export const updateStaff = (userId, data) => {
 export const deleteDoctorWorkScheduleadmin = (scheduleId) => {
   return axiosClient.delete(`Manager/DeleteDoctorWorkSchedule/${scheduleId}`);
 };
+
+// Lấy tất cả các xét nghiệm
+export const getAllLabTests = () => {
+  return axiosClient.get('/LabTest/AllLabTests');
+};
+
+// Lấy thông tin xét nghiệm theo ID
+export const getLabTestById = (labTestId) => {
+  return axiosClient.get(`/LabTest/LabTest/${labTestId}`);
+};
+
+// Thêm mới xét nghiệm
+export const addLabTest = (data) => {
+  return axiosClient.post('/LabTest/AddLabTest', data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+};
+
+// Cập nhật xét nghiệm
+export const updateLabTest = (labTestId, data) => {
+  return axiosClient.put(`/LabTest/UpdateLabTest/${labTestId}`, data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+};
+
+// Xóa xét nghiệm
+export const deleteLabTest = (labTestId) => {
+  return axiosClient.delete(`/LabTest/DeleteLabTest/${labTestId}`);
+};

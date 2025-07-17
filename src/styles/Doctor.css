@@ -955,3 +955,51 @@
   background: #218838;
   transform: scale(1.08);
 }
+
+.labtest-form {
+  max-width: 500px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.labtest-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.labtest-row label {
+  font-weight: 500;
+  color: #1976d2;
+}
+.labtest-row input {
+  padding: 8px 12px;
+  border: 1px solid #bdbdbd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+.labtest-submit-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background 0.2s;
+}
+.labtest-submit-btn:hover {
+  background: #1565c0;
+}
+.labtest-message {
+  margin-top: 10px;
+  color: #388e3c;
+  font-weight: 500;
+  text-align: center;
+}

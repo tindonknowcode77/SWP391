@@ -7,6 +7,12 @@ import {bacsilaydanhsachbenhnhan} from '../api/auth';
 import {bacsilaytreatmentplan} from '../api/auth';
 import { cancelAppointment } from '../api/auth';
 import { doctorcheckout } from '../api/auth';
+import { getAllLabTests} from '../api/auth';
+import { addLabTest} from '../api/auth';
+import { updateLabTest} from '../api/auth';
+import { deleteLabTest} from '../api/auth';
+
+
 
 
 
@@ -41,6 +47,40 @@ const Doctor = () => {
   const [checkinAppointmentId, setCheckinAppointmentId] = useState(null);
   // Thêm state cho tab tất cả lịch hẹn
   const [allAppointments, setAllAppointments] = useState([]);
+  const [labTestForm, setLabTestForm] = useState({
+    RequestID: '',
+    TreatmentPlantID: '',
+    TestName: '',
+    TestCode: '',
+    TestType: '',
+    ResultValue: '',
+    CD4Initial: '',
+    ViralLoadInitial: '',
+    Status: '',
+    Description: ''
+  });
+  const [labTestMessage, setLabTestMessage] = useState('');
+  const [updateLabTestForm, setUpdateLabTestForm] = useState({
+    labTestId: '',
+    RequestID: '',
+    TreatmentPlantID: '',
+    TestName: '',
+    TestCode: '',
+    TestType: '',
+    ResultValue: '',
+    CD4Initial: '',
+    ViralLoadInitial: '',
+    Status: '',
+    Description: ''
+  });
+  const [updateLabTestMessage, setUpdateLabTestMessage] = useState('');
+  const [labTests, setLabTests] = useState([]);
+  const [loadingLabTests, setLoadingLabTests] = useState(false);
+  const [labTestsError, setLabTestsError] = useState(null);
+  const [showDeleteLabTestModal, setShowDeleteLabTestModal] = useState(false);
+  const [labTestToDelete, setLabTestToDelete] = useState(null);
+  const [deleteLabTestMessage, setDeleteLabTestMessage] = useState('');
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
 
   const patientNameMap = {
@@ -127,8 +167,20 @@ const Doctor = () => {
           setPatientsError('Không thể tải danh sách bệnh nhân');
           setLoadingPatients(false);
         });
+    } else if (selected === 'all-labtests') {
+      setLoadingLabTests(true);
+      setLabTestsError(null);
+      getAllLabTests()
+        .then((data) => {
+          setLabTests(Array.isArray(data) ? data : (data?.data || []));
+          setLoadingLabTests(false);
+        })
+        .catch((err) => {
+          setLabTestsError('Không thể tải danh sách LabTest');
+          setLoadingLabTests(false);
+        });
     }
-  }, [selected]);
+  }, [selected, deleteLabTestMessage]);
 
   // useEffect(() => {
   //   if (doctorStatus !== 'checked-in') {
@@ -160,8 +212,15 @@ const Doctor = () => {
   }
 
   const handleLogout = async () => {
+    setShowLogoutConfirm(true);
+  };
+  const confirmLogout = async () => {
     await logout();
     navigate('/login');
+    setShowLogoutConfirm(false);
+  };
+  const cancelLogout = () => {
+    setShowLogoutConfirm(false);
   };
 
   const handleCancelClick = (appointment) => {
@@ -331,6 +390,25 @@ const Doctor = () => {
           >
             Bệnh nhân của tôi
           </li>
+          <li
+            className={selected === 'all-labtests' ? 'active' : ''}
+            onClick={() => setSelected('all-labtests')}
+          >
+            Danh sách LabTest
+          </li>
+          <li
+            className={selected === 'labtest' ? 'active' : ''}
+            onClick={() => setSelected('labtest')}
+          >
+            Thêm LabTest
+          </li>
+          <li
+            className={selected === 'update-labtest' ? 'active' : ''}
+            onClick={() => setSelected('update-labtest')}
+          >
+            Cập nhật LabTest
+          </li>
+          
         </ul>
       </aside>
       <main className="doctor-main">
@@ -760,6 +838,239 @@ const Doctor = () => {
             )}
           </div>
         )}
+        {selected === 'labtest' && (
+          <div className="doctor-content">
+            <h2 className="doctor-table-title">Thêm LabTest mới</h2>
+            <form
+              className="labtest-form"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  await addLabTest(labTestForm);
+                  setLabTestMessage('Thêm LabTest thành công!');
+                  setLabTestForm({
+                    RequestID: '',
+                    TreatmentPlantID: '',
+                    TestName: '',
+                    TestCode: '',
+                    TestType: '',
+                    ResultValue: '',
+                    CD4Initial: '',
+                    ViralLoadInitial: '',
+                    Status: '',
+                    Description: ''
+                  });
+                } catch (err) {
+                  setLabTestMessage('Có lỗi khi thêm LabTest!');
+                }
+              }}
+            >
+              {/* Các trường nhập liệu */}
+              <div className="labtest-row">
+                <label>Mã yêu cầu (RequestID):</label>
+                <input value={labTestForm.RequestID} onChange={e => setLabTestForm({...labTestForm, RequestID: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Mã hồ sơ điều trị (TreatmentPlantID):</label>
+                <input value={labTestForm.TreatmentPlantID} onChange={e => setLabTestForm({...labTestForm, TreatmentPlantID: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Tên xét nghiệm (TestName):</label>
+                <input value={labTestForm.TestName} onChange={e => setLabTestForm({...labTestForm, TestName: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Mã xét nghiệm (TestCode):</label>
+                <input value={labTestForm.TestCode} onChange={e => setLabTestForm({...labTestForm, TestCode: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Loại xét nghiệm (TestType):</label>
+                <input value={labTestForm.TestType} onChange={e => setLabTestForm({...labTestForm, TestType: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Kết quả (ResultValue):</label>
+                <input value={labTestForm.ResultValue} onChange={e => setLabTestForm({...labTestForm, ResultValue: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>CD4 ban đầu:</label>
+                <input type="number" value={labTestForm.CD4Initial} onChange={e => setLabTestForm({...labTestForm, CD4Initial: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Viral Load ban đầu:</label>
+                <input type="number" value={labTestForm.ViralLoadInitial} onChange={e => setLabTestForm({...labTestForm, ViralLoadInitial: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Trạng thái:</label>
+                <input value={labTestForm.Status} onChange={e => setLabTestForm({...labTestForm, Status: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Mô tả:</label>
+                <input value={labTestForm.Description} onChange={e => setLabTestForm({...labTestForm, Description: e.target.value})} />
+              </div>
+              <button className="labtest-submit-btn" type="submit">Thêm LabTest</button>
+              {labTestMessage && <div className="labtest-message">{labTestMessage}</div>}
+            </form>
+          </div>
+        )}
+        {selected === 'update-labtest' && (
+          <div className="doctor-content">
+            <h2 className="doctor-table-title">Cập nhật LabTest</h2>
+            <form
+              className="labtest-form"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  await updateLabTest(updateLabTestForm.labTestId, {
+                    RequestID: updateLabTestForm.RequestID,
+                    TreatmentPlantID: updateLabTestForm.TreatmentPlantID,
+                    TestName: updateLabTestForm.TestName,
+                    TestCode: updateLabTestForm.TestCode,
+                    TestType: updateLabTestForm.TestType,
+                    ResultValue: updateLabTestForm.ResultValue,
+                    CD4Initial: updateLabTestForm.CD4Initial,
+                    ViralLoadInitial: updateLabTestForm.ViralLoadInitial,
+                    Status: updateLabTestForm.Status,
+                    Description: updateLabTestForm.Description
+                  });
+                  setUpdateLabTestMessage('Cập nhật LabTest thành công!');
+                } catch (err) {
+                  setUpdateLabTestMessage('Có lỗi khi cập nhật LabTest!');
+                }
+              }}
+            >
+              <div className="labtest-row">
+                <label>ID LabTest (labTestId):</label>
+                <input value={updateLabTestForm.labTestId} onChange={e => setUpdateLabTestForm({...updateLabTestForm, labTestId: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Mã yêu cầu (RequestID):</label>
+                <input value={updateLabTestForm.RequestID} onChange={e => setUpdateLabTestForm({...updateLabTestForm, RequestID: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Mã hồ sơ điều trị (TreatmentPlantID):</label>
+                <input value={updateLabTestForm.TreatmentPlantID} onChange={e => setUpdateLabTestForm({...updateLabTestForm, TreatmentPlantID: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Tên xét nghiệm (TestName):</label>
+                <input value={updateLabTestForm.TestName} onChange={e => setUpdateLabTestForm({...updateLabTestForm, TestName: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Mã xét nghiệm (TestCode):</label>
+                <input value={updateLabTestForm.TestCode} onChange={e => setUpdateLabTestForm({...updateLabTestForm, TestCode: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Loại xét nghiệm (TestType):</label>
+                <input value={updateLabTestForm.TestType} onChange={e => setUpdateLabTestForm({...updateLabTestForm, TestType: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Kết quả (ResultValue):</label>
+                <input value={updateLabTestForm.ResultValue} onChange={e => setUpdateLabTestForm({...updateLabTestForm, ResultValue: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>CD4 ban đầu:</label>
+                <input type="number" value={updateLabTestForm.CD4Initial} onChange={e => setUpdateLabTestForm({...updateLabTestForm, CD4Initial: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Viral Load ban đầu:</label>
+                <input type="number" value={updateLabTestForm.ViralLoadInitial} onChange={e => setUpdateLabTestForm({...updateLabTestForm, ViralLoadInitial: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Trạng thái:</label>
+                <input value={updateLabTestForm.Status} onChange={e => setUpdateLabTestForm({...updateLabTestForm, Status: e.target.value})} required />
+              </div>
+              <div className="labtest-row">
+                <label>Mô tả:</label>
+                <input value={updateLabTestForm.Description} onChange={e => setUpdateLabTestForm({...updateLabTestForm, Description: e.target.value})} />
+              </div>
+              <button className="labtest-submit-btn" type="submit">Cập nhật LabTest</button>
+              {updateLabTestMessage && <div className="labtest-message">{updateLabTestMessage}</div>}
+            </form>
+          </div>
+        )}
+        {selected === 'all-labtests' && (
+          <div className="doctor-content">
+            <h2 className="doctor-table-title">Danh sách tất cả LabTest</h2>
+            {loadingLabTests && <div>Đang tải...</div>}
+            {labTestsError && <div style={{color: 'red'}}>{labTestsError}</div>}
+            {!loadingLabTests && !labTestsError && labTests.length === 0 && <div>Không có LabTest nào.</div>}
+            {!loadingLabTests && !labTestsError && labTests.length > 0 && (
+              <div className="appointments-table-wrapper">
+                <table className="appointments-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Mã yêu cầu</th>
+                      <th>Mã hồ sơ điều trị</th>
+                      <th>Tên xét nghiệm</th>
+                      <th>Kết quả</th>
+                      <th>CD4</th>
+                      <th>Viral Load</th>
+                      <th>Trạng thái</th>
+                      <th>Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {labTests.map((item, idx) => (
+                      <tr key={item.LabTestID || idx}>
+                        <td>{item.LabTestID}</td>
+                        <td>{item.RequestID}</td>
+                        <td>{item.TreatmentPlantID}</td>
+                        <td>{item.TestName}</td>
+                        <td>{item.ResultValue}</td>
+                        <td>{item.CD4Initial}</td>
+                        <td>{item.ViralLoadInitial}</td>
+                        <td>{item.Status}</td>
+                        <td>
+                          <button
+                            className="doctor-cancel-btn"
+                            style={{background:'#e53935', color:'#fff', borderRadius:6, padding:'4px 12px', fontWeight:600, fontSize:'1rem'}}
+                            onClick={() => {
+                              setLabTestToDelete(item);
+                              setShowDeleteLabTestModal(true);
+                            }}
+                          >
+                            Xóa
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {showDeleteLabTestModal && (
+              <div className="doctor-cancel-modal">
+                <div className="doctor-cancel-container" style={{maxWidth: 350, textAlign: 'center'}}>
+                  <div style={{fontSize: '2.5rem', color: '#f44336', marginBottom: 12}}>
+                    <i className="fas fa-trash-alt"></i>
+                  </div>
+                  <h3 style={{color:'#333', marginBottom:16, fontWeight:600}}>Bạn chắc chắn muốn xóa LabTest này?</h3>
+                  <div style={{display: 'flex', gap: 16, justifyContent: 'center'}}>
+                    <button
+                      onClick={() => setShowDeleteLabTestModal(false)}
+                      style={{background: '#f44336', color: '#fff', borderRadius: 6, padding: '8px 24px', fontWeight: 600, border: 'none'}}>
+                      Đóng
+                    </button>
+                    <button
+                      onClick={async () => {
+                        try {
+                          await deleteLabTest(labTestToDelete.LabTestID);
+                          setDeleteLabTestMessage('Xóa LabTest thành công!');
+                        } catch (err) {
+                          setDeleteLabTestMessage('Có lỗi khi xóa LabTest!');
+                        }
+                        setShowDeleteLabTestModal(false);
+                        setLabTestToDelete(null);
+                      }}
+                      style={{background: '#4caf50', color: '#fff', borderRadius: 6, padding: '8px 24px', fontWeight: 600, border: 'none'}}>
+                      Xác Nhận
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {deleteLabTestMessage && <div className="labtest-message">{deleteLabTestMessage}</div>}
+          </div>
+        )}
       </main>
       {showSuccessPopup && (
         <div className="doctor-success-popup-overlay">
@@ -809,6 +1120,28 @@ const Doctor = () => {
                 }}
                 style={{background: '#4caf50', color: '#fff', borderRadius: 6, padding: '8px 24px', fontWeight: 600, border: 'none'}}>
                 Xác Nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showLogoutConfirm && (
+        <div className="doctor-cancel-modal">
+          <div className="doctor-cancel-container" style={{maxWidth: 350, textAlign: 'center'}}>
+            <div style={{fontSize: '2.5rem', color: '#f44336', marginBottom: 12}}>
+              <i className="fas fa-sign-out-alt"></i>
+            </div>
+            <h3 style={{color:'#333', marginBottom:16, fontWeight:600}}>Bạn có chắc chắn muốn đăng xuất không?</h3>
+            <div style={{display: 'flex', gap: 16, justifyContent: 'center'}}>
+              <button
+                onClick={cancelLogout}
+                style={{background: '#f44336', color: '#fff', borderRadius: 6, padding: '8px 24px', fontWeight: 600, border: 'none'}}>
+                Hủy
+              </button>
+              <button
+                onClick={confirmLogout}
+                style={{background: '#4caf50', color: '#fff', borderRadius: 6, padding: '8px 24px', fontWeight: 600, border: 'none'}}>
+                Đăng xuất
               </button>
             </div>
           </div>

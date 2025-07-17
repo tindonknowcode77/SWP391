@@ -111,6 +111,7 @@ const Admin = () => {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [scheduleToDelete, setScheduleToDelete] = useState(null);
   const [deleteMsg, setDeleteMsg] = useState('');
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleAddDoctorChange = (e) => {
     const { name, value } = e.target;
@@ -283,12 +284,19 @@ const Admin = () => {
   };
 
   const handleLogout = async () => {
+    setShowLogoutConfirm(true);
+  };
+  const confirmLogout = async () => {
     try {
       await logout();
       navigate('/login');
     } catch (error) {
       alert('Đăng xuất thất bại!');
     }
+    setShowLogoutConfirm(false);
+  };
+  const cancelLogout = () => {
+    setShowLogoutConfirm(false);
   };
 
   // Lấy danh sách lịch làm việc bác sĩ
@@ -886,6 +894,16 @@ const Admin = () => {
           </div>
         )}
       </main>
+      {showLogoutConfirm && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h3>Xác nhận đăng xuất</h3>
+            <p>Bạn có chắc chắn muốn đăng xuất không?</p>
+            <button className="admin-action-btn" style={{background:'#e74c3c', marginRight:8}} onClick={confirmLogout}>Đăng xuất</button>
+            <button className="admin-action-btn" onClick={cancelLogout}>Hủy</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
