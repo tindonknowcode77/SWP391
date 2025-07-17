@@ -394,4 +394,6 @@ export const updateStaff = (userId, data) => {
     headers: { 'Content-Type': 'application/json' }
   });
 }
-
+export const deleteDoctorWorkScheduleadmin = (scheduleId) => {
+  return axiosClient.delete(`Manager/DeleteDoctorWorkSchedule/${scheduleId}`);
+};

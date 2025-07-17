@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import '../styles/admin.css';
-import { tatcacacuser, getAllDoctorsManager, getAllStaff, addDoctor } from '../api/auth';
+import {tatcacacuser} from '../api/auth';
+import { getAllDoctorsManager} from '../api/auth';
+import { getAllDoctorWorkSchedules } from '../api/auth';
+import {  addDoctor } from '../api/auth';
 import { updateDoctor } from '../api/auth';
 import {addDoctorWorkSchedule, updateDoctorWorkSchedule} from '../api/auth';
 import {addARVProtocol} from '../api/auth';
 import { capnhatARVProtocol } from '../api/auth';
 import { addStaff } from '../api/auth';
 import { updateStaff } from '../api/auth';
+import { deleteDoctorWorkScheduleadmin } from '../api/auth';
 
 const Admin = () => {
   const { currentUser, logout } = useAuth();
@@ -102,6 +106,11 @@ const Admin = () => {
   });
   const [updateStaffMsg, setUpdateStaffMsg] = useState('');
   const [updatedStaff, setUpdatedStaff] = useState(null);
+
+  const [doctorSchedules, setDoctorSchedules] = useState([]);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [scheduleToDelete, setScheduleToDelete] = useState(null);
+  const [deleteMsg, setDeleteMsg] = useState('');
 
   const handleAddDoctorChange = (e) => {
     const { name, value } = e.target;
@@ -282,11 +291,51 @@ const Admin = () => {
     }
   };
 
+  // Lấy danh sách lịch làm việc bác sĩ
+  const fetchDoctorSchedules = async () => {
+    try {
+      const res = await getAllDoctorWorkSchedules();
+      setDoctorSchedules(res);
+    } catch (err) {
+      setDoctorSchedules([]);
+    }
+  };
+
+  // Khi chọn tab, load danh sách
+  useEffect(() => {
+    if (selectedTab === 'doctorschedule') {
+      fetchDoctorSchedules();
+    }
+  }, [selectedTab]);
+
+  // Hàm xử lý xóa
+  const handleDeleteSchedule = (schedule) => {
+    setScheduleToDelete(schedule);
+    setShowDeletePopup(true);
+    setDeleteMsg('');
+  };
+  const confirmDeleteSchedule = async () => {
+    if (!scheduleToDelete) return;
+    try {
+      await deleteDoctorWorkScheduleadmin(scheduleToDelete.ScheduleID);
+      setDeleteMsg('Xóa lịch thành công!');
+      setShowDeletePopup(false);
+      setScheduleToDelete(null);
+      fetchDoctorSchedules();
+    } catch (err) {
+      setDeleteMsg('Xóa lịch thất bại!');
+    }
+  };
+  const cancelDeleteSchedule = () => {
+    setShowDeletePopup(false);
+    setScheduleToDelete(null);
+  };
+
   return (
     <div className="admin-container">
       <aside className="admin-sidebar">
         <div className="admin-sidebar-user-row">
-          <span className="admin-sidebar-user">Admin</span>
+          <span className="admin-sidebar-user">{currentUser?.name || 'Admin'}</span>
           <button
             className="admin-sidebar-logout-btn"
             title="Đăng xuất"
@@ -304,6 +353,10 @@ const Admin = () => {
           <li className={selectedTab === 'updatedoctor' ? 'active' : ''} onClick={() => setSelectedTab('updatedoctor')}>
             <i className="fas fa-user-edit"></i>
             <span>Cập nhật bác sĩ</span>
+          </li>
+          <li className={selectedTab === 'doctorschedule' ? 'active' : ''} onClick={() => setSelectedTab('doctorschedule')}>
+            <i className="fas fa-calendar"></i>
+            <span>Lịch khám bác sĩ</span>
           </li>
           <li className={selectedTab === 'addschedule' ? 'active' : ''} onClick={() => setSelectedTab('addschedule')}>
             <i className="fas fa-calendar-plus"></i>
@@ -329,6 +382,7 @@ const Admin = () => {
             <i className="fas fa-user-friends"></i>
             <span>Cập nhật nhân viên</span>
           </li>
+        
         </ul>
       </aside>
       <main className="admin-main">
@@ -778,6 +832,55 @@ const Admin = () => {
                     </tr>
                   </tbody>
                 </table>
+              </div>
+            )}
+          </div>
+        )}
+        {selectedTab === 'doctorschedule' && (
+          <div className="admin-content">
+            <h2 className="admin-table-title">Lịch khám của bác sĩ</h2>
+            {deleteMsg && <div style={{color: deleteMsg.includes('thành công') ? '#27ae60' : '#e74c3c', marginBottom: 12}}>{deleteMsg}</div>}
+            <table className="admin-appointments-table">
+              <thead>
+                <tr>
+                  <th>ScheduleID</th>
+                  <th>DoctorID</th>
+                  <th>SlotID</th>
+                  <th>DateWork</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                {doctorSchedules && doctorSchedules.length > 0 ? doctorSchedules.map(sch => (
+                  <tr key={sch.ScheduleID}>
+                    <td>{sch.ScheduleID}</td>
+                    <td>{sch.DoctorID}</td>
+                    <td>{sch.SlotID}</td>
+                    <td>{sch.DateWork}</td>
+                    <td>
+                      <button className="admin-action-btn" style={{background:'#e74c3c'}} onClick={() => handleDeleteSchedule(sch)}>Xóa</button>
+                    </td>
+                  </tr>
+                )) : (
+                  <tr><td colSpan={5} style={{textAlign:'center'}}>Không có dữ liệu</td></tr>
+                )}
+              </tbody>
+            </table>
+            {/* Popup xác nhận xóa */}
+            {showDeletePopup && (
+              <div className="popup-overlay">
+                <div className="popup-content">
+                  <h3>Xác nhận xóa lịch</h3>
+                  <p>Bạn có chắc chắn muốn xóa lịch này không?</p>
+                  <div style={{marginBottom:8}}>
+                    <b>ScheduleID:</b> {scheduleToDelete?.ScheduleID}<br/>
+                    <b>DoctorID:</b> {scheduleToDelete?.DoctorID}<br/>
+                    <b>SlotID:</b> {scheduleToDelete?.SlotID}<br/>
+                    <b>DateWork:</b> {scheduleToDelete?.DateWork}
+                  </div>
+                  <button className="admin-action-btn" style={{background:'#red', marginRight:8}} onClick={confirmDeleteSchedule}>Xóa</button>
+                  <button className="admin-action-btn" onClick={cancelDeleteSchedule}>Hủy</button>
+                </div>
               </div>
             )}
           </div>
