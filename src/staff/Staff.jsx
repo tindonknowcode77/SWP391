@@ -11,10 +11,7 @@ import { xemdanhsachlichhendahoanthanh } from '../api/auth';
 
 
 
-const DOCTOR_NAME_MAP = {
-  'DT000001': 'Nguyễn Văn A',
-  'DT000002': 'Nguyễn Văn B',
-};
+
 
 const Staff = () => {
   const [selected, setSelected] = useState('all');
@@ -263,8 +260,8 @@ const Staff = () => {
                     ).map((item, idx) => (
                       <tr key={item.BookID || idx}>
                         <td>{item.BookID}</td>
-                        <td>{item.PatientID}</td>
-                        <td>{DOCTOR_NAME_MAP[item.DoctorID] || item.DoctorID}</td>
+                        <td>{item.Patient?.User?.Fullname}</td>
+                        <td>{item.Doctor?.User?.Fullname || item.DoctorID}</td>
                         <td>{item.BookingType || item.BookingType}</td>
                         <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
                         <td>{item.Note || ''}</td>
@@ -313,8 +310,8 @@ const Staff = () => {
                     {appointments.map((item, idx) => (
                       <tr key={item.BookID || idx}>
                         <td>{item.BookID}</td>
-                        <td>{item.PatientID}</td>
-                        <td>{DOCTOR_NAME_MAP[item.DoctorID] || item.DoctorID}</td>
+                        <td>{item.Patient?.User?.Fullname}</td>
+                        <td>{item.Doctor?.User?.Fullname || item.DoctorID}</td>
                         <td>{item.BookingType || item.BookingType}</td>
                         <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
                         <td>{item.Note || ''}</td>
@@ -363,8 +360,8 @@ const Staff = () => {
                     {cancelledAppointments.map((item, idx) => (
                       <tr key={item.BookID || idx}>
                         <td>{item.BookID}</td>
-                        <td>{item.PatientID}</td>
-                        <td>{DOCTOR_NAME_MAP[item.DoctorID] || item.DoctorID}</td>
+                        <td>{item.Patient?.User?.Fullname}</td>
+                        <td>{item.Doctor?.User?.Fullname || item.DoctorID}</td>
                         <td>{item.BookingType || item.BookingType}</td>
                         <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
                         <td>{item.Note || ''}</td>
@@ -413,8 +410,8 @@ const Staff = () => {
                     {completedAppointments.map((item, idx) => (
                       <tr key={item.BookID || idx}>
                         <td>{item.BookID}</td>
-                        <td>{item.PatientID}</td>
-                        <td>{DOCTOR_NAME_MAP[item.DoctorID] || item.DoctorID}</td>
+                        <td>{item.Patient?.User?.Fullname}</td>
+                        <td>{item.Doctor?.User?.Fullname || item.DoctorID}</td>
                         <td>{item.BookingType || item.BookingType}</td>
                         <td>{item.BookDate ? new Date(item.BookDate).toLocaleString('vi-VN') : ''}</td>
                         <td>{item.Note || ''}</td>
