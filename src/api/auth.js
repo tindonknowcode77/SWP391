@@ -426,3 +426,7 @@ export const updateLabTest = (labTestId, data) => {
 export const deleteLabTest = (labTestId) => {
   return axiosClient.delete(`/LabTest/DeleteLabTest/${labTestId}`);
 };
+
+export const getLabTestsByPatient = (patientId) => {
+  return axiosClient.get(`/LabTest/LabTestsByPatient/${patientId}`);
+};

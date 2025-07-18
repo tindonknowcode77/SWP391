@@ -10,6 +10,7 @@ import { nguoidunglaytoathuoc } from  '../api/auth';
 import { nguoidunglayAVR } from  '../api/auth';
 import { datlichkham } from '../api/auth';
 import { patientcheckin } from '../api/auth';
+import { getLabTestsByPatient } from '../api/auth';
 
 const Profile = () => {  
   const { currentUser, loading, updateProfile, logout, setCurrentUser } = useAuth();
@@ -144,6 +145,14 @@ const Profile = () => {
   const [checkinBookId, setCheckinBookId] = useState(null);
   const [checkinResult, setCheckinResult] = useState(null); // {success: true/false, message: ''}
 
+  const [labTests, setLabTests] = useState([]);
+  const [labTestsLoading, setLabTestsLoading] = useState(false);
+  const [labTestsError, setLabTestsError] = useState(null);
+
+  const [inputPatientId, setInputPatientId] = useState('');
+  const [showLabTestPopup, setShowLabTestPopup] = useState(false);
+  const [selectedLabTests, setSelectedLabTests] = useState([]);
+
   const isToday = (bookDate) => {
     const today = new Date().toISOString().split('T')[0];
     const book = new Date(bookDate).toISOString().split('T')[0];
@@ -240,6 +249,23 @@ const Profile = () => {
         .catch((err) => {
           setAppointmentsError('Không thể tải danh sách lịch hẹn');
           setAppointmentsLoading(false);
+        });
+    }
+  }, [activeTab, currentUser]);
+
+  // Lấy dữ liệu xét nghiệm động khi vào tab 'labtest'
+  useEffect(() => {
+    if (activeTab === 'labtest' && currentUser?.id) {
+      setLabTestsLoading(true);
+      setLabTestsError(null);
+      getLabTestsByPatient(currentUser.id)
+        .then((res) => {
+          setLabTests(Array.isArray(res) ? res : (res?.data || []));
+          setLabTestsLoading(false);
+        })
+        .catch(() => {
+          setLabTestsError('Không thể tải danh sách xét nghiệm');
+          setLabTestsLoading(false);
         });
     }
   }, [activeTab, currentUser]);
@@ -377,6 +403,13 @@ const Profile = () => {
               <i className="fas fa-pills"></i>
               <span>Thuốc đang dùng</span>
             </button>
+            <button 
+              className={`profile-nav-btn ${activeTab === 'labtest' ? 'active' : ''}`}
+              onClick={() => handleTabChange('labtest')}
+            >
+              <i className="fas fa-vial"></i>
+              <span>Xét nghiệm</span>
+            </button>
             
             <button 
               className={`profile-nav-btn ${activeTab === 'notifications' ? 'active' : ''}`}
@@ -418,6 +451,7 @@ const Profile = () => {
               {activeTab === 'medical' && 'Hồ sơ bệnh án'}
               {activeTab === 'appointments' && 'Lịch hẹn của tôi'}
               {activeTab === 'medication' && 'Thuốc đang dùng'}
+              {activeTab === 'labtest' && 'Xét nghiệm'}
               {activeTab === 'notifications' && 'Thông báo hệ thống'}
             </h2>
             
@@ -859,6 +893,47 @@ const Profile = () => {
               </div>
             )}
             
+            {activeTab === 'labtest' && (
+              <div className="labtest-list">
+                <div className="section-info">
+                  <p>Nhập mã bệnh nhân (PatientID) để tra cứu xét nghiệm:</p>
+                  <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+                    <input
+                      type="text"
+                      placeholder="Nhập PatientID (ví dụ: PT000014)"
+                      value={inputPatientId}
+                      onChange={e => setInputPatientId(e.target.value)}
+                      style={{ padding: 6, borderRadius: 4, border: '1px solid #ccc', minWidth: 200 }}
+                    />
+                    <button
+                      onClick={() => {
+                        if (!inputPatientId) return;
+                        setLabTestsLoading(true);
+                        setLabTestsError(null);
+                        getLabTestsByPatient(inputPatientId)
+                          .then((res) => {
+                            const data = Array.isArray(res) ? res : (res?.data || []);
+                            setLabTests(data);
+                            setSelectedLabTests(data);
+                            setShowLabTestPopup(true);
+                            setLabTestsLoading(false);
+                          })
+                          .catch(() => {
+                            setLabTestsError('Không thể tải danh sách xét nghiệm');
+                            setLabTestsLoading(false);
+                          });
+                      }}
+                      style={{ padding: '6px 16px', borderRadius: 4, background: '#4CAF50', color: '#fff', border: 'none' }}
+                    >
+                      Tra cứu
+                    </button>
+                  </div>
+                </div>
+                {labTestsLoading && <div>Đang tải...</div>}
+                {labTestsError && <div style={{color: 'red'}}>{labTestsError}</div>}
+              </div>
+            )}
+            
             {activeTab === 'notifications' && (
               <div className="notification-list">
                 <div className="section-info">
@@ -1088,6 +1163,39 @@ const Profile = () => {
           </div>
         </div>
       )}
+
+      {showLabTestPopup && (
+  <div className="labtest-popup-overlay">
+    <div className="labtest-popup">
+      <div className="labtest-popup-header">
+        <h3>🧪 Kết quả xét nghiệm</h3>
+        <button className="close-btn" onClick={() => setShowLabTestPopup(false)}>✖</button>
+      </div>
+      <div className="labtest-popup-body">
+        {selectedLabTests.length === 0 ? (
+          <div>Không có dữ liệu xét nghiệm.</div>
+        ) : (
+          selectedLabTests.map((item, idx) => (
+            <div className="labtest-detail-card" key={item.LabTestID || idx}>
+              <div><b>Mã xét nghiệm:</b> {item.LabTestID}</div>
+              <div><b>Tên xét nghiệm:</b> {item.TestName}</div>
+              <div><b>Mã yêu cầu:</b> {item.RequestID}</div>
+              <div><b>Mã phác đồ:</b> {item.TreatmentPlantID}</div>
+              <div><b>Mã xét nghiệm:</b> {item.TestCode}</div>
+              <div><b>Loại xét nghiệm:</b> {item.TestType}</div>
+              <div><b>Kết quả:</b> {item.ResultValue}</div>
+              <div><b>CD4 Initial:</b> {item.CD4Initial}</div>
+              <div><b>Viral Load Initial:</b> {item.ViralLoadInitial}</div>
+              <div><b>Trạng thái:</b> {item.Status}</div>
+              <div><b>Ghi chú:</b> {item.Description}</div>
+              <hr style={{margin: '12px 0'}}/>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  </div>
+)}
 
     </>
   );

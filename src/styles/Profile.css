@@ -1128,3 +1128,58 @@
   margin: 8px 0;
 }
 
+.labtest-popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.labtest-popup {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 95%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 0;
+  animation: popupShow 0.2s;
+}
+@keyframes popupShow {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.labtest-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #4CAF50;
+  color: #fff;
+  padding: 16px 20px;
+  border-radius: 12px 12px 0 0;
+}
+.labtest-popup-body {
+  padding: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.labtest-detail-card {
+  background: #f7f7f7;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.close-btn:hover {
+  color: #ff5252;
+}
+
