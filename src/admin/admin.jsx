@@ -18,6 +18,20 @@ const Admin = () => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const [selected, setSelected] = useState('appointments');
+
+  if (!currentUser || currentUser.role !== 'R001') {
+    return (
+      <div className="admin-warning-banner" style={{flexDirection: 'column', gap: '18px'}}>
+        <div style={{display: 'flex', alignItems: 'center', gap: 18}}>
+          <span className="admin-warning-icon">&#9888;</span>
+          Không phận sự miễn vào !!!
+        </div>
+        <button className="admin-warning-btn" onClick={() => navigate('/hospital')}>
+          Quay lại trang chủ
+        </button>
+      </div>
+    );
+  }
   // Placeholder states for admin data
   
   const [showAddDoctor, setShowAddDoctor] = useState(false);
