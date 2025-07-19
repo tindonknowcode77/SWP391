@@ -25,6 +25,7 @@ const TreatmentPlanAdd = () => {
   const [loading, setLoading] = useState(false);
   const [patientInfo, setPatientInfo] = useState(null);
   const [selectedARVObj, setSelectedARVObj] = useState(null);
+  const [matchedPatient, setMatchedPatient] = useState(null);
 
 
 
@@ -94,6 +95,29 @@ const TreatmentPlanAdd = () => {
     }
   }, [currentUser, doctors]);
 
+  // Tìm PatientFullname dựa trên PatientID từ form so sánh với PatientID từ API
+  useEffect(() => {
+    if (form.PatientID && patients.length > 0) {
+      const matchedPatient = patients.find(patient => 
+        patient.Patient && patient.Patient.PatientID && String(patient.Patient.PatientID) === String(form.PatientID)
+      );
+      
+      if (matchedPatient) {
+        console.log('Found matching patient:', matchedPatient);
+        setMatchedPatient(matchedPatient);
+      } else {
+        console.log('No matching patient found for PatientID:', form.PatientID);
+        console.log('Available patients:', patients.map(p => ({ 
+          PatientID: p.Patient?.PatientID, 
+          PatientFullname: p.PatientFullname || p.Patient?.User?.Fullname 
+        })));
+        setMatchedPatient(null);
+      }
+    } else {
+      setMatchedPatient(null);
+    }
+  }, [form.PatientID, patients]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -155,7 +179,7 @@ const TreatmentPlanAdd = () => {
           {form.PatientID ? (
             <input
               type="text"
-              value={form.PatientID}
+              value={matchedPatient?.PatientFullname || matchedPatient?.Patient?.User?.Fullname || form.PatientID}
               disabled
               style={{ background: '#f7fafd', fontWeight: 'bold' }}
             />
@@ -167,23 +191,18 @@ const TreatmentPlanAdd = () => {
             >
               <option value="">Chọn bệnh nhân</option>
               {patients.map((p, idx) => (
-                <option key={p.PatientID || idx} value={p.PatientID}>
-                  {p.PatientID}
+                <option key={p.Patient?.PatientID || idx} value={p.Patient?.PatientID}>
+                  {p.PatientFullname || p.Patient?.User?.Fullname || p.Patient?.PatientID} - {p.Patient?.PatientID}
                 </option>
               ))}
             </select>
           )}
+
+         
           {form.PatientID && (
-            <button
-              type="button"
-              style={{ marginLeft: 10, padding: '4px 10px', borderRadius: 4, background: '#eee', color: '#1976d2', border: 'none', cursor: 'pointer' }}
-              onClick={() => {
-                setForm({ ...form, PatientID: '' });
-                setPatientInfo(null);
-              }}
-            >
-              Chọn lại bệnh nhân
-            </button>
+            <small style={{ color: '#666', marginTop: '4px', display: 'block' }}>
+              Mã bệnh nhân: {form.PatientID}
+            </small>
           )}
         </div>
         <div className="tp-add-row">
