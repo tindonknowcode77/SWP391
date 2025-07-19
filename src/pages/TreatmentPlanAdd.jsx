@@ -280,23 +280,28 @@ const TreatmentPlanAdd = () => {
       </form>
       <div className="tp-patient-info">
         <h3>Thông tin bệnh nhân</h3>
-        {patientInfo ? (
+        {matchedPatient ? (
           <>
-            <p><b>Mã BN:</b> {patientInfo.patientCode || patientInfo.id}</p>
-            <p><b>Họ tên:</b> {patientInfo.PatientFullname || patientInfo.fullName}</p>
-            <p><b>Ngày sinh:</b> {patientInfo.dateOfBirth}</p>
-            <p><b>Giới tính:</b> {patientInfo.gender}</p>
-            <p><b>SĐT:</b> {patientInfo.phoneNumber}</p>
-            <p><b>Nhóm máu:</b> {patientInfo.bloodGroup}</p>
-            <p><b>Dị ứng:</b> {patientInfo.allergy || 'Không'}</p>
+            <p><b>Mã BN:</b> {matchedPatient.Patient?.PatientID || 'N/A'}</p>
+            <p><b>Họ tên:</b> {matchedPatient.PatientFullname || matchedPatient.Patient?.User?.Fullname || 'N/A'}</p>
+            <p><b>Ngày sinh:</b> {matchedPatient.Patient?.DateOfBirth?.split('T')[0] || 'N/A'}</p>
+            <p><b>Giới tính:</b> {matchedPatient.Patient?.Gender || 'N/A'}</p>
+            <p><b>SĐT:</b> {matchedPatient.Patient?.Phone || matchedPatient.Patient?.User?.PhoneNumber || 'N/A'}</p>
+            <p><b>Email:</b> {matchedPatient.Patient?.User?.Email || 'N/A'}</p>
+            <p><b>Địa chỉ:</b> {matchedPatient.Patient?.User?.Address || 'N/A'}</p>
+            {matchedPatient.Note && (
+              <p><b>Ghi chú:</b> {matchedPatient.Note}</p>
+            )}
           </>
+        ) : form.PatientID ? (
+          <p>Đang tải thông tin bệnh nhân...</p>
         ) : (
           <p>Vui lòng chọn bệnh nhân để xem thông tin.</p>
         )}
-        {form.PatientID && patientInfo && (
+        {form.PatientID && matchedPatient && (
           <input
             type="text"
-            value={patientInfo.PatientFullname || patientInfo.fullName}
+            value={"Bệnh nhân mới"}
             disabled
             style={{
               marginTop: 8,
