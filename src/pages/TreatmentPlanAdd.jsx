@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllDoctors, AllARVProtocol, AddTreatmentPlan, TreatmentPlansByPatient, bacsilaydanhsachbenhnhan } from "../api/auth";
+import { AllARVProtocol, AddTreatmentPlan, TreatmentPlansByPatient, bacsilaydanhsachbenhnhan } from "../api/auth";
 import '../styles/TreatmentPlanAdd.css';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { getAllDoctors} from '../api/auth';
 
 const TreatmentPlanAdd = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentUser } = useAuth();
 
   const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
@@ -74,12 +77,22 @@ const TreatmentPlanAdd = () => {
     }
   }, [form.ARVProtocol, arvProtocols]);
 
+  // Tìm DoctorID dựa trên currentUser.name so sánh với Fullname từ API
   useEffect(() => {
-    const doctorId = localStorage.getItem('DoctorId');
-    if (doctorId) {
-      setForm(f => ({ ...f, DoctorID: doctorId }));
+    if (currentUser?.name && doctors.length > 0) {
+      const matchedDoctor = doctors.find(doctor => 
+        doctor.Fullname && doctor.Fullname.toLowerCase() === currentUser.name.toLowerCase()
+      );
+      
+      if (matchedDoctor) {
+        console.log('Found matching doctor:', matchedDoctor);
+        setForm(f => ({ ...f, DoctorID: matchedDoctor.DoctorId }));
+      } else {
+        console.log('No matching doctor found for:', currentUser.name);
+        console.log('Available doctors:', doctors.map(d => d.Fullname));
+      }
     }
-  }, []);
+  }, [currentUser, doctors]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -175,26 +188,16 @@ const TreatmentPlanAdd = () => {
         </div>
         <div className="tp-add-row">
           <label>Bác sĩ phụ trách</label>
-          {form.DoctorID ? (
-            <input
-              type="text"
-              value={form.DoctorID}
-              disabled
-              style={{ background: '#f7fafd', fontWeight: 'bold' }}
-            />
-          ) : (
-            <select
-              value={form.DoctorID}
-              onChange={e => setForm({ ...form, DoctorID: e.target.value })}
-              required
-            >
-              <option value="">Chọn bác sĩ</option>
-              {Array.isArray(doctors) && doctors.map((d, idx) => (
-                <option key={d.DoctorId || idx} value={d.DoctorId}>
-                  {d.Fullname} - {d.DoctorId}
-                </option>
-              ))}
-            </select>
+          <input
+            type="text"
+            value={currentUser?.name || 'Không xác định'}
+            disabled
+            style={{ background: '#f7fafd', fontWeight: 'bold' }}
+          />
+          {form.DoctorID && (
+            <small style={{ color: '#666', marginTop: '4px', display: 'block' }}>
+              Mã bác sĩ: {form.DoctorID}
+            </small>
           )}
         </div>
         <div className="tp-add-row">
