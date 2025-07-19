@@ -26,6 +26,7 @@ const TreatmentPlanAdd = () => {
   const [patientInfo, setPatientInfo] = useState(null);
   const [selectedARVObj, setSelectedARVObj] = useState(null);
   const [matchedPatient, setMatchedPatient] = useState(null);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
 
 
@@ -132,7 +133,7 @@ const TreatmentPlanAdd = () => {
         TreatmentResult: form.TreatmentResult
       });
       console.log("API Response:", response);
-      alert('Thêm mới hồ sơ điều trị thành công!');
+      setShowSuccessPopup(true);
       setForm({
         PatientID: '',
         DoctorID: '',
@@ -143,6 +144,7 @@ const TreatmentPlanAdd = () => {
       });
       setPatientInfo(null);
       setSelectedARVObj(null);
+      setMatchedPatient(null);
     } catch (error) {
       console.log("Lỗi:", error);
       alert('Có lỗi xảy ra khi thêm mới!');
@@ -315,6 +317,76 @@ const TreatmentPlanAdd = () => {
           />
         )}
       </div>
+      
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '30px',
+            textAlign: 'center',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+            maxWidth: '400px',
+            width: '90%'
+          }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              borderRadius: '50%',
+              backgroundColor: '#4CAF50',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              margin: '0 auto 20px',
+              fontSize: '30px',
+              color: 'white'
+            }}>
+              ✓
+            </div>
+            <h3 style={{
+              margin: '0 0 15px 0',
+              color: '#333',
+              fontSize: '18px',
+              fontWeight: '600'
+            }}>
+              Bạn đã cập nhật kế hoạch điều trị thành công !
+            </h3>
+            <button
+              onClick={() => {
+                setShowSuccessPopup(false);
+                navigate('/doctor');
+              }}
+              style={{
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '10px 24px',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#45a049'}
+              onMouseOut={(e) => e.target.style.backgroundColor = '#4CAF50'}
+            >
+              Đóng
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
