@@ -10,10 +10,12 @@ import {
   AddTreatmentPlan
 } from '../api/auth';
 import {updateARVProtocol} from '../api/auth';
-
-
 import '../styles/TreatmentPlanDetail.css';
+import { useAuth } from '../context/AuthContext';
+
+
 const TreatmentPlanDetail = () => {
+  const { currentUser} = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -122,21 +124,26 @@ const TreatmentPlanDetail = () => {
   console.log('plan:', plan);
 
   return (
-    <div className="treatment-plan-detail-page">
-      <div className="treatment-plan-detail-center">
-        <button className="tpd-back-btn" onClick={() => navigate(-1)}>Quay lại</button>
-        <h2 className="tpd-title">Chi tiết hồ sơ điều trị</h2>
-        <div className="tpd-info-block">
-          <strong>Mã hồ sơ:</strong> {plan.TreatmentPlanID}<br/>
-          <strong>Bác sĩ:</strong> {plan.DoctorID }<br/>
-          <strong>Chẩn đoán:</strong> {plan.Diagnosis}<br/>
-          <strong>Kết quả:</strong> {plan.TreatmentResult }<br/>
-          <strong>Phác đồ ARV hiện tại:</strong> {plan.ARVProtocol }
+    <div className="tpd-page">
+      <div className="tpd-container">
+        <div className="tpd-header">
+          <button className="tpd-back-btn" onClick={() => navigate(-1)}>← Quay lại</button>
+          <h2 className="tpd-title">📋 Chi tiết hồ sơ điều trị</h2>
         </div>
-        <section className="tpd-arv-section">
-          <h3 className="tpd-section-title">Chọn/Sửa phác đồ ARV</h3>
-          <div className="tpd-arv-row">
-            <select value={selectedARV} onChange={handleARVChange} className="tpd-arv-select">
+
+        <div className="tpd-info-card">
+          <h3>🧾 Thông tin chung</h3>
+          <p><strong>Mã hồ sơ:</strong> {plan.TreatmentPlanID}</p>
+          <p><strong>Bác sĩ:</strong> {currentUser?.name}</p>
+          <p><strong>Chẩn đoán:</strong> {plan.Diagnosis}</p>
+          <p><strong>Kết quả:</strong> {plan.TreatmentResult}</p>
+          <p><strong>Phác đồ ARV hiện tại:</strong> {plan.ARVProtocol}</p>
+        </div>
+
+        <div className="tpd-section">
+          <h3 className="tpd-section-title">💊 Chọn/Sửa phác đồ ARV</h3>
+          <div className="tpd-arv-select-row">
+            <select value={selectedARV} onChange={handleARVChange} className="tpd-select">
               <option value="">-- Chọn phác đồ ARV --</option>
               {arvProtocols.map((arv) => (
                 <option key={arv.ARVID} value={arv.ARVID}>
@@ -144,12 +151,14 @@ const TreatmentPlanDetail = () => {
                 </option>
               ))}
             </select>
-            <button className="tpd-update-arv-btn" onClick={handleARVUpdate}>Cập nhật</button>
+            <button className="tpd-update-btn" onClick={handleARVUpdate}>Cập nhật</button>
           </div>
-          {arvEditSuccess && <div className="tpd-success-msg">{arvEditSuccess}</div>}
-          {arvEditError && <div className="tpd-error-msg">{arvEditError}</div>}
+
+          {arvEditSuccess && <div className="tpd-msg success">✅ {arvEditSuccess}</div>}
+          {arvEditError && <div className="tpd-msg error">❌ {arvEditError}</div>}
+
           {selectedARVObj && (
-            <div className="tpd-arv-detail">
+            <div className="tpd-arv-details">
               <p><strong>Mã phác đồ:</strong> {selectedARVObj.ARVID}</p>
               <p><strong>Tên phác đồ:</strong> {selectedARVObj.ARVName}</p>
               <p><strong>Mã code:</strong> {selectedARVObj.ARVCode}</p>
@@ -158,11 +167,12 @@ const TreatmentPlanDetail = () => {
               <p><strong>Nhóm:</strong> {selectedARVObj.ForGroup}</p>
             </div>
           )}
-        </section>
-        <section className="tpd-prescription-section">
-          <h3 className="tpd-section-title">Đơn thuốc</h3>
+        </div>
+
+        <div className="tpd-section">
+          <h3 className="tpd-section-title">📝 Đơn thuốc</h3>
           <button
-            className="tpd-add-prescription-btn"
+            className="tpd-add-btn"
             onClick={() => {
               if (location.state && location.state.fromDoctor && location.state.BookID) {
                 navigate(`/prescription/${plan.TreatmentPlanID}`, { state: { fromDoctor: true, BookID: location.state.BookID } });
@@ -173,9 +183,9 @@ const TreatmentPlanDetail = () => {
               }
             }}
           >
-            Thêm đơn thuốc
+            ➕ Thêm đơn thuốc
           </button>
-        </section>
+        </div>
       </div>
     </div>
   );
