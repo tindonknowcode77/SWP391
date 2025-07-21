@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import '../styles/DoctorsList.css';
 import { getAllDoctors } from '../api/auth';
@@ -11,6 +11,7 @@ const DoctorsList = () => {
   const [filterSpecialty, setFilterSpecialty] = useState('');
   const [currentPage, setCurrentPage] = useState(0); // Pagination for doctors
   const doctorsPerPage = 3;
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch doctors data from API
@@ -32,6 +33,7 @@ const DoctorsList = () => {
       } catch (error) {
         console.error('Lỗi khi tải dữ liệu bác sĩ từ API:', error);
         setIsLoading(false);
+        navigate('/login');
       }
     };
 

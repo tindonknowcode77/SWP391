@@ -88,7 +88,9 @@ export default function ExaminationSchedule() {
         setIsLoading(false);
       } catch (error) {
         console.error('Lỗi khi tải dữ liệu bác sĩ từ API:', error);
+        setDoctors([]);
         setIsLoading(false);
+        navigate('/login');
       }
     };
 
