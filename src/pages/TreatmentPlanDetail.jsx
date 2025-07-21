@@ -36,6 +36,12 @@ const TreatmentPlanDetail = () => {
   });
   const [prescSuccess, setPrescSuccess] = useState('');
   const [prescError, setPrescError] = useState('');
+  const [editDiagnosis, setEditDiagnosis] = useState(false);
+  const [editResult, setEditResult] = useState(false);
+  const [diagnosisValue, setDiagnosisValue] = useState('');
+  const [resultValue, setResultValue] = useState('');
+  const [pendingDiagnosis, setPendingDiagnosis] = useState('');
+  const [pendingResult, setPendingResult] = useState('');
 
   useEffect(() => {
     setLoading(true);
@@ -43,6 +49,10 @@ const TreatmentPlanDetail = () => {
       .then(res => {
         setPlan(res?.data || res);
         setSelectedARV(res?.data?.ARVProtocol || res?.ARVProtocol || '');
+        setDiagnosisValue(res?.data?.Diagnosis || res?.Diagnosis || '');
+        setResultValue(res?.data?.TreatmentResult || res?.TreatmentResult || '');
+        setPendingDiagnosis(res?.data?.Diagnosis || res?.Diagnosis || '');
+        setPendingResult(res?.data?.TreatmentResult || res?.TreatmentResult || '');
         setLoading(false);
       })
       .catch(() => {
@@ -135,10 +145,61 @@ const TreatmentPlanDetail = () => {
           <h3>🧾 Thông tin chung</h3>
           <p><strong>Mã hồ sơ:</strong> {plan.TreatmentPlanID}</p>
           <p><strong>Bác sĩ:</strong> {currentUser?.name}</p>
-          <p><strong>Chẩn đoán:</strong> {plan.Diagnosis}</p>
-          <p><strong>Kết quả:</strong> {plan.TreatmentResult}</p>
-          <p><strong>Phác đồ ARV hiện tại:</strong> {plan.ARVProtocol}</p>
+          <p><strong>Phác đồ ARV:</strong> {plan.ARVProtocol}</p>
         </div>
+
+
+    <div className="tpd-edit-block">
+      <h3 className="tpd-section-title">✏️ Cập nhật thông tin điều trị</h3>
+      <p><strong>Chẩn đoán: </strong> {editDiagnosis ? (
+        <>
+          <input
+            value={diagnosisValue}
+            onChange={e => setDiagnosisValue(e.target.value)}
+            autoFocus
+          />
+          <button className="tpd-edit-btn" onClick={() => { setEditDiagnosis(false); setPendingDiagnosis(diagnosisValue); }} title="Lưu"><i className="fas fa-check"></i></button>
+        </>
+      ) : (
+        <>
+          {pendingDiagnosis}
+          <button className="tpd-edit-btn" onClick={() => setEditDiagnosis(true)} title="Chỉnh sửa"><i className="fas fa-pencil-alt"></i></button>
+        </>
+      )}</p>
+
+      <p><strong>Kết quả: </strong> {editResult ? (
+        <>
+          <input
+            value={resultValue}
+            onChange={e => setResultValue(e.target.value)}
+            autoFocus
+          />
+          <button className="tpd-edit-btn" onClick={() => { setEditResult(false); setPendingResult(resultValue); }} title="Lưu"><i className="fas fa-check"></i></button>
+        </>
+      ) : (
+        <>
+          {pendingResult}
+          <button className="tpd-edit-btn" onClick={() => setEditResult(true)} title="Chỉnh sửa"><i className="fas fa-pencil-alt"></i></button>
+        </>
+      )}</p>
+
+      <button className="tpd-update-btn" style={{ marginBottom: 16 }} onClick={async () => {
+        if (!plan) return;
+        const payload = {
+          ...plan,
+          Diagnosis: pendingDiagnosis,
+          TreatmentResult: pendingResult
+        };
+        try {
+          await UpdateTreatmentPlan(payload);
+          setPlan(prev => ({ ...prev, Diagnosis: pendingDiagnosis, TreatmentResult: pendingResult }));
+          alert('Cập nhật thành công!');
+        } catch (e) {
+          alert('Cập nhật thất bại!');
+        }
+      }}>Cập nhật thông tin</button>
+    </div>
+
 
         <div className="tpd-section">
           <h3 className="tpd-section-title">💊 Chọn/Sửa phác đồ ARV</h3>
