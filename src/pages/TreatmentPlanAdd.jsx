@@ -177,7 +177,7 @@ const TreatmentPlanAdd = () => {
           <span style={{fontSize:'1.2em'}}>&larr;</span> Quay lại trang bác sĩ
         </button>
         <div className="tp-add-row">
-          <label>Chọn bệnh nhân</label>
+          <label>Tên bệnh nhân</label>
           {form.PatientID ? (
             <input
               type="text"
