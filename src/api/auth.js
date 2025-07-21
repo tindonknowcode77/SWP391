@@ -430,3 +430,9 @@ export const deleteLabTest = (labTestId) => {
 export const getLabTestsByPatient = (patientId) => {
   return axiosClient.get(`/LabTest/LabTestsByPatient/${patientId}`);
 };
+
+export const quenmatkhau = (data) => {
+  return axiosClient.post('/Login/Forget Password', data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+};
