@@ -5,13 +5,13 @@ import {
   AllARVProtocol,
   addPrescription,
   UpdateTreatmentPlan,
-  bacsilaydanhsachbenhnhan,
   getAllDoctors,
   AddTreatmentPlan
 } from '../api/auth';
 import {updateARVProtocol} from '../api/auth';
 import '../styles/TreatmentPlanDetail.css';
 import { useAuth } from '../context/AuthContext';
+import {bacsilaydanhsachbenhnhan} from '../api/auth';
 
 
 const TreatmentPlanDetail = () => {
@@ -42,6 +42,7 @@ const TreatmentPlanDetail = () => {
   const [resultValue, setResultValue] = useState('');
   const [pendingDiagnosis, setPendingDiagnosis] = useState('');
   const [pendingResult, setPendingResult] = useState('');
+  const [patientInfo, setPatientInfo] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -54,6 +55,22 @@ const TreatmentPlanDetail = () => {
         setPendingDiagnosis(res?.data?.Diagnosis || res?.Diagnosis || '');
         setPendingResult(res?.data?.TreatmentResult || res?.TreatmentResult || '');
         setLoading(false);
+        // Sau khi lấy được plan, lấy danh sách bệnh nhân và tìm bệnh nhân tương ứng
+        bacsilaydanhsachbenhnhan().then(list => {
+          const arr = list?.data || list;
+          console.log('Danh sách arr:', arr);
+          if (arr && Array.isArray(arr)) {
+            const planPatientID = String(res?.data?.PatientID || res?.PatientID);
+            const found = arr.find(p =>
+              String(p.PatientID) === planPatientID ||
+              (p.Patient && String(p.Patient.PatientID) === planPatientID)
+            );
+            if (found) {
+              console.log('Tìm thấy patientInfo:', found);
+            }
+            setPatientInfo(found || null);
+          }
+        });
       })
       .catch(() => {
         setError('Không thể tải hồ sơ điều trị');
@@ -141,12 +158,33 @@ const TreatmentPlanDetail = () => {
           <h2 className="tpd-title">📋 Chi tiết hồ sơ điều trị</h2>
         </div>
 
-        <div className="tpd-info-card">
-          <h3>🧾 Thông tin chung</h3>
-          <p><strong>Mã hồ sơ:</strong> {plan.TreatmentPlanID}</p>
-          <p><strong>Bác sĩ:</strong> {currentUser?.name}</p>
-          <p><strong>Phác đồ ARV:</strong> {plan.ARVProtocol}</p>
-        </div>
+        <div className="tpd-info-row">
+        {patientInfo && (
+    <div className="tpd-info-card">
+      <h4>👤 Thông tin bệnh nhân</h4>
+      <p><strong>Mã bệnh nhân:</strong> {patientInfo.Patient?.PatientID}</p>
+      <p><strong>Họ tên:</strong> {patientInfo.PatientFullname || patientInfo.Patient?.Fullname}</p>
+      <p><strong>Giới tính:</strong> {patientInfo.Patient?.Gender}</p>
+      <p><strong>Ngày sinh:</strong> {patientInfo.Patient?.DateOfBirth?.split('T')[0] || 'N/A'}</p>
+      <p><strong>Nhóm máu:</strong> {patientInfo.Patient?.BloodType}</p>
+      <p><strong>Dị ứng:</strong> {patientInfo.Patient?.Allergy}</p>
+      <p><strong>Số điện thoại:</strong> {patientInfo.Patient?.Phone}</p>
+      <p><strong>Email:</strong> {patientInfo.Patient?.User?.Email}</p>
+    </div>
+  )}
+
+  <div className="tpd-divider" />
+
+  <div className="tpd-info-card">
+    <h3>🧾 Thông tin hồ sơ</h3>
+    <p><strong>Mã hồ sơ:</strong> {plan.TreatmentPlanID}</p>
+    <p><strong>Bác sĩ:</strong> {currentUser?.name}</p>
+    <p><strong>Phác đồ ARV:</strong> {plan.ARVProtocol}</p>
+    <p><strong>Chẩn đoán:</strong> {plan.Diagnosis}</p>
+    <p><strong>Kết quả điều trị:</strong> {plan.TreatmentResult}</p>
+  </div>
+</div>
+
 
 
     <div className="tpd-edit-block">
