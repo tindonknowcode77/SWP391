@@ -199,4 +199,25 @@
   flex-wrap: wrap;
 }
 
+.tpd-info-row {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-top: 16px;
+}
+
+.tpd-info-card {
+  flex: 1;
+  padding: 16px;
+  background-color: #edeff4;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tpd-divider {
+  width: 1px;
+  background-color: #ccc;
+  height: 100%;
+}
+
 
