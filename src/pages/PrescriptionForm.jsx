@@ -100,7 +100,7 @@ const PrescriptionForm = () => {
         <label htmlFor="Dosage"><strong>Liều lượng thuốc</strong></label>
         <input id="Dosage" name="Dosage" value={prescription.Dosage} onChange={handleChange} placeholder="Liều lượng" required />
         <label htmlFor="LineOfTreatment"><strong>Số lần khám</strong></label>
-        <input id="LineOfTreatment" name="LineOfTreatment" value={prescription.LineOfTreatment} onChange={handleChange} placeholder="Phác đồ điều trị" required />
+        <input id="LineOfTreatment" name="LineOfTreatment" value={prescription.LineOfTreatment} onChange={handleChange} placeholder="Số lần điều trị" required />
         <button type="submit">Thêm đơn thuốc</button>
       </form>
       {success && <div className="success-msg">{success}</div>}
