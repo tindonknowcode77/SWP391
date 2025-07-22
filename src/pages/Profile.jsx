@@ -62,38 +62,11 @@ const Profile = () => {
     address : '',
     image : ''
   });
-
+  //Dữ liệu thuốc sửa ở đây
   const [medicalHistory, setMedicalHistory] = useState([]);
-
-  // Mô phỏng dữ liệu thuốc đang dùng
-  const [medications] = useState([
-    {
-      id: 1,
-      name: 'Efavirenz 600mg',
-      dosage: '1 viên/ngày',
-      schedule: 'Tối trước khi đi ngủ',
-      startDate: '10/01/2025',
-      endDate: 'Dùng liên tục'
-    },
-    {
-      id: 2,
-      name: 'Lamivudine 300mg',
-      dosage: '1 viên/ngày',
-      schedule: 'Sáng sau khi ăn',
-      startDate: '10/01/2025',
-      endDate: 'Dùng liên tục'
-    },
-    {
-      id: 3,
-      name: 'Tenofovir 300mg',
-      dosage: '1 viên/ngày',
-      schedule: 'Sáng sau khi ăn',
-      startDate: '10/01/2025',
-      endDate: 'Dùng liên tục'
-    }
-  ]);
-
-  // Mô phỏng dữ liệu thông báo từ hệ thống
+  const [prescriptionData, setPrescriptionData] = useState(null);
+  
+  
   const [notifications] = useState([
     {
       id: 1,
@@ -126,7 +99,6 @@ const Profile = () => {
 
   const [showPrescriptionPopup, setShowPrescriptionPopup] = useState(false);
   const [selectedPrescription, setSelectedPrescription] = useState(null);
-  const [prescriptionData, setPrescriptionData] = useState(null);
   const [prescriptionLoading, setPrescriptionLoading] = useState(false);
   const [prescriptionError, setPrescriptionError] = useState(null);
   const [prescriptionPage, setPrescriptionPage] = useState(0);
@@ -267,6 +239,26 @@ const Profile = () => {
           setLabTestsError('Không thể tải danh sách xét nghiệm');
           setLabTestsLoading(false);
         });
+    }
+  }, [activeTab, currentUser]);
+
+  // Lấy dữ liệu thuốc động khi vào tab 'medication'
+  useEffect(() => {
+    if (activeTab === 'medication' && currentUser?.id) {
+      pantient(currentUser.id)
+        .then(userRes => {
+          const patientId = userRes?.PatientId || userRes?.PatientID;
+          if (patientId) {
+            nguoidunglaytoathuoc(patientId)
+              .then(res => {
+                setPrescriptionData(Array.isArray(res) ? res : (res?.data || []));
+              })
+              .catch(() => setPrescriptionData([]));
+          } else {
+            setPrescriptionData([]);
+          }
+        })
+        .catch(() => setPrescriptionData([]));
     }
   }, [activeTab, currentUser]);
 
@@ -825,71 +817,64 @@ const Profile = () => {
             )}
             
             {activeTab === 'medication' && (
-              <div className="medication-list">
+              <div className="medication-list1">
                 <div className="section-info">
                   <p>Danh sách thuốc bạn đang sử dụng theo phác đồ điều trị hiện tại. Hãy đảm bảo dùng thuốc đúng liều, đúng giờ.</p>
                 </div>
                 
-                <div className="current-medications">
-                  {medications.map(med => (
-                    <div className="medication-card" key={med.id}>
-                      <div className="medication-header">
-                        <h4>{med.name}</h4>
-                        <span className="medication-badge">Đang dùng</span>
+                <div className="current-medications1">
+                  {Array.isArray(prescriptionData) && prescriptionData.length > 0 && prescriptionData[0] && typeof prescriptionData[0] === "object" ? (
+                    prescriptionData.map((item, idx) => (
+                      <div className="medication-card1" key={item.MedicalName || idx}>
+                        <div className="medication-header1">
+                          <h4>{item.MedicalName}</h4>
+                          <span className="medication-badge1">Đang dùng</span>
+                        </div>
+                        <div className="medication-details1">
+                          <div className="medication-detail1">
+                            <i className="fas fa-prescription-bottle"></i>
+                            <span className="label">Liều lượng:</span>
+                            <span className="value">{item.Dosage || ''}</span>
+                          </div>
+                          <div className="medication-detail1">
+                            <i className="fas fa-calendar-plus"></i>
+                            <span className="label">Ngày bắt đầu:</span>
+                            <span className="value">{item.StartDate?.split('T')[0] || ''}</span>
+                          </div>
+                          <div className="medication-detail1">
+                            <i className="fas fa-calendar-minus"></i>
+                            <span className="label">Ngày kết thúc:</span>
+                            <span className="value">{item.EndDate?.split('T')[0] || ''}</span>
+                          </div>
+                        </div>
+                        <div className="medication-actions1">
+                          <button className="medication-btn1 info">
+                            <i className="fas fa-info-circle"></i>
+                            <span>Thông tin thuốc</span>
+                          </button>
+                          <button className="medication-btn1 reminder">
+                            <i className="fas fa-bell"></i>
+                            <span>Thiết lập nhắc nhở</span>
+                          </button>
+                        </div>
                       </div>
-                      
-                      <div className="medication-details">
-                        <div className="medication-detail">
-                          <i className="fas fa-prescription-bottle"></i>
-                          <span className="label">Liều lượng:</span>
-                          <span className="value">{med.dosage}</span>
-                        </div>
-                        
-                        <div className="medication-detail">
-                          <i className="fas fa-clock"></i>
-                          <span className="label">Lịch uống:</span>
-                          <span className="value">{med.schedule}</span>
-                        </div>
-                        
-                        <div className="medication-detail">
-                          <i className="fas fa-calendar-plus"></i>
-                          <span className="label">Ngày bắt đầu:</span>
-                          <span className="value">{med.startDate}</span>
-                        </div>
-                        
-                        <div className="medication-detail">
-                          <i className="fas fa-calendar-minus"></i>
-                          <span className="label">Ngày kết thúc:</span>
-                          <span className="value">{med.endDate}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="medication-actions">
-                        <button className="medication-btn info">
-                          <i className="fas fa-info-circle"></i>
-                          <span>Thông tin thuốc</span>
-                        </button>
-                        
-                        <button className="medication-btn reminder">
-                          <i className="fas fa-bell"></i>
-                          <span>Thiết lập nhắc nhở</span>
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <div>Không có dữ liệu đơn thuốc.</div>
+                  )}
                 </div>
                 
-                <div className="medication-links">
-                  <Link to="/medication" className="medication-link">
+                {/* <div className="medication-links1">
+                  <Link to="/medication" className="medication-link1">
                     <i className="fas fa-pills"></i>
                     <span>Quản lý thuốc và nhắc nhở</span>
                   </Link>
                   
-                  <Link to="/resources" className="medication-link">
+                  <Link to="/resources" className="medication-link1">
                     <i className="fas fa-book-medical"></i>
                     <span>Thông tin về thuốc ARV</span>
                   </Link>
-                </div>
+                </div> */}
               </div>
             )}
             
