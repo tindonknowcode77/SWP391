@@ -78,7 +78,9 @@ const PrescriptionForm = () => {
       <button className="back-btn" onClick={() => navigate(-1)}>Quay lại</button>
       <h2>Thêm đơn thuốc</h2>
       <form className="prescription-form" onSubmit={handleSubmit}>
+        <label htmlFor="MedicationId"><strong>Chọn loại thuốc</strong></label>
         <select
+          id="MedicationId"
           name="MedicationId"
           value={prescription.MedicationId}
           onChange={handleChange}
@@ -91,10 +93,14 @@ const PrescriptionForm = () => {
             </option>
           ))}
         </select>
-        <input type="date" name="StartDate" value={prescription.StartDate} onChange={handleChange} required />
-        <input type="date" name="EndDate" value={prescription.EndDate} onChange={handleChange} required />
-        <input name="Dosage" value={prescription.Dosage} onChange={handleChange} placeholder="Liều lượng" required />
-        <input name="LineOfTreatment" value={prescription.LineOfTreatment} onChange={handleChange} placeholder="Phác đồ điều trị" required />
+        <label htmlFor="StartDate"><strong>Ngày bắt đầu</strong></label>
+        <input type="date" id="StartDate" name="StartDate" value={prescription.StartDate} onChange={handleChange} required />
+        <label htmlFor="EndDate"><strong>Ngày kết thúc</strong></label>
+        <input type="date" id="EndDate" name="EndDate" value={prescription.EndDate} onChange={handleChange} required />
+        <label htmlFor="Dosage"><strong>Liều lượng thuốc</strong></label>
+        <input id="Dosage" name="Dosage" value={prescription.Dosage} onChange={handleChange} placeholder="Liều lượng" required />
+        <label htmlFor="LineOfTreatment"><strong>Số lần khám</strong></label>
+        <input id="LineOfTreatment" name="LineOfTreatment" value={prescription.LineOfTreatment} onChange={handleChange} placeholder="Phác đồ điều trị" required />
         <button type="submit">Thêm đơn thuốc</button>
       </form>
       {success && <div className="success-msg">{success}</div>}
