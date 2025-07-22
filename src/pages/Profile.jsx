@@ -65,6 +65,71 @@ const Profile = () => {
   //Dữ liệu thuốc sửa ở đây
   const [medicalHistory, setMedicalHistory] = useState([]);
   const [prescriptionData, setPrescriptionData] = useState(null);
+  const medicationInfo = {
+    Tenofovir: {
+      tacDung: "Ức chế enzyme sao chép ngược của virus HIV và HBV, giúp giảm lượng virus trong cơ thể.",
+      tacDungPhu: "Buồn nôn, tiêu chảy, nhức đầu, giảm mật độ xương, ảnh hưởng chức năng thận.",
+      luuY: "Theo dõi chức năng thận định kỳ. Dùng thận trọng với bệnh nhân có tiền sử bệnh thận hoặc loãng xương."
+    },
+    Lamivudine: {
+      tacDung: "Ức chế enzyme sao chép ngược, làm giảm sự nhân lên của HIV và HBV.",
+      tacDungPhu: "Đau bụng, nhức đầu, buồn nôn, tiêu chảy nhẹ.",
+      luuY: "Không dùng đồng thời với emtricitabine. Theo dõi chức năng gan nếu có viêm gan B kèm theo."
+    },
+    Dolutegravir: {
+      tacDung: "Ức chế enzyme tích hợp của HIV, ngăn virus tích hợp vào DNA của tế bào người.",
+      tacDungPhu: "Mất ngủ, đau đầu, tăng men gan, phát ban.",
+      luuY: "Không nên dùng cho phụ nữ đang mang thai 3 tháng đầu. Có thể gây tăng cân nhẹ khi dùng lâu dài."
+    },
+    Efavirenz: {
+      tacDung: "Ức chế enzyme sao chép ngược không nucleoside, giúp làm giảm tải lượng virus HIV.",
+      tacDungPhu: "Ác mộng, chóng mặt, thay đổi tâm trạng, phát ban da.",
+      luuY: "Dùng vào buổi tối để hạn chế tác dụng phụ lên hệ thần kinh. Tránh sử dụng với rượu hoặc thuốc an thần."
+    },
+    Zidovudine: {
+      tacDung: "Ức chế enzyme sao chép ngược, là thuốc kháng HIV đầu tiên được sử dụng.",
+      tacDungPhu: "Thiếu máu, buồn nôn, mất ngủ, thay đổi chỉ số huyết học.",
+      luuY: "Theo dõi công thức máu định kỳ. Thận trọng với người có bệnh về tủy xương hoặc gan."
+    },
+    Nevirapine: {
+      tacDung: "Ức chế enzyme sao chép ngược không nucleoside, làm chậm sự nhân lên của HIV.",
+      tacDungPhu: "Phát ban da, tăng men gan, buồn nôn.",
+      luuY: "Theo dõi chặt chẽ chức năng gan trong 6 tuần đầu. Tăng liều từ từ để giảm nguy cơ phát ban nghiêm trọng."
+    },
+    Abacavir: {
+      tacDung: "Ức chế enzyme sao chép ngược, giúp giảm lượng virus HIV trong máu.",
+      tacDungPhu: "Buồn nôn, sốt, phát ban, đau bụng.",
+      luuY: "Kiểm tra HLA-B*5701 trước khi dùng để tránh phản ứng quá mẫn nghiêm trọng có thể gây tử vong."
+    },
+    Raltegravir: {
+      tacDung: "Ức chế enzyme tích hợp của HIV, giúp ngăn virus xâm nhập vào DNA tế bào người.",
+      tacDungPhu: "Mệt mỏi, đau đầu, tiêu chảy, tăng men gan.",
+      luuY: "Thích hợp cho phụ nữ mang thai. Cần theo dõi men gan định kỳ khi dùng lâu dài."
+    },
+    Darunavir: {
+      tacDung: "Ức chế enzyme protease của HIV, ngăn virus cắt protein để tạo virus mới.",
+      tacDungPhu: "Phát ban, buồn nôn, đau bụng, tăng lipid máu.",
+      luuY: "Luôn dùng kết hợp với ritonavir hoặc cobicistat để tăng sinh khả dụng. Theo dõi chỉ số mỡ máu."
+    },
+    Ritonavir: {
+      tacDung: "Chính: ức chế protease; Phổ biến: dùng để tăng hiệu lực các thuốc khác bằng cách ức chế enzyme CYP3A4.",
+      tacDungPhu: "Tiêu chảy, vị kim loại trong miệng, tăng triglyceride, tăng men gan.",
+      luuY: "Thường không dùng đơn độc. Theo dõi tương tác thuốc kỹ lưỡng vì ảnh hưởng đến nhiều thuốc chuyển hóa qua gan."
+    }
+  };
+
+  const [selectedDrug, setSelectedDrug] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+
+  const handleInfoClick = (name) => {
+  setSelectedDrug(name);
+  setShowPopup(true);
+};
+
+  const closePopup = () => {
+  setShowPopup(false);
+  setSelectedDrug(null);
+};
   
   
   const [notifications] = useState([
@@ -848,9 +913,9 @@ const Profile = () => {
                           </div>
                         </div>
                         <div className="medication-actions1">
-                          <button className="medication-btn1 info">
-                            <i className="fas fa-info-circle"></i>
-                            <span>Thông tin thuốc</span>
+                        <button className="medication-btn1 info" onClick={() => handleInfoClick(item.MedicalName)}>
+                              <i className="fas fa-info-circle"></i>
+                             <span>Thông tin thuốc</span>
                           </button>
                           <button className="medication-btn1 reminder">
                             <i className="fas fa-bell"></i>
@@ -1178,6 +1243,33 @@ const Profile = () => {
           ))
         )}
       </div>
+    </div>
+  </div>
+)}
+{showPopup && (
+  <div className="popup-overlay" onClick={closePopup}>
+    <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+      <button className="popup-close" onClick={closePopup}>×</button>
+      <h3>🧪 Thông tin thuốc: <span>{selectedDrug}</span></h3>
+
+      {medicationInfo[selectedDrug] ? (
+        <>
+          <div className="info-section">
+            <strong>Tác dụng:</strong>
+            <p>{medicationInfo[selectedDrug].tacDung}</p>
+          </div>
+          <div className="info-section">
+            <strong>Tác dụng phụ:</strong>
+            <p>{medicationInfo[selectedDrug].tacDungPhu}</p>
+          </div>
+          <div className="info-section">
+            <strong>Lưu ý:</strong>
+            <p>{medicationInfo[selectedDrug].luuY}</p>
+          </div>
+        </>
+      ) : (
+        <p>Không có thông tin về loại thuốc này.</p>
+      )}
     </div>
   </div>
 )}
