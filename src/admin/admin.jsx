@@ -126,6 +126,7 @@ const Admin = () => {
   const [scheduleToDelete, setScheduleToDelete] = useState(null);
   const [deleteMsg, setDeleteMsg] = useState('');
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [doctorsList, setDoctorsList] = useState([]);
 
   const handleAddDoctorChange = (e) => {
     const { name, value } = e.target;
@@ -323,10 +324,23 @@ const Admin = () => {
     }
   };
 
+  // Lấy danh sách bác sĩ
+  const fetchDoctorsList = async () => {
+    try {
+      const res = await getAllDoctorsManager();
+      setDoctorsList(res);
+    } catch (err) {
+      setDoctorsList([]);
+    }
+  };
+
   // Khi chọn tab, load danh sách
   useEffect(() => {
     if (selectedTab === 'doctorschedule') {
       fetchDoctorSchedules();
+    }
+    if (selectedTab === 'addschedule' || selectedTab === 'updateschedule') {
+      fetchDoctorsList();
     }
   }, [selectedTab]);
 
@@ -558,7 +572,14 @@ const Admin = () => {
             <form className="add-doctor-form" onSubmit={handleAddScheduleSubmit} style={{maxWidth: 500, margin: '0 auto'}}>
               <div className="form-group">
                 <label>DoctorID</label>
-                <input name="DoctorID" value={addScheduleForm.DoctorID} onChange={handleAddScheduleChange} required />
+                <select name="DoctorID" value={addScheduleForm.DoctorID} onChange={handleAddScheduleChange} required>
+                  <option value="">-- Chọn bác sĩ --</option>
+                  {doctorsList.map(doctor => (
+                    <option key={doctor.DoctorId} value={doctor.DoctorId}>
+                      {doctor.DoctorId} - {doctor.Fullname}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="form-group">
                 <label>SlotID</label>
@@ -604,7 +625,14 @@ const Admin = () => {
               </div>
               <div className="form-group">
                 <label>DoctorID</label>
-                <input name="DoctorID" value={updateScheduleForm.DoctorID} onChange={handleUpdateScheduleChange} required />
+                <select name="DoctorID" value={updateScheduleForm.DoctorID} onChange={handleUpdateScheduleChange} required>
+                  <option value="">-- Chọn bác sĩ --</option>
+                  {doctorsList.map(doctor => (
+                    <option key={doctor.DoctorId} value={doctor.DoctorId}>
+                      {doctor.DoctorId} - {doctor.Fullname}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="form-group">
                 <label>SlotID</label>
