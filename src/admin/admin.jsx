@@ -13,6 +13,8 @@ import { capnhatARVProtocol } from '../api/auth';
 import { addStaff } from '../api/auth';
 import { updateStaff } from '../api/auth';
 import { deleteDoctorWorkScheduleadmin } from '../api/auth';
+import { getAllARVProtocol} from '../api/auth';
+import { getAllStaff } from '../api/auth';
 
 const Admin = () => {
   const { currentUser, logout } = useAuth();
@@ -127,6 +129,8 @@ const Admin = () => {
   const [deleteMsg, setDeleteMsg] = useState('');
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [doctorsList, setDoctorsList] = useState([]);
+  const [arvProtocolsList, setArvProtocolsList] = useState([]);
+  const [staffList, setStaffList] = useState([]);
 
   const handleAddDoctorChange = (e) => {
     const { name, value } = e.target;
@@ -334,13 +338,39 @@ const Admin = () => {
     }
   };
 
+  // Lấy danh sách ARV protocols
+  const fetchARVProtocolsList = async () => {
+    try {
+      const res = await getAllARVProtocol();
+      setArvProtocolsList(res);
+    } catch (err) {
+      setArvProtocolsList([]);
+    }
+  };
+
+  // Lấy danh sách nhân viên
+  const fetchStaffList = async () => {
+    try {
+      const res = await getAllStaff();
+      setStaffList(res);
+    } catch (err) {
+      setStaffList([]);
+    }
+  };
+
   // Khi chọn tab, load danh sách
   useEffect(() => {
     if (selectedTab === 'doctorschedule') {
       fetchDoctorSchedules();
     }
-    if (selectedTab === 'addschedule' || selectedTab === 'updateschedule') {
+    if (selectedTab === 'addschedule' || selectedTab === 'updateschedule' || selectedTab === 'alldoctors') {
       fetchDoctorsList();
+    }
+    if (selectedTab === 'allarvprotocols') {
+      fetchARVProtocolsList();
+    }
+    if (selectedTab === 'allstaff') {
+      fetchStaffList();
     }
   }, [selectedTab]);
 
@@ -390,6 +420,10 @@ const Admin = () => {
             <i className="fas fa-user-edit"></i>
             <span>Cập nhật bác sĩ</span>
           </li>
+          <li className={selectedTab === 'alldoctors' ? 'active' : ''} onClick={() => setSelectedTab('alldoctors')}>
+            <i className="fas fa-users"></i>
+            <span>Danh sách tất cả bác sĩ</span>
+          </li>
           <li className={selectedTab === 'doctorschedule' ? 'active' : ''} onClick={() => setSelectedTab('doctorschedule')}>
             <i className="fas fa-calendar"></i>
             <span>Lịch khám bác sĩ</span>
@@ -410,6 +444,10 @@ const Admin = () => {
             <i className="fas fa-capsules"></i>
             <span>Cập nhật ARV</span>
           </li>
+          <li className={selectedTab === 'allarvprotocols' ? 'active' : ''} onClick={() => setSelectedTab('allarvprotocols')}>
+            <i className="fas fa-list-alt"></i>
+            <span>Danh sách tất cả các phác đồ ARV</span>
+          </li>
           <li className={selectedTab === 'addstaff' ? 'active' : ''} onClick={() => setSelectedTab('addstaff')}>
             <i className="fas fa-user-plus"></i>
             <span>Thêm nhân viên</span>
@@ -417,6 +455,10 @@ const Admin = () => {
           <li className={selectedTab === 'updatestaff' ? 'active' : ''} onClick={() => setSelectedTab('updatestaff')}>
             <i className="fas fa-user-friends"></i>
             <span>Cập nhật nhân viên</span>
+          </li>
+          <li className={selectedTab === 'allstaff' ? 'active' : ''} onClick={() => setSelectedTab('allstaff')}>
+            <i className="fas fa-users"></i>
+            <span>Danh sách tất cả các nhân viên</span>
           </li>
         
         </ul>
@@ -782,6 +824,37 @@ const Admin = () => {
             )}
           </div>
         )}
+        {selectedTab === 'allarvprotocols' && (
+          <div className="admin-content">
+            <h2 className="admin-table-title">Danh sách tất cả các phác đồ ARV</h2>
+            <table className="admin-appointments-table">
+              <thead>
+                <tr>
+                  <th>ARVID</th>
+                  <th>ARVCode</th>
+                  <th>ARVName</th>
+                  <th>Description</th>
+                  <th>AgeRange</th>
+                  <th>ForGroup</th>
+                </tr>
+              </thead>
+              <tbody>
+                {arvProtocolsList && arvProtocolsList.length > 0 ? arvProtocolsList.map(arv => (
+                  <tr key={arv.ARVID}>
+                    <td>{arv.ARVID}</td>
+                    <td>{arv.ARVCode}</td>
+                    <td>{arv.ARVName}</td>
+                    <td>{arv.Description}</td>
+                    <td>{arv.AgeRange}</td>
+                    <td>{arv.ForGroup}</td>
+                  </tr>
+                )) : (
+                  <tr><td colSpan={6} style={{textAlign:'center'}}>Không có dữ liệu</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
         {selectedTab === 'addstaff' && (
           <div className="admin-content">
             <h2 className="admin-table-title">Thêm nhân viên</h2>
@@ -884,6 +957,80 @@ const Admin = () => {
                 </table>
               </div>
             )}
+          </div>
+        )}
+        {selectedTab === 'allstaff' && (
+          <div className="admin-content">
+            <h2 className="admin-table-title">Danh sách tất cả các nhân viên</h2>
+            <table className="admin-appointments-table">
+              <thead>
+                <tr>
+                  <th>UserID</th>
+                  <th>Họ tên</th>
+                  <th>Email</th>
+                  <th>Địa chỉ</th>
+                  <th>Ảnh</th>
+                </tr>
+              </thead>
+              <tbody>
+                {staffList && staffList.length > 0 ? staffList.map((staff, index) => (
+                  <tr key={staff.UserID || staff.UserId || staff.ID || index}>
+                    <td>{staff.UserID || staff.UserId || staff.ID || 'N/A'}</td>
+                    <td>{staff.Fullname || staff.FullName || 'N/A'}</td>
+                    <td>{staff.Email || 'N/A'}</td>
+                    <td>{staff.Address || 'N/A'}</td>
+                    <td>
+                      {staff.Image ? 
+                        <img src={staff.Image} alt="staff" style={{width:40, height:40, objectFit:'cover', borderRadius:4}} /> : 
+                        'Không có'
+                      }
+                    </td>
+                  </tr>
+                )) : (
+                  <tr><td colSpan={5} style={{textAlign:'center'}}>Không có dữ liệu</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {selectedTab === 'alldoctors' && (
+          <div className="admin-content">
+            <h2 className="admin-table-title">Danh sách tất cả bác sĩ</h2>
+            <table className="admin-appointments-table">
+              <thead>
+                <tr>
+                  <th>DoctorId</th>
+                  <th>Họ tên</th>
+                  <th>Email</th>
+                  <th>Chuyên khoa</th>
+                  <th>Mã số hành nghề</th>
+                  <th>Kinh nghiệm (năm)</th>
+                  <th>Địa chỉ</th>
+                  <th>Ảnh</th>
+                </tr>
+              </thead>
+              <tbody>
+                {doctorsList && doctorsList.length > 0 ? doctorsList.map(doctor => (
+                  <tr key={doctor.DoctorId}>
+                    <td>{doctor.DoctorId}</td>
+                    <td>{doctor.Fullname}</td>
+                    <td>{doctor.Email}</td>
+                    <td>{doctor.Specialization}</td>
+                    <td>{doctor.LicenseNumber}</td>
+                    <td>{doctor.ExperienceYears}</td>
+                    <td>{doctor.Address}</td>
+                    <td>
+                      {doctor.Image ? 
+                        <img src={doctor.Image} alt="doctor" style={{width:40, height:40, objectFit:'cover', borderRadius:4}} /> : 
+                        'Không có'
+                      }
+                    </td>
+                  </tr>
+                )) : (
+                  <tr><td colSpan={8} style={{textAlign:'center'}}>Không có dữ liệu</td></tr>
+                )}
+              </tbody>
+            </table>
           </div>
         )}
         {selectedTab === 'doctorschedule' && (
