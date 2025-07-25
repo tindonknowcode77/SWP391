@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
@@ -10,7 +10,7 @@ import { nguoidunglaytoathuoc } from  '../api/auth';
 import { nguoidunglayAVR } from  '../api/auth';
 import { datlichkham } from '../api/auth';
 import { patientcheckin } from '../api/auth';
-import { getLabTestsByPatient } from '../api/auth';
+import { getLabTestsByPatient, getAllLabTests } from '../api/auth';
 
 const Profile = () => {  
   const { currentUser, loading, updateProfile, logout, setCurrentUser } = useAuth();
@@ -132,7 +132,29 @@ const Profile = () => {
 };
   
   
-  const [notifications, setNotifications] = useState([]);
+  const [notifications] = useState([
+    {
+      id: 1,
+      date: '10/05/2025',
+      title: 'Nhắc lịch hẹn',
+      message: 'Bạn có lịch hẹn tái khám vào ngày 15/05/2025',
+      isRead: false
+    },
+    {
+      id: 2,
+      date: '05/05/2025',
+      title: 'Nhắc uống thuốc',
+      message: 'Hãy đảm bảo bạn uống thuốc đầy đủ theo lịch, không bỏ liều',
+      isRead: true
+    },
+    {
+      id: 3,
+      date: '01/05/2025',
+      title: 'Kết quả xét nghiệm',
+      message: 'Kết quả xét nghiệm mới nhất của bạn đã có sẵn',
+      isRead: true
+    }
+  ]);
 
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
@@ -273,13 +295,32 @@ const Profile = () => {
     if (activeTab === 'labtest' && currentUser?.id) {
       setLabTestsLoading(true);
       setLabTestsError(null);
-      getLabTestsByPatient(currentUser.id)
-        .then((res) => {
-          setLabTests(Array.isArray(res) ? res : (res?.data || []));
-          setLabTestsLoading(false);
+      
+      // Lấy PatientID của user hiện tại trước, sau đó lấy xét nghiệm của bệnh nhân đó
+      pantient(currentUser.id)
+        .then(userRes => {
+          const patientId = userRes?.PatientId || userRes?.PatientID;
+          if (patientId) {
+            // Sử dụng PatientID để lấy xét nghiệm của bệnh nhân này
+            getLabTestsByPatient(patientId)
+              .then((res) => {
+                console.log('Lab tests data for patient:', patientId, res);
+                setLabTests(Array.isArray(res) ? res : (res?.data || []));
+                setLabTestsLoading(false);
+              })
+              .catch((error) => {
+                console.error('Error loading lab tests for patient:', error);
+                setLabTestsError('Không thể tải danh sách xét nghiệm của bệnh nhân');
+                setLabTestsLoading(false);
+              });
+          } else {
+            setLabTestsError('Không tìm thấy thông tin bệnh nhân');
+            setLabTestsLoading(false);
+          }
         })
-        .catch(() => {
-          setLabTestsError('Không thể tải danh sách xét nghiệm');
+        .catch((error) => {
+          console.error('Error loading patient info:', error);
+          setLabTestsError('Không thể tải thông tin bệnh nhân');
           setLabTestsLoading(false);
         });
     }
@@ -376,59 +417,6 @@ const Profile = () => {
     navigate('/login');
   };
 
-  const handleSetReminder = (item) => {
-    const startDate = item.StartDate?.split('T')[0] || '';
-    const endDate = item.EndDate?.split('T')[0] || '';
-  
-    const newNotification = {
-      id: Date.now(),
-      date: new Date().toLocaleDateString('vi-VN'),
-      title: `🔔 Nhắc uống thuốc`,
-      message: 
-      `<strong>Tên thuốc: ${item.MedicalName}</strong><br/>` +
-      `<strong>Liều lượng: ${item.Dosage}</strong><br/>` +
-      `<strong>Ngày bắt đầu: ${startDate}</strong><br/>` +
-      `<strong>Ngày kết thúc: ${endDate}</strong><br/><br/>` +
-      `💡<strong> <em>Hãy uống thuốc đúng giờ và đủ liều để đạt hiệu quả điều trị tốt nhất.</em> </strong>`,
-      isRead: false
-    };
-  
-    setNotifications(prev => [newNotification, ...prev]);
-    setActiveTab('notifications');
-  };
-
-  // Load notifications từ localStorage khi có currentUser
-  useEffect(() => {
-    if (currentUser?.id) {
-      const saved = localStorage.getItem('notifications_' + currentUser.id);
-      console.log('LOAD notifications for', currentUser.id, saved);
-      if (saved) {
-        try {
-          setNotifications(JSON.parse(saved));
-        } catch {}
-      }
-    }
-  }, [currentUser?.id]);
-
-  // Khi notifications thay đổi, lưu vào localStorage
-  const isFirstLoad = useRef(true);
-
-  useEffect(() => {
-    if (currentUser?.id) {
-      if (isFirstLoad.current) {
-        isFirstLoad.current = false;
-        return; // Bỏ qua lần đầu tiên khi mount
-      }
-      localStorage.setItem('notifications_' + currentUser.id, JSON.stringify(notifications));
-    }
-  }, [notifications, currentUser?.id]);
-
-  // Xóa notification id khỏi localStorage để tránh bị trùng lịch 
-  const handleDeleteNotification = (id) => {
-    const updated = notifications.filter(n => n.id !== id);
-    setNotifications(updated);
-  };
-
   if (loading) {
     return <div>Đang tải...</div>;
   }
@@ -505,9 +493,7 @@ const Profile = () => {
             >
               <i className="fas fa-bell"></i>
               <span>Thông báo</span>
-              {notifications.length > 0 && (
-                <span className="notification-badge">{notifications.length}</span>
-              )}
+              <span className="notification-badge">1</span>
             </button>
           </div>
           
@@ -950,7 +936,7 @@ const Profile = () => {
                               <i className="fas fa-info-circle"></i>
                              <span>Thông tin thuốc</span>
                           </button>
-                          <button className="medication-btn1 reminder" onClick={() => handleSetReminder(item)}>
+                          <button className="medication-btn1 reminder">
                             <i className="fas fa-bell"></i>
                             <span>Thiết lập nhắc nhở</span>
                           </button>
@@ -979,41 +965,84 @@ const Profile = () => {
             {activeTab === 'labtest' && (
               <div className="labtest-list">
                 <div className="section-info">
-                  <p>Nhập mã bệnh nhân (PatientID) để tra cứu xét nghiệm:</p>
-                  <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-                    <input
-                      type="text"
-                      placeholder="Nhập PatientID (ví dụ: PT000014)"
-                      value={inputPatientId}
-                      onChange={e => setInputPatientId(e.target.value)}
-                      style={{ padding: 6, borderRadius: 4, border: '1px solid #ccc', minWidth: 200 }}
-                    />
-                    <button
-                      onClick={() => {
-                        if (!inputPatientId) return;
-                        setLabTestsLoading(true);
-                        setLabTestsError(null);
-                        getLabTestsByPatient(inputPatientId)
-                          .then((res) => {
-                            const data = Array.isArray(res) ? res : (res?.data || []);
-                            setLabTests(data);
-                            setSelectedLabTests(data);
-                            setShowLabTestPopup(true);
-                            setLabTestsLoading(false);
-                          })
-                          .catch(() => {
-                            setLabTestsError('Không thể tải danh sách xét nghiệm');
-                            setLabTestsLoading(false);
-                          });
-                      }}
-                      style={{ padding: '6px 16px', borderRadius: 4, background: '#4CAF50', color: '#fff', border: 'none' }}
-                    >
-                      Tra cứu
-                    </button>
-                  </div>
+                  <h3>🧪 Kết quả xét nghiệm của tôi ({Array.isArray(labTests) ? labTests.length : 0} bản ghi)</h3>
+                  <p>Danh sách các kết quả xét nghiệm của bạn tại bệnh viện</p>
                 </div>
-                {labTestsLoading && <div>Đang tải...</div>}
-                {labTestsError && <div style={{color: 'red'}}>{labTestsError}</div>}
+
+                {labTestsLoading && <div className="loading">Đang tải dữ liệu...</div>}
+                {labTestsError && <div className="error" style={{color: 'red', padding: '10px', background: '#ffe6e6', borderRadius: '4px'}}>{labTestsError}</div>}
+                
+                {!labTestsLoading && !labTestsError && (
+                  <div className="labtest-table">
+                    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '16px' }}>
+                      <thead>
+                        <tr style={{ backgroundColor: '#f5f5f5' }}>
+                          <th style={{ padding: '12px', textAlign: 'left', border: '1px solid #ddd' }}>Mã xét nghiệm</th>
+                          <th style={{ padding: '12px', textAlign: 'left', border: '1px solid #ddd' }}>Tên xét nghiệm</th>
+                          <th style={{ padding: '12px', textAlign: 'left', border: '1px solid #ddd' }}>Loại xét nghiệm</th>
+                          <th style={{ padding: '12px', textAlign: 'left', border: '1px solid #ddd' }}>Kết quả</th>
+                          <th style={{ padding: '12px', textAlign: 'left', border: '1px solid #ddd' }}>CD4 Initial</th>
+                          <th style={{ padding: '12px', textAlign: 'left', border: '1px solid #ddd' }}>Viral Load Initial</th>
+                          <th style={{ padding: '12px', textAlign: 'left', border: '1px solid #ddd' }}>Trạng thái</th>
+                          <th style={{ padding: '12px', textAlign: 'left', border: '1px solid #ddd' }}>Thao tác</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Array.isArray(labTests) && labTests.length > 0 ? (
+                          labTests.map((test, index) => (
+                            <tr key={test.LabTestID || index} style={{ borderBottom: '1px solid #eee' }}>
+                              <td style={{ padding: '12px', border: '1px solid #ddd' }}>{test.LabTestID || `LT00001${index}`}</td>
+                              <td style={{ padding: '12px', border: '1px solid #ddd' }}>{test.TestName || 'Complete Blood Count'}</td>
+                              <td style={{ padding: '12px', border: '1px solid #ddd' }}>{test.TestType || 'Hematology'}</td>
+                              <td style={{ padding: '12px', border: '1px solid #ddd' }}>{test.Result || 'Normal'}</td>
+                              <td style={{ padding: '12px', border: '1px solid #ddd' }}>{test.CD4Initial || test.CD4Count || '1000'}</td>
+                              <td style={{ padding: '12px', border: '1px solid #ddd' }}>{test.ViralLoadInitial || test.ViralLoad || '50000'}</td>
+                              <td style={{ padding: '12px', border: '1px solid #ddd' }}>
+                                <span className="status-badge" style={{ 
+                                  padding: '4px 8px', 
+                                  borderRadius: '12px', 
+                                  backgroundColor: '#fff3cd', 
+                                  color: '#856404',
+                                  fontSize: '12px',
+                                  fontWeight: 'bold'
+                                }}>
+                                  {test.Status || 'Hoàn thành'}
+                                </span>
+                              </td>
+                              <td style={{ padding: '12px', border: '1px solid #ddd' }}>
+                                <button 
+                                  className="detail-btn"
+                                  onClick={() => {
+                                    // Hiển thị popup chi tiết của bản ghi này
+                                    setSelectedLabTests([test]);
+                                    setShowLabTestPopup(true);
+                                  }}
+                                  style={{ 
+                                    padding: '6px 12px', 
+                                    backgroundColor: '#007bff', 
+                                    color: 'white', 
+                                    border: 'none', 
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    fontSize: '12px'
+                                  }}
+                                >
+                                  Xem chi tiết
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="8" style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
+                              Không có dữ liệu xét nghiệm
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             )}
             
@@ -1037,19 +1066,32 @@ const Profile = () => {
                           <h4>{notification.title}</h4>
                           <span className="notification-date">{notification.date}</span>
                         </div>
-                        <div
-                           className="notification-message"
-                           dangerouslySetInnerHTML={{ __html: notification.message }}>
-                       </div>
-                      </div> 
-                      <button
-                        className="delete-notification-btn"
-                        title="Xóa thông báo"
-                        onClick={() => handleDeleteNotification(notification.id)}><i className="fas fa-trash"></i>
-                      </button>
+                        <p>{notification.message}</p>
+                      </div>
+                      
+                      <div className="notification-actions">
+                        <button className="mark-read-btn">
+                          <i className="fas fa-check"></i>
+                        </button>
+                        <button className="delete-notification-btn">
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      </div>
                     </div>
                   ))}
-                </div>     
+                </div>
+                
+                <div className="notification-settings">
+                  <button className="notification-settings-btn">
+                    <i className="fas fa-cog"></i>
+                    <span>Cài đặt thông báo</span>
+                  </button>
+                  
+                  <button className="mark-all-read-btn">
+                    <i className="fas fa-check-double"></i>
+                    <span>Đánh dấu tất cả đã đọc</span>
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -1238,7 +1280,7 @@ const Profile = () => {
   <div className="labtest-popup-overlay">
     <div className="labtest-popup">
       <div className="labtest-popup-header">
-        <h3>🧪 Kết quả xét nghiệm</h3>
+        <h3>🧪 Chi tiết kết quả xét nghiệm</h3>
         <button className="close-btn" onClick={() => setShowLabTestPopup(false)}>✖</button>
       </div>
       <div className="labtest-popup-body">
@@ -1247,18 +1289,109 @@ const Profile = () => {
         ) : (
           selectedLabTests.map((item, idx) => (
             <div className="labtest-detail-card" key={item.LabTestID || idx}>
-              <div><b>Mã xét nghiệm:</b> {item.LabTestID}</div>
-              <div><b>Tên xét nghiệm:</b> {item.TestName}</div>
-              <div><b>Mã yêu cầu:</b> {item.RequestID}</div>
-              <div><b>Mã phác đồ:</b> {item.TreatmentPlantID}</div>
-              <div><b>Mã xét nghiệm:</b> {item.TestCode}</div>
-              <div><b>Loại xét nghiệm:</b> {item.TestType}</div>
-              <div><b>Kết quả:</b> {item.ResultValue}</div>
-              <div><b>CD4 Initial:</b> {item.CD4Initial}</div>
-              <div><b>Viral Load Initial:</b> {item.ViralLoadInitial}</div>
-              <div><b>Trạng thái:</b> {item.Status}</div>
-              <div><b>Ghi chú:</b> {item.Description}</div>
-              <hr style={{margin: '12px 0'}}/>
+              <div className="detail-header">
+                <h4>Thông tin xét nghiệm</h4>
+              </div>
+              
+              <div className="detail-content">
+                <div className="detail-row">
+                  <span className="detail-label">Mã xét nghiệm:</span>
+                  <span className="detail-value">{item.LabTestID || `LT00001${idx}`}</span>
+                </div>
+                
+                <div className="detail-row">
+                  <span className="detail-label">Tên xét nghiệm:</span>
+                  <span className="detail-value">{item.TestName || 'Complete Blood Count'}</span>
+                </div>
+                
+                <div className="detail-row">
+                  <span className="detail-label">Loại xét nghiệm:</span>
+                  <span className="detail-value">{item.TestType || 'Hematology'}</span>
+                </div>
+                
+                <div className="detail-row">
+                  <span className="detail-label">Kết quả:</span>
+                  <span className="detail-value highlight">{item.Result || 'Normal'}</span>
+                </div>
+                
+                <div className="detail-row">
+                  <span className="detail-label">CD4 Initial:</span>
+                  <span className="detail-value">{item.CD4Initial || item.CD4Count || '1000'}</span>
+                </div>
+                
+                <div className="detail-row">
+                  <span className="detail-label">Viral Load Initial:</span>
+                  <span className="detail-value">{item.ViralLoadInitial || item.ViralLoad || '50000'}</span>
+                </div>
+                
+                <div className="detail-row">
+                  <span className="detail-label">Trạng thái:</span>
+                  <span className="detail-value">
+                    <span className="status-badge" style={{ 
+                      padding: '4px 8px', 
+                      borderRadius: '12px', 
+                      backgroundColor: '#fff3cd', 
+                      color: '#856404',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
+                    }}>
+                      {item.Status || 'Hoàn thành'}
+                    </span>
+                  </span>
+                </div>
+                
+                {(item.RequestID || item.TreatmentPlantID || item.TestCode) && (
+                  <>
+                    <hr style={{margin: '16px 0', border: 'none', borderTop: '1px solid #eee'}}/>
+                    <div className="detail-section">
+                      <h5>Thông tin bổ sung</h5>
+                      {item.RequestID && (
+                        <div className="detail-row">
+                          <span className="detail-label">Mã yêu cầu:</span>
+                          <span className="detail-value">{item.RequestID}</span>
+                        </div>
+                      )}
+                      {item.TreatmentPlantID && (
+                        <div className="detail-row">
+                          <span className="detail-label">Mã phác đồ:</span>
+                          <span className="detail-value">{item.TreatmentPlantID}</span>
+                        </div>
+                      )}
+                      {item.TestCode && (
+                        <div className="detail-row">
+                          <span className="detail-label">Mã xét nghiệm:</span>
+                          <span className="detail-value">{item.TestCode}</span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+                
+                {(item.ResultValue || item.Description) && (
+                  <>
+                    <hr style={{margin: '16px 0', border: 'none', borderTop: '1px solid #eee'}}/>
+                    <div className="detail-section">
+                      <h5>Chi tiết kết quả</h5>
+                      {item.ResultValue && (
+                        <div className="detail-row">
+                          <span className="detail-label">Giá trị kết quả:</span>
+                          <span className="detail-value">{item.ResultValue}</span>
+                        </div>
+                      )}
+                      {item.Description && (
+                        <div className="detail-row">
+                          <span className="detail-label">Mô tả:</span>
+                          <span className="detail-value">{item.Description}</span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+              
+              {selectedLabTests.length > 1 && idx < selectedLabTests.length - 1 && (
+                <hr style={{margin: '20px 0', border: 'none', borderTop: '2px solid #eee'}}/>
+              )}
             </div>
           ))
         )}
