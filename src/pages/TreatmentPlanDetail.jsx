@@ -144,153 +144,385 @@ const TreatmentPlanDetail = () => {
       });
   };
 
-  if (loading) return <div>Đang tải...</div>;
-  if (error) return <div style={{color:'red'}}>{error}</div>;
-  if (!plan) return <div>Không tìm thấy hồ sơ điều trị.</div>;
+  if (loading) return (
+    <div className="tpd-loading">
+      <div className="loading-spinner"></div>
+      <p>Đang tải hồ sơ điều trị...</p>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="tpd-error">
+      <i className="fas fa-exclamation-triangle"></i>
+      <p>{error}</p>
+    </div>
+  );
+  
+  if (!plan) return (
+    <div className="tpd-error">
+      <i className="fas fa-file-medical"></i>
+      <p>Không tìm thấy hồ sơ điều trị.</p>
+    </div>
+  );
 
   console.log('plan:', plan);
 
   return (
     <div className="tpd-page">
-      <div className="tpd-container">
-        <div className="tpd-header">
-          <button className="tpd-back-btn" onClick={() => navigate(-1)}>← Quay lại</button>
-          <h2 className="tpd-title">📋 Chi tiết hồ sơ điều trị</h2>
-        </div>
-
-        <div className="tpd-info-row">
-        {patientInfo && (
-    <div className="tpd-info-card">
-      <h4>👤 Thông tin bệnh nhân</h4>
-      <p><strong>Mã bệnh nhân:</strong> {patientInfo.Patient?.PatientID}</p>
-      <p><strong>Họ tên:</strong> {patientInfo.PatientFullname || patientInfo.Patient?.Fullname}</p>
-      <p><strong>Giới tính:</strong> {patientInfo.Patient?.Gender}</p>
-      <p><strong>Ngày sinh:</strong> {patientInfo.Patient?.DateOfBirth?.split('T')[0] || 'N/A'}</p>
-      <p><strong>Nhóm máu:</strong> {patientInfo.Patient?.BloodType}</p>
-      <p><strong>Dị ứng:</strong> {patientInfo.Patient?.Allergy}</p>
-      <p><strong>Số điện thoại:</strong> {patientInfo.Patient?.Phone}</p>
-      <p><strong>Email:</strong> {patientInfo.Patient?.User?.Email}</p>
-    </div>
-  )}
-
-  <div className="tpd-divider" />
-
-  <div className="tpd-info-card">
-    <h3>🧾 Thông tin hồ sơ</h3>
-    <p><strong>Mã hồ sơ:</strong> {plan.TreatmentPlanID}</p>
-    <p><strong>Bác sĩ:</strong> {currentUser?.name}</p>
-    <p><strong>Phác đồ ARV:</strong> {plan.ARVProtocol}</p>
-    <p><strong>Chẩn đoán:</strong> {plan.Diagnosis}</p>
-    <p><strong>Kết quả điều trị:</strong> {plan.TreatmentResult}</p>
-  </div>
-</div>
-
-
-
-    <div className="tpd-edit-block">
-      <h3 className="tpd-section-title">✏️ Cập nhật thông tin điều trị</h3>
-      <p><strong>Chẩn đoán: </strong> {editDiagnosis ? (
-        <>
-          <input
-            value={diagnosisValue}
-            onChange={e => setDiagnosisValue(e.target.value)}
-            autoFocus
-          />
-          <button className="tpd-edit-btn" onClick={() => { setEditDiagnosis(false); setPendingDiagnosis(diagnosisValue); }} title="Lưu"><i className="fas fa-check"></i></button>
-        </>
-      ) : (
-        <>
-          {pendingDiagnosis}
-          <button className="tpd-edit-btn" onClick={() => setEditDiagnosis(true)} title="Chỉnh sửa"><i className="fas fa-pencil-alt"></i></button>
-        </>
-      )}</p>
-
-      <p><strong>Kết quả: </strong> {editResult ? (
-        <>
-          <input
-            value={resultValue}
-            onChange={e => setResultValue(e.target.value)}
-            autoFocus
-          />
-          <button className="tpd-edit-btn" onClick={() => { setEditResult(false); setPendingResult(resultValue); }} title="Lưu"><i className="fas fa-check"></i></button>
-        </>
-      ) : (
-        <>
-          {pendingResult}
-          <button className="tpd-edit-btn" onClick={() => setEditResult(true)} title="Chỉnh sửa"><i className="fas fa-pencil-alt"></i></button>
-        </>
-      )}</p>
-
-      <button className="tpd-update-btn" style={{ marginBottom: 16 }} onClick={async () => {
-        if (!plan) return;
-        const payload = {
-          ...plan,
-          Diagnosis: pendingDiagnosis,
-          TreatmentResult: pendingResult
-        };
-        try {
-          await UpdateTreatmentPlan(payload);
-          setPlan(prev => ({ ...prev, Diagnosis: pendingDiagnosis, TreatmentResult: pendingResult }));
-          alert('Cập nhật thành công!');
-        } catch (e) {
-          alert('Cập nhật thất bại!');
-        }
-      }}>Cập nhật thông tin</button>
-    </div>
-
-
-        <div className="tpd-section">
-          <h3 className="tpd-section-title">💊 Chọn/Sửa phác đồ ARV</h3>
-          <div className="tpd-arv-select-row">
-            <select value={selectedARV} onChange={handleARVChange} className="tpd-select">
-              <option value="">-- Chọn phác đồ ARV --</option>
-              {arvProtocols.map((arv) => (
-                <option key={arv.ARVID} value={arv.ARVID}>
-                  {arv.ARVName} ({arv.ARVCode})
-                </option>
-              ))}
-            </select>
-            <button className="tpd-update-btn" onClick={handleARVUpdate}>Cập nhật</button>
-          </div>
-
-          {arvEditSuccess && <div className="tpd-msg success">✅ {arvEditSuccess}</div>}
-          {arvEditError && <div className="tpd-msg error">❌ {arvEditError}</div>}
-
-          {selectedARVObj && (
-            <div className="tpd-arv-details">
-              <p><strong>Mã phác đồ:</strong> {selectedARVObj.ARVID}</p>
-              <p><strong>Tên phác đồ:</strong> {selectedARVObj.ARVName}</p>
-              <p><strong>Mã code:</strong> {selectedARVObj.ARVCode}</p>
-              <p><strong>Mô tả:</strong> {selectedARVObj.Description}</p>
-              <p><strong>Độ tuổi:</strong> {selectedARVObj.AgeRange}</p>
-              <p><strong>Nhóm:</strong> {selectedARVObj.ForGroup}</p>
-            </div>
-          )}
-        </div>
-
-        <div className="tpd-section">
-          <h3 className="tpd-section-title">📝 Đơn thuốc</h3>
-          <button
-            className="tpd-add-btn"
-            onClick={() => {
-              const navigationState = {
-                fromDoctor: location.state?.fromDoctor || false,
-                patientInfo: patientInfo,
-                treatmentPlan: plan,
-                BookID: location.state?.BookID
-              };
-              
-              if (location.state && location.state.fromDoctor && location.state.BookID) {
-                navigate(`/prescription/${plan.TreatmentPlanID}`, { state: navigationState });
-              } else if (location.state && location.state.fromDoctor) {
-                navigate(`/prescription/${plan.TreatmentPlanID}`, { state: navigationState });
-              } else {
-                navigate(`/prescription/${plan.TreatmentPlanID}`, { state: navigationState });
-              }
-            }}
-          >
-            ➕ Thêm đơn thuốc
+      {/* Header Section */}
+      <div className="tpd-header-section">
+        <div className="tpd-header-content">
+          <button className="tpd-back-btn" onClick={() => navigate(-1)}>
+            <i className="fas fa-arrow-left"></i>
+            <span>Quay lại</span>
           </button>
+          <div className="tpd-header-title">
+            <i className="fas fa-notes-medical"></i>
+            <h1>Hồ Sơ Điều Trị</h1>
+          </div>
+        </div>
+      </div>
+
+      <div className="tpd-container">
+        {/* Patient Information Section */}
+        {patientInfo && (
+          <div className="tpd-patient-section">
+            <div className="tpd-section-header">
+              <i className="fas fa-user-injured"></i>
+              <h3>Thông tin bệnh nhân</h3>
+            </div>
+            <div className="tpd-patient-grid">
+              <div className="tpd-patient-card">
+                <div className="tpd-patient-avatar">
+                  <i className="fas fa-user-circle"></i>
+                </div>
+                <div className="tpd-patient-info">
+                  <h4>{patientInfo.PatientFullname || patientInfo.Patient?.Fullname}</h4>
+                  <p className="tpd-patient-id">Mã BN: {patientInfo.Patient?.PatientID}</p>
+                </div>
+              </div>
+              <div className="tpd-patient-details">
+                <div className="tpd-detail-row">
+                  <div className="tpd-detail-item">
+                    <span className="tpd-label">Giới tính:</span>
+                    <span className="tpd-value">{patientInfo.Patient?.Gender}</span>
+                  </div>
+                  <div className="tpd-detail-item">
+                    <span className="tpd-label">Ngày sinh:</span>
+                    <span className="tpd-value">
+                      {patientInfo.Patient?.DateOfBirth?.split('T')[0] || 'N/A'}
+                    </span>
+                  </div>
+                </div>
+                <div className="tpd-detail-row">
+                  <div className="tpd-detail-item">
+                    <span className="tpd-label">Nhóm máu:</span>
+                    <span className="tpd-value blood-type">{patientInfo.Patient?.BloodType}</span>
+                  </div>
+                  <div className="tpd-detail-item">
+                    <span className="tpd-label">Dị ứng:</span>
+                    <span className="tpd-value allergy">
+                      {patientInfo.Patient?.Allergy || 'Không có'}
+                    </span>
+                  </div>
+                </div>
+                <div className="tpd-detail-row">
+                  <div className="tpd-detail-item">
+                    <span className="tpd-label">Số điện thoại:</span>
+                    <span className="tpd-value">{patientInfo.Patient?.Phone}</span>
+                  </div>
+                  <div className="tpd-detail-item">
+                    <span className="tpd-label">Email:</span>
+                    <span className="tpd-value">{patientInfo.Patient?.User?.Email}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Treatment Plan Information */}
+        <div className="tpd-treatment-section">
+          <div className="tpd-section-header">
+            <i className="fas fa-clipboard-list"></i>
+            <h3>Thông tin hồ sơ điều trị</h3>
+          </div>
+          <div className="tpd-treatment-grid">
+            <div className="tpd-treatment-card">
+              <div className="tpd-treatment-item">
+                <span className="tpd-label">Mã hồ sơ:</span>
+                <span className="tpd-value plan-id">{plan.TreatmentPlanID}</span>
+              </div>
+              <div className="tpd-treatment-item">
+                <span className="tpd-label">Bác sĩ điều trị:</span>
+                <span className="tpd-value doctor-name">{currentUser?.name}</span>
+              </div>
+              <div className="tpd-treatment-item">
+                <span className="tpd-label">Phác đồ ARV:</span>
+                <span className="tpd-value arv-protocol">{plan.ARVProtocol}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Diagnosis and Treatment Result Section */}
+        <div className="tpd-edit-section">
+          <div className="tpd-section-header">
+            <i className="fas fa-edit"></i>
+            <h3>Cập nhật thông tin điều trị</h3>
+          </div>
+          
+          <div className="tpd-edit-form">
+            <div className="tpd-form-group">
+              <label className="tpd-form-label">
+                <i className="fas fa-stethoscope"></i>
+                <span>Chẩn đoán</span>
+              </label>
+              <div className="tpd-input-group">
+                {editDiagnosis ? (
+                  <>
+                    <textarea
+                      className="tpd-textarea"
+                      value={diagnosisValue}
+                      onChange={e => setDiagnosisValue(e.target.value)}
+                      placeholder="Nhập chẩn đoán..."
+                      autoFocus
+                    />
+                    <div className="tpd-input-actions">
+                      <button 
+                        className="tpd-save-btn" 
+                        onClick={() => { 
+                          setEditDiagnosis(false); 
+                          setPendingDiagnosis(diagnosisValue); 
+                        }}
+                      >
+                        <i className="fas fa-check"></i>
+                        <span>Lưu</span>
+                      </button>
+                      <button 
+                        className="tpd-cancel-btn" 
+                        onClick={() => { 
+                          setEditDiagnosis(false); 
+                          setDiagnosisValue(pendingDiagnosis); 
+                        }}
+                      >
+                        <i className="fas fa-times"></i>
+                        <span>Hủy</span>
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="tpd-display-value">
+                      {pendingDiagnosis || 'Chưa có chẩn đoán'}
+                    </div>
+                    <button 
+                      className="tpd-edit-btn" 
+                      onClick={() => setEditDiagnosis(true)}
+                    >
+                      <i className="fas fa-pencil-alt"></i>
+                      <span>Chỉnh sửa</span>
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="tpd-form-group">
+              <label className="tpd-form-label">
+                <i className="fas fa-clipboard-check"></i>
+                <span>Kết quả điều trị</span>
+              </label>
+              <div className="tpd-input-group">
+                {editResult ? (
+                  <>
+                    <textarea
+                      className="tpd-textarea"
+                      value={resultValue}
+                      onChange={e => setResultValue(e.target.value)}
+                      placeholder="Nhập kết quả điều trị..."
+                      autoFocus
+                    />
+                    <div className="tpd-input-actions">
+                      <button 
+                        className="tpd-save-btn" 
+                        onClick={() => { 
+                          setEditResult(false); 
+                          setPendingResult(resultValue); 
+                        }}
+                      >
+                        <i className="fas fa-check"></i>
+                        <span>Lưu</span>
+                      </button>
+                      <button 
+                        className="tpd-cancel-btn" 
+                        onClick={() => { 
+                          setEditResult(false); 
+                          setResultValue(pendingResult); 
+                        }}
+                      >
+                        <i className="fas fa-times"></i>
+                        <span>Hủy</span>
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="tpd-display-value">
+                      {pendingResult || 'Chưa có kết quả'}
+                    </div>
+                    <button 
+                      className="tpd-edit-btn" 
+                      onClick={() => setEditResult(true)}
+                    >
+                      <i className="fas fa-pencil-alt"></i>
+                      <span>Chỉnh sửa</span>
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="tpd-form-actions">
+              <button 
+                className="tpd-update-all-btn" 
+                onClick={async () => {
+                  if (!plan) return;
+                  const payload = {
+                    ...plan,
+                    Diagnosis: pendingDiagnosis,
+                    TreatmentResult: pendingResult
+                  };
+                  try {
+                    await UpdateTreatmentPlan(payload);
+                    setPlan(prev => ({ ...prev, Diagnosis: pendingDiagnosis, TreatmentResult: pendingResult }));
+                    alert('Cập nhật thành công!');
+                  } catch (e) {
+                    alert('Cập nhật thất bại!');
+                  }
+                }}
+              >
+                <i className="fas fa-save"></i>
+                <span>Cập nhật thông tin</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ARV Protocol Section */}
+        <div className="tpd-arv-section">
+          <div className="tpd-section-header">
+            <i className="fas fa-pills"></i>
+            <h3>Phác đồ ARV</h3>
+          </div>
+          
+          <div className="tpd-arv-content">
+            <div className="tpd-arv-selector">
+              <div className="tpd-select-group">
+                <label className="tpd-select-label">
+                  <i className="fas fa-list"></i>
+                  <span>Chọn phác đồ ARV</span>
+                </label>
+                <select 
+                  value={selectedARV} 
+                  onChange={handleARVChange} 
+                  className="tpd-select"
+                >
+                  <option value="">-- Chọn phác đồ ARV --</option>
+                  {arvProtocols.map((arv) => (
+                    <option key={arv.ARVID} value={arv.ARVID}>
+                      {arv.ARVName} ({arv.ARVCode})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button className="tpd-update-arv-btn" onClick={handleARVUpdate}>
+                <i className="fas fa-sync-alt"></i>
+                <span>Cập nhật phác đồ</span>
+              </button>
+            </div>
+
+            {arvEditSuccess && (
+              <div className="tpd-message success">
+                <i className="fas fa-check-circle"></i>
+                <span>{arvEditSuccess}</span>
+              </div>
+            )}
+            {arvEditError && (
+              <div className="tpd-message error">
+                <i className="fas fa-exclamation-circle"></i>
+                <span>{arvEditError}</span>
+              </div>
+            )}
+
+            {selectedARVObj && (
+              <div className="tpd-arv-details">
+                <div className="tpd-arv-header">
+                  <i className="fas fa-info-circle"></i>
+                  <h4>Chi tiết phác đồ</h4>
+                </div>
+                <div className="tpd-arv-grid">
+                  <div className="tpd-arv-item">
+                    <span className="tpd-label">Mã phác đồ:</span>
+                    <span className="tpd-value">{selectedARVObj.ARVID}</span>
+                  </div>
+                  <div className="tpd-arv-item">
+                    <span className="tpd-label">Tên phác đồ:</span>
+                    <span className="tpd-value">{selectedARVObj.ARVName}</span>
+                  </div>
+                  <div className="tpd-arv-item">
+                    <span className="tpd-label">Mã code:</span>
+                    <span className="tpd-value">{selectedARVObj.ARVCode}</span>
+                  </div>
+                  <div className="tpd-arv-item">
+                    <span className="tpd-label">Độ tuổi:</span>
+                    <span className="tpd-value">{selectedARVObj.AgeRange}</span>
+                  </div>
+                  <div className="tpd-arv-item">
+                    <span className="tpd-label">Nhóm:</span>
+                    <span className="tpd-value">{selectedARVObj.ForGroup}</span>
+                  </div>
+                  <div className="tpd-arv-item full-width">
+                    <span className="tpd-label">Mô tả:</span>
+                    <span className="tpd-value">{selectedARVObj.Description}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Prescription Section */}
+        <div className="tpd-prescription-section">
+          <div className="tpd-section-header">
+            <i className="fas fa-prescription-bottle-medical"></i>
+            <h3>Đơn thuốc</h3>
+          </div>
+          
+          <div className="tpd-prescription-content">
+            <button
+              className="tpd-add-prescription-btn"
+              onClick={() => {
+                const navigationState = {
+                  fromDoctor: location.state?.fromDoctor || false,
+                  patientInfo: patientInfo,
+                  treatmentPlan: plan,
+                  BookID: location.state?.BookID
+                };
+                
+                if (location.state && location.state.fromDoctor && location.state.BookID) {
+                  navigate(`/prescription/${plan.TreatmentPlanID}`, { state: navigationState });
+                } else if (location.state && location.state.fromDoctor) {
+                  navigate(`/prescription/${plan.TreatmentPlanID}`, { state: navigationState });
+                } else {
+                  navigate(`/prescription/${plan.TreatmentPlanID}`, { state: navigationState });
+                }
+              }}
+            >
+              <i className="fas fa-plus-circle"></i>
+              <span>Thêm đơn thuốc mới</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

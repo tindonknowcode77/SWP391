@@ -1,223 +1,750 @@
+/* ===== Treatment Plan Detail - Professional Medical Style ===== */
+
 .tpd-page {
-  background: #f4f7fc;
-  padding: 40px 20px;
   min-height: 100vh;
-  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
 }
 
-.tpd-container {
-  max-width: 900px;
+/* Loading and Error States */
+.tpd-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e3e8f0;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.tpd-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #e74c3c;
+  text-align: center;
+}
+
+.tpd-error i {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: #e74c3c;
+}
+
+.tpd-error p {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Header Section */
+.tpd-header-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.tpd-header-content {
+  max-width: 1200px;
   margin: 0 auto;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  padding: 30px 40px;
-}
-
-.tpd-header {
+  padding: 0 30px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
 }
 
 .tpd-back-btn {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
   border: none;
-  font-size: 16px;
-  color: #1976d2;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  padding: 8px;
-}
-
-.tpd-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-.tpd-info-card {
-  background: #e8f0fe;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 32px;
-  line-height: 1.6;
-}
-
-.tpd-section {
-  margin-bottom: 40px;
-}
-
-.tpd-section-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #34495e;
-  margin-bottom: 16px;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  backdrop-filter: blur(10px);
 }
 
-.tpd-arv-select-row {
+.tpd-back-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateX(-2px);
+}
+
+.tpd-header-title {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.tpd-header-title i {
+  font-size: 2.5rem;
+  color: #ffd700;
+}
+
+.tpd-header-title h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Main Container */
+.tpd-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Section Headers */
+.tpd-section-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tpd-section-header i {
+  font-size: 1.5rem;
+  color: #ffd700;
+}
+
+.tpd-section-header h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Patient Section */
+.tpd-patient-section {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid #e1e8ed;
+}
+
+.tpd-patient-grid {
+  padding: 30px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.tpd-patient-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+}
+
+.tpd-patient-avatar {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2rem;
+}
+
+.tpd-patient-info {
+  text-align: center;
+}
+
+.tpd-patient-info h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+}
+
+.tpd-patient-id {
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-weight: 600;
+  margin: 0;
+}
+
+.tpd-patient-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tpd-detail-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.tpd-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tpd-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tpd-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2c3e50;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.tpd-value.blood-type {
+  background: #fff3cd;
+  border-left-color: #ffc107;
+  color: #856404;
+  font-weight: 600;
+}
+
+.tpd-value.allergy {
+  background: #e8f5e8;
+  border-left-color: #28a745;
+  color: #155724;
+  font-style: italic;
+}
+
+/* Treatment Section */
+.tpd-treatment-section {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid #e1e8ed;
+}
+
+.tpd-treatment-grid {
+  padding: 30px;
+}
+
+.tpd-treatment-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.tpd-treatment-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tpd-value.plan-id {
+  background: #e3f2fd;
+  border-left-color: #2196f3;
+  color: #1565c0;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.tpd-value.doctor-name {
+  background: #f3e5f5;
+  border-left-color: #9c27b0;
+  color: #7b1fa2;
+  font-weight: 600;
+}
+
+.tpd-value.arv-protocol {
+  background: #e8f5e8;
+  border-left-color: #4caf50;
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+/* Edit Section */
+.tpd-edit-section {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid #e1e8ed;
+}
+
+.tpd-edit-form {
+  padding: 30px;
+}
+
+.tpd-form-group {
+  margin-bottom: 25px;
+}
+
+.tpd-form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 12px;
+}
+
+.tpd-form-label i {
+  color: #667eea;
+  font-size: 1.1rem;
+}
+
+.tpd-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tpd-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.tpd-textarea:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.tpd-display-value {
+  padding: 16px;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #495057;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  font-style: italic;
+}
+
+.tpd-input-actions {
   display: flex;
   gap: 12px;
-  align-items: center;
 }
 
-.tpd-select {
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  flex: 1;
-  font-size: 15px;
-}
-
-.tpd-update-btn {
-  padding: 10px 16px;
-  background-color: #2ecc71;
-  color: #fff;
+.tpd-save-btn,
+.tpd-cancel-btn,
+.tpd-edit-btn {
+  padding: 10px 20px;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.tpd-add-btn {
-  padding: 10px 16px;
-  background-color: #2980b9;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.tpd-add-btn:hover {
-  background-color: #1f6394;
-}
-
-.tpd-msg {
-  margin-top: 12px;
-  padding: 10px;
-  border-radius: 8px;
-  font-weight: 500;
-}
-
-.tpd-msg.success {
-  background-color: #dff0d8;
-  color: #3c763d;
-}
-
-.tpd-msg.error {
-  background-color: #f2dede;
-  color: #a94442;
-}
-
-.tpd-arv-details {
-  margin-top: 20px;
-  background: #fdfdfd;
-  border: 1px solid #dcdcdc;
-  border-radius: 12px;
-  padding: 16px;
-  line-height: 1.6;
-}
-
-.tpd-info-card p {
-  margin: 12px 0;
-  font-size: 16px;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.tpd-info-card strong {
-  width: 130px;
-  color: #2c3e50;
+.tpd-save-btn {
+  background: #28a745;
+  color: white;
 }
 
-.tpd-info-card input {
-  flex: 1;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 15px;
-  margin-right: 8px;
-  transition: border-color 0.2s ease;
+.tpd-save-btn:hover {
+  background: #218838;
+  transform: translateY(-1px);
 }
 
-.tpd-info-card input:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 3px rgba(52, 152, 219, 0.4);
+.tpd-cancel-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.tpd-cancel-btn:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
 }
 
 .tpd-edit-btn {
-  background-color: transparent;
-  border: none;
-  color: #2980b9;
-  font-size: 16px;
-  cursor: pointer;
-  margin-left: 8px;
-  padding: 4px 6px;
-  transition: color 0.2s ease;
+  background: #007bff;
+  color: white;
 }
 
 .tpd-edit-btn:hover {
-  color: #1f6394;
+  background: #0056b3;
+  transform: translateY(-1px);
 }
 
-.tpd-update-btn {
-  padding: 10px 18px;
-  background-color: #27ae60;
-  color: #fff;
+.tpd-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.tpd-update-all-btn {
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.tpd-update-btn:hover {
-  background-color: #219150;
-}
-
-.tpd-edit-block {
-  background: #fdfefe;
-  padding: 24px;
-  margin-bottom: 32px;
-  border-radius: 12px;
-  border: 1px solid #dcdcdc;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.tpd-edit-block p {
-  margin-bottom: 16px;
-  font-size: 16px;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.tpd-info-row {
+.tpd-update-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* ARV Section */
+.tpd-arv-section {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid #e1e8ed;
+}
+
+.tpd-arv-content {
+  padding: 30px;
+}
+
+.tpd-arv-selector {
   display: flex;
-  gap: 24px;
-  align-items: flex-start;
-  margin-top: 16px;
+  gap: 20px;
+  align-items: end;
+  margin-bottom: 20px;
 }
 
-.tpd-info-card {
+.tpd-select-group {
   flex: 1;
-  padding: 16px;
-  background-color: #edeff4;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.tpd-divider {
-  width: 1px;
-  background-color: #ccc;
-  height: 100%;
+.tpd-select-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.tpd-select-label i {
+  color: #667eea;
+}
+
+.tpd-select {
+  padding: 14px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+}
+
+.tpd-select:focus {
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.tpd-update-arv-btn {
+  padding: 14px 24px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.tpd-update-arv-btn:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.tpd-message {
+  padding: 16px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  animation: slideInUp 0.3s ease;
+}
+
+.tpd-message.success {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.tpd-message.success i {
+  color: #28a745;
+  font-size: 1.2rem;
+}
+
+.tpd-message.error {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.tpd-message.error i {
+  color: #dc3545;
+  font-size: 1.2rem;
+}
+
+.tpd-arv-details {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.tpd-arv-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.tpd-arv-header i {
+  color: #667eea;
+  font-size: 1.2rem;
+}
+
+.tpd-arv-header h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #495057;
+  margin: 0;
+}
+
+.tpd-arv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.tpd-arv-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tpd-arv-item.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Prescription Section */
+.tpd-prescription-section {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid #e1e8ed;
+}
+
+.tpd-prescription-content {
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.tpd-add-prescription-btn {
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.tpd-add-prescription-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.tpd-add-prescription-btn i {
+  font-size: 1.3rem;
+}
+
+/* Animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tpd-header-content {
+    padding: 0 20px;
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .tpd-header-title h1 {
+    font-size: 1.8rem;
+  }
+
+  .tpd-container {
+    margin: 20px auto;
+    padding: 0 20px;
+  }
+
+  .tpd-patient-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .tpd-detail-row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .tpd-treatment-card {
+    grid-template-columns: 1fr;
+  }
+
+  .tpd-arv-selector {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tpd-arv-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tpd-input-actions {
+    flex-direction: column;
+  }
+
+  .tpd-form-actions {
+    justify-content: center;
+  }
+
+  .tpd-edit-form,
+  .tpd-arv-content,
+  .tpd-prescription-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tpd-header-title h1 {
+    font-size: 1.5rem;
+  }
+
+  .tpd-back-btn {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+
+  .tpd-section-header {
+    padding: 15px 20px;
+  }
+
+  .tpd-section-header h3 {
+    font-size: 1.2rem;
+  }
+
+  .tpd-textarea,
+  .tpd-select {
+    padding: 12px 14px;
+    font-size: 0.95rem;
+  }
+
+  .tpd-save-btn,
+  .tpd-cancel-btn,
+  .tpd-edit-btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  .tpd-update-all-btn,
+  .tpd-update-arv-btn {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
 }
 
 
