@@ -15,7 +15,12 @@ import { updateStaff } from '../api/auth';
 import { deleteDoctorWorkScheduleadmin } from '../api/auth';
 import { getAllARVProtocol} from '../api/auth';
 import { getAllStaff } from '../api/auth';
-
+import { xoastaff } from '../api/auth';
+import { laytatcaquanly } from '../api/auth';
+import { themManager } from '../api/auth';
+import { layManagerById } from '../api/auth';
+import { capnhatManager } from '../api/auth';
+import { xoaManager } from '../api/auth';
 const Admin = () => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
@@ -126,11 +131,40 @@ const Admin = () => {
   const [doctorSchedules, setDoctorSchedules] = useState([]);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [scheduleToDelete, setScheduleToDelete] = useState(null);
+  const [staffToDelete, setStaffToDelete] = useState(null);
+  const [showDeleteStaffPopup, setShowDeleteStaffPopup] = useState(false);
+  const [deleteStaffMsg, setDeleteStaffMsg] = useState('');
+  const [managerToDelete, setManagerToDelete] = useState(null);
+  const [showDeleteManagerPopup, setShowDeleteManagerPopup] = useState(false);
+  const [deleteManagerMsg, setDeleteManagerMsg] = useState('');
   const [deleteMsg, setDeleteMsg] = useState('');
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [doctorsList, setDoctorsList] = useState([]);
   const [arvProtocolsList, setArvProtocolsList] = useState([]);
   const [staffList, setStaffList] = useState([]);
+  const [managersList, setManagersList] = useState([]);
+  
+  // State cho form thêm quản lý
+  const [addManagerForm, setAddManagerForm] = useState({
+    Fullname: '',
+    Email: '',
+    Password: '',
+    Address: '',
+    Image: ''
+  });
+  const [addManagerMsg, setAddManagerMsg] = useState('');
+  const [addedManager, setAddedManager] = useState(null);
+  
+  // State cho form cập nhật quản lý
+  const [updateManagerId, setUpdateManagerId] = useState('');
+  const [updateManagerForm, setUpdateManagerForm] = useState({
+    Fullname: '',
+    Email: '',
+    Address: '',
+    Image: ''
+  });
+  const [updateManagerMsg, setUpdateManagerMsg] = useState('');
+  const [updatedManager, setUpdatedManager] = useState(null);
 
   const handleAddDoctorChange = (e) => {
     const { name, value } = e.target;
@@ -301,6 +335,124 @@ const Admin = () => {
       setUpdatedStaff(null);
     }
   };
+  
+  // Handlers cho form thêm quản lý
+  const handleAddManagerChange = (e) => {
+    const { name, value } = e.target;
+    setAddManagerForm(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const handleAddManagerSubmit = async (e) => {
+    e.preventDefault();
+    setAddManagerMsg('');
+    try {
+      await themManager(addManagerForm);
+      setAddManagerMsg('Thêm quản lý thành công!');
+      setAddedManager({ ...addManagerForm });
+      
+      // Hiển thị thông báo toàn trang
+      const successNotification = document.createElement('div');
+      successNotification.className = 'global-success-notification';
+      successNotification.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        Đã thêm quản lý <strong>${addManagerForm.Fullname}</strong> thành công
+      `;
+      document.body.appendChild(successNotification);
+      
+      // Xóa thông báo sau 3 giây
+      setTimeout(() => {
+        successNotification.style.opacity = '0';
+        setTimeout(() => document.body.removeChild(successNotification), 300);
+      }, 3000);
+      
+      // Reset form
+      setAddManagerForm({ Fullname: '', Email: '', Password: '', Address: '', Image: '' });
+    } catch (err) {
+      setAddManagerMsg('Thêm quản lý thất bại!');
+      setAddedManager(null);
+    }
+  };
+  
+  // Handlers cho form cập nhật quản lý
+  const handleUpdateManagerChange = (e) => {
+    const { name, value } = e.target;
+    setUpdateManagerForm(prev => ({ ...prev, [name]: value }));
+  };
+  
+  // Tải thông tin quản lý khi nhập ID
+  const loadManagerData = async () => {
+    if (!updateManagerId) return;
+    
+    setUpdateManagerMsg('Đang tìm thông tin quản lý...');
+    try {
+      const manager = await layManagerById(updateManagerId);
+      if (manager) {
+        setUpdateManagerForm({
+          Fullname: manager.fullname || '',
+          Email: manager.email || '',
+          Address: manager.address || '',
+          Image: manager.image || ''
+        });
+        setUpdateManagerMsg('Đã tìm thấy thông tin quản lý');
+      } else {
+        setUpdateManagerMsg('Không tìm thấy quản lý với ID này');
+        setUpdateManagerForm({
+          Fullname: '',
+          Email: '',
+          Address: '',
+          Image: ''
+        });
+      }
+    } catch (err) {
+      setUpdateManagerMsg('Không thể tải thông tin quản lý');
+      setUpdateManagerForm({
+        Fullname: '',
+        Email: '',
+        Address: '',
+        Image: ''
+      });
+    }
+  };
+  
+  // Effect để tải thông tin quản lý khi ID thay đổi và có giá trị
+  useEffect(() => {
+    if (updateManagerId && selectedTab === 'updatemanager') {
+      loadManagerData();
+    }
+  }, [updateManagerId]);
+  
+  const handleUpdateManagerSubmit = async (e) => {
+    e.preventDefault();
+    setUpdateManagerMsg('');
+    if (!updateManagerId) {
+      setUpdateManagerMsg('Vui lòng nhập ID quản lý!');
+      return;
+    }
+    try {
+      await capnhatManager(updateManagerId, updateManagerForm);
+      setUpdateManagerMsg('Cập nhật quản lý thành công!');
+      setUpdatedManager({ ...updateManagerForm });
+      
+      // Hiển thị thông báo toàn trang
+      const successNotification = document.createElement('div');
+      successNotification.className = 'global-success-notification';
+      successNotification.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        Đã cập nhật quản lý <strong>${updateManagerForm.Fullname}</strong> thành công
+      `;
+      document.body.appendChild(successNotification);
+      
+      // Xóa thông báo sau 3 giây
+      setTimeout(() => {
+        successNotification.style.opacity = '0';
+        setTimeout(() => document.body.removeChild(successNotification), 300);
+      }, 3000);
+      
+    } catch (err) {
+      setUpdateManagerMsg('Cập nhật quản lý thất bại!');
+      setUpdatedManager(null);
+    }
+  };
 
   const handleLogout = async () => {
     setShowLogoutConfirm(true);
@@ -357,6 +509,17 @@ const Admin = () => {
       setStaffList([]);
     }
   };
+  
+  // Lấy danh sách quản lý
+  const fetchManagersList = async () => {
+    try {
+      const res = await laytatcaquanly();
+      setManagersList(res);
+    } catch (err) {
+      setManagersList([]);
+      console.error("Lỗi khi lấy danh sách quản lý:", err);
+    }
+  };
 
   // Khi chọn tab, load danh sách
   useEffect(() => {
@@ -371,6 +534,9 @@ const Admin = () => {
     }
     if (selectedTab === 'allstaff') {
       fetchStaffList();
+    }
+    if (selectedTab === 'allmanagers' || selectedTab === 'updatemanager') {
+      fetchManagersList();
     }
   }, [selectedTab]);
 
@@ -395,6 +561,104 @@ const Admin = () => {
   const cancelDeleteSchedule = () => {
     setShowDeletePopup(false);
     setScheduleToDelete(null);
+  };
+  
+  // Hàm xử lý xóa nhân viên
+  const handleDeleteStaff = (staff) => {
+    setStaffToDelete(staff);
+    setShowDeleteStaffPopup(true);
+    setDeleteStaffMsg('');
+  };
+  
+  const confirmDeleteStaff = async () => {
+    if (!staffToDelete) return;
+    try {
+      const deletedStaffName = staffToDelete?.Fullname || staffToDelete?.FullName || 'Nhân viên';
+      await xoastaff(staffToDelete.UserID || staffToDelete.UserId || staffToDelete.ID);
+      
+      // Hiển thị thông báo trong popup
+      setDeleteStaffMsg('Xóa nhân viên thành công!');
+      
+      // Đóng popup sau 1 giây để người dùng thấy thông báo thành công
+      setTimeout(() => {
+        setShowDeleteStaffPopup(false);
+        setStaffToDelete(null);
+        
+        // Hiển thị thông báo toàn trang sau khi đóng popup
+        const successNotification = document.createElement('div');
+        successNotification.className = 'global-success-notification';
+        successNotification.innerHTML = `
+          <i class="fas fa-check-circle"></i>
+          Đã xóa thành công nhân viên <strong>${deletedStaffName}</strong>
+        `;
+        document.body.appendChild(successNotification);
+        
+        // Xóa thông báo sau 3 giây
+        setTimeout(() => {
+          successNotification.style.opacity = '0';
+          setTimeout(() => document.body.removeChild(successNotification), 300);
+        }, 3000);
+        
+        // Cập nhật danh sách nhân viên
+        fetchStaffList();
+      }, 1000);
+    } catch (err) {
+      setDeleteStaffMsg('Xóa nhân viên thất bại!');
+    }
+  };
+  
+  const cancelDeleteStaff = () => {
+    setShowDeleteStaffPopup(false);
+    setStaffToDelete(null);
+  };
+  
+  // Hàm xử lý xóa quản lý
+  const handleDeleteManager = (manager) => {
+    setManagerToDelete(manager);
+    setShowDeleteManagerPopup(true);
+    setDeleteManagerMsg('');
+  };
+  
+  const confirmDeleteManager = async () => {
+    if (!managerToDelete) return;
+    try {
+      const deletedManagerName = managerToDelete?.Fullname || managerToDelete?.FullName || 'Quản lý';
+      await xoaManager(managerToDelete.UserID || managerToDelete.UserId || managerToDelete.ID);
+      
+      // Hiển thị thông báo trong popup
+      setDeleteManagerMsg('Xóa quản lý thành công!');
+      
+      // Đóng popup sau 1 giây để người dùng thấy thông báo thành công
+      setTimeout(() => {
+        setShowDeleteManagerPopup(false);
+        setManagerToDelete(null);
+        
+        // Hiển thị thông báo toàn trang sau khi đóng popup
+        const successNotification = document.createElement('div');
+        successNotification.className = 'global-success-notification';
+        successNotification.innerHTML = `
+          <i class="fas fa-check-circle"></i>
+          Đã xóa thành công quản lý <strong>${deletedManagerName}</strong>
+        `;
+        document.body.appendChild(successNotification);
+        
+        // Xóa thông báo sau 3 giây
+        setTimeout(() => {
+          successNotification.style.opacity = '0';
+          setTimeout(() => document.body.removeChild(successNotification), 300);
+        }, 3000);
+        
+        // Cập nhật danh sách quản lý
+        fetchManagersList();
+      }, 1000);
+    } catch (err) {
+      setDeleteManagerMsg('Xóa quản lý thất bại!');
+    }
+  };
+  
+  const cancelDeleteManager = () => {
+    setShowDeleteManagerPopup(false);
+    setManagerToDelete(null);
   };
 
   return (
@@ -459,6 +723,18 @@ const Admin = () => {
           <li className={selectedTab === 'allstaff' ? 'active' : ''} onClick={() => setSelectedTab('allstaff')}>
             <i className="fas fa-users"></i>
             <span>Danh sách tất cả các nhân viên</span>
+          </li>
+          <li className={selectedTab === 'allmanagers' ? 'active' : ''} onClick={() => setSelectedTab('allmanagers')}>
+            <i className="fas fa-user-tie"></i>
+            <span>Danh sách tất cả các quản lý</span>
+          </li>
+          <li className={selectedTab === 'addmanager' ? 'active' : ''} onClick={() => setSelectedTab('addmanager')}>
+            <i className="fas fa-user-plus"></i>
+            <span>Thêm quản lý</span>
+          </li>
+          <li className={selectedTab === 'updatemanager' ? 'active' : ''} onClick={() => setSelectedTab('updatemanager')}>
+            <i className="fas fa-user-edit"></i>
+            <span>Cập nhật quản lý</span>
           </li>
         
         </ul>
@@ -970,6 +1246,7 @@ const Admin = () => {
                   <th>Email</th>
                   <th>Địa chỉ</th>
                   <th>Ảnh</th>
+                  <th>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
@@ -985,12 +1262,246 @@ const Admin = () => {
                         'Không có'
                       }
                     </td>
+                    <td>
+                      <button 
+                        onClick={() => handleDeleteStaff(staff)} 
+                        className="admin-action-btn" 
+                        style={{
+                          backgroundColor: '#e74c3c', 
+                          padding: '6px 12px', 
+                          fontSize: '14px', 
+                          borderRadius: '6px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          boxShadow: '0 2px 5px rgba(231, 76, 60, 0.2)',
+                          transition: 'all 0.2s ease'
+                        }}
+                        title="Xóa nhân viên này"
+                      >
+                        <i className="fas fa-trash-alt"></i> Xóa
+                      </button>
+                    </td>
                   </tr>
                 )) : (
-                  <tr><td colSpan={5} style={{textAlign:'center'}}>Không có dữ liệu</td></tr>
+                  <tr><td colSpan={6} style={{textAlign:'center'}}>Không có dữ liệu</td></tr>
                 )}
               </tbody>
             </table>
+            
+            {/* Popup xác nhận xóa nhân viên */}
+            {showDeleteStaffPopup && (
+              <div className="delete-popup-overlay">
+                <div className="delete-popup">
+                  <h3>Xác nhận xóa nhân viên</h3>
+                  <p>
+                    Bạn có chắc chắn muốn xóa nhân viên <strong>{staffToDelete?.Fullname || staffToDelete?.FullName}</strong> với ID: <strong>{staffToDelete?.UserID || staffToDelete?.UserId || staffToDelete?.ID}</strong>?
+                  </p>
+                  <p style={{ fontSize: '0.9rem', color: '#7f8c8d', marginTop: '-5px' }}>
+                    Hành động này không thể hoàn tác sau khi đã thực hiện.
+                  </p>
+                  <div className="delete-popup-buttons">
+                    <button className="delete-popup-btn cancel" onClick={cancelDeleteStaff}>
+                      <i className="fas fa-times" style={{ marginRight: '5px' }}></i> Hủy
+                    </button>
+                    <button className="delete-popup-btn confirm" onClick={confirmDeleteStaff}>
+                      <i className="fas fa-trash-alt" style={{ marginRight: '5px' }}></i> Xác nhận xóa
+                    </button>
+                  </div>
+                  {deleteStaffMsg && <p className={deleteStaffMsg.includes("thành công") ? "success-msg" : "error-msg"}>{deleteStaffMsg}</p>}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+        {selectedTab === 'addmanager' && (
+          <div className="admin-content">
+            <h2 className="admin-table-title">Thêm quản lý</h2>
+            <form className="add-doctor-form" onSubmit={handleAddManagerSubmit} style={{maxWidth: 500, margin: '0 auto'}}>
+              <div className="form-group">
+                <label>Họ tên</label>
+                <input name="Fullname" value={addManagerForm.Fullname} onChange={handleAddManagerChange} required />
+              </div>
+              <div className="form-group">
+                <label>Email</label>
+                <input name="Email" value={addManagerForm.Email} onChange={handleAddManagerChange} required type="email" />
+              </div>
+              <div className="form-group">
+                <label>Mật khẩu</label>
+                <input name="Password" value={addManagerForm.Password} onChange={handleAddManagerChange} required type="password" />
+              </div>
+              <div className="form-group">
+                <label>Địa chỉ</label>
+                <input name="Address" value={addManagerForm.Address} onChange={handleAddManagerChange} required />
+              </div>
+              <div className="form-group">
+                <label>Ảnh (URL)</label>
+                <input name="Image" value={addManagerForm.Image} onChange={handleAddManagerChange} />
+              </div>
+              <button type="submit" className="admin-action-btn" style={{marginTop: 16}}>Thêm quản lý</button>
+              {addManagerMsg && <div style={{marginTop: 12, color: addManagerMsg.includes('thành công') ? '#27ae60' : '#e74c3c'}}>{addManagerMsg}</div>}
+            </form>
+            {addedManager && addManagerMsg.includes('thành công') && (
+              <div style={{marginTop: 32}}>
+                <h3>Thông tin quản lý vừa thêm</h3>
+                <table className="admin-appointments-table">
+                  <thead>
+                    <tr>
+                      <th>Họ tên</th>
+                      <th>Email</th>
+                      <th>Địa chỉ</th>
+                      <th>Ảnh</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{addedManager.Fullname}</td>
+                      <td>{addedManager.Email}</td>
+                      <td>{addedManager.Address}</td>
+                      <td>{addedManager.Image ? <img src={addedManager.Image} alt="manager" style={{width:40, height:40, objectFit:'cover', borderRadius:4}} /> : 'Không có'}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {selectedTab === 'updatemanager' && (
+          <div className="admin-content">
+            <h2 className="admin-table-title">Cập nhật thông tin quản lý</h2>
+            
+            <form className="update-doctor-form" onSubmit={handleUpdateManagerSubmit} style={{maxWidth: 500, margin: '0 auto'}}>
+              <div className="form-group">
+                <label>ID quản lý</label>
+                <input 
+                  value={updateManagerId} 
+                  onChange={(e) => setUpdateManagerId(e.target.value)} 
+                  required 
+                  placeholder="Nhập ID quản lý cần cập nhật"
+                />
+              </div>
+              <div className="form-group">
+                <label>Họ tên</label>
+                <input name="Fullname" value={updateManagerForm.Fullname} onChange={handleUpdateManagerChange} required />
+              </div>
+              <div className="form-group">
+                <label>Email</label>
+                <input name="Email" value={updateManagerForm.Email} onChange={handleUpdateManagerChange} required type="email" />
+              </div>
+              <div className="form-group">
+                <label>Địa chỉ</label>
+                <input name="Address" value={updateManagerForm.Address} onChange={handleUpdateManagerChange} required />
+              </div>
+              <div className="form-group">
+                <label>Ảnh (URL)</label>
+                <input name="Image" value={updateManagerForm.Image} onChange={handleUpdateManagerChange} />
+              </div>
+              <button type="submit" className="admin-action-btn" style={{marginTop: 16}}>Cập nhật quản lý</button>
+              {updateManagerMsg && <div style={{marginTop: 12, color: updateManagerMsg.includes('thành công') || updateManagerMsg.includes('Đã tìm thấy') ? '#27ae60' : '#e74c3c'}}>{updateManagerMsg}</div>}
+            </form>
+            {updatedManager && updateManagerMsg.includes('thành công') && (
+              <div style={{marginTop: 32}}>
+                <h3>Thông tin quản lý vừa cập nhật</h3>
+                <table className="admin-appointments-table">
+                  <thead>
+                    <tr>
+                      <th>Họ tên</th>
+                      <th>Email</th>
+                      <th>Địa chỉ</th>
+                      <th>Ảnh</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{updatedManager.Fullname}</td>
+                      <td>{updatedManager.Email}</td>
+                      <td>{updatedManager.Address}</td>
+                      <td>{updatedManager.Image ? <img src={updatedManager.Image} alt="manager" style={{width:40, height:40, objectFit:'cover', borderRadius:4}} /> : 'Không có'}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+        {selectedTab === 'allmanagers' && (
+          <div className="admin-content">
+            <h2 className="admin-table-title">Danh sách tất cả các quản lý</h2>
+            <table className="admin-appointments-table">
+              <thead>
+                <tr>
+                  <th>UserID</th>
+                  <th>Họ tên</th>
+                  <th>Email</th>
+                  <th>Địa chỉ</th>
+                  <th>Ảnh</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                {managersList && managersList.length > 0 ? managersList.map((manager, index) => (
+                  <tr key={manager.UserID || manager.UserId || manager.ID || index}>
+                    <td>{manager.UserID || manager.UserId || manager.ID || 'N/A'}</td>
+                    <td>{manager.Fullname || manager.FullName || 'N/A'}</td>
+                    <td>{manager.Email || 'N/A'}</td>
+                    <td>{manager.Address || 'N/A'}</td>
+                    <td>
+                      {manager.Image ? 
+                        <img src={manager.Image} alt="manager" style={{width:40, height:40, objectFit:'cover', borderRadius:4}} /> : 
+                        'Không có'
+                      }
+                    </td>
+                    <td>
+                      <button 
+                        onClick={() => handleDeleteManager(manager)} 
+                        className="admin-action-btn" 
+                        style={{
+                          backgroundColor: '#e74c3c', 
+                          padding: '6px 12px', 
+                          fontSize: '14px', 
+                          borderRadius: '6px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          boxShadow: '0 2px 5px rgba(231, 76, 60, 0.2)',
+                          transition: 'all 0.2s ease'
+                        }}
+                        title="Xóa quản lý này"
+                      >
+                        <i className="fas fa-trash-alt"></i> Xóa
+                      </button>
+                    </td>
+                  </tr>
+                )) : (
+                  <tr><td colSpan={6} style={{textAlign:'center'}}>Không có dữ liệu</td></tr>
+                )}
+              </tbody>
+            </table>
+            
+            {/* Popup xác nhận xóa quản lý */}
+            {showDeleteManagerPopup && (
+              <div className="delete-popup-overlay">
+                <div className="delete-popup">
+                  <h3>Xác nhận xóa quản lý</h3>
+                  <p>
+                    Bạn có chắc chắn muốn xóa quản lý <strong>{managerToDelete?.Fullname || managerToDelete?.FullName}</strong> với ID: <strong>{managerToDelete?.UserID || managerToDelete?.UserId || managerToDelete?.ID}</strong>?
+                  </p>
+                  <p style={{ fontSize: '0.9rem', color: '#7f8c8d', marginTop: '-5px' }}>
+                    Hành động này không thể hoàn tác sau khi đã thực hiện.
+                  </p>
+                  <div className="delete-popup-buttons">
+                    <button className="delete-popup-btn cancel" onClick={cancelDeleteManager}>
+                      <i className="fas fa-times" style={{ marginRight: '5px' }}></i> Hủy
+                    </button>
+                    <button className="delete-popup-btn confirm" onClick={confirmDeleteManager}>
+                      <i className="fas fa-trash-alt" style={{ marginRight: '5px' }}></i> Xác nhận xóa
+                    </button>
+                  </div>
+                  {deleteManagerMsg && <p className={deleteManagerMsg.includes("thành công") ? "success-msg" : "error-msg"}>{deleteManagerMsg}</p>}
+                </div>
+              </div>
+            )}
           </div>
         )}
         {selectedTab === 'alldoctors' && (

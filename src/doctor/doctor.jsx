@@ -56,7 +56,7 @@ const Doctor = () => {
     ResultValue: '',
     CD4Initial: '',
     ViralLoadInitial: '',
-    Status: '',
+    Status: 'Đang xử lý',
     Description: ''
   });
   const [labTestMessage, setLabTestMessage] = useState('');
@@ -81,6 +81,13 @@ const Doctor = () => {
   const [labTestToDelete, setLabTestToDelete] = useState(null);
   const [deleteLabTestMessage, setDeleteLabTestMessage] = useState('');
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  // State for dropdown data
+  const [dropdownData, setDropdownData] = useState({
+    requestIds: [],
+    treatmentPlanIds: [],
+    labTestIds: []
+  });
+  const [loadingDropdownData, setLoadingDropdownData] = useState(false);
 
 
   const patientNameMap = {
@@ -104,6 +111,33 @@ const Doctor = () => {
     'PT000018': 'Võ Thị Lan',
     'PT000019': 'Tạ Minh Đức',
     'PT000020': 'Ngô Quỳnh Anh',
+  };
+
+  // Fetch dropdown data for labtest forms
+  const fetchDropdownData = async () => {
+    setLoadingDropdownData(true);
+    try {
+      const labTestsData = await getAllLabTests();
+      const labTests = Array.isArray(labTestsData) ? labTestsData : (labTestsData?.data || []);
+      
+      const treatmentPlansData = await bacsilaytreatmentplan();
+      const treatmentPlans = Array.isArray(treatmentPlansData) ? treatmentPlansData : (treatmentPlansData?.data || []);
+      
+      // Extract unique IDs
+      const requestIds = [...new Set(labTests.map(test => test.RequestID).filter(Boolean))];
+      const treatmentPlanIds = [...new Set(treatmentPlans.map(plan => plan.TreatmentPlanID).filter(Boolean))];
+      const labTestIds = [...new Set(labTests.map(test => test.LabTestID).filter(Boolean))];
+      
+      setDropdownData({
+        requestIds,
+        treatmentPlanIds,
+        labTestIds
+      });
+    } catch (error) {
+      console.error('Error fetching dropdown data:', error);
+    } finally {
+      setLoadingDropdownData(false);
+    }
   };
 
   useEffect(() => {
@@ -181,6 +215,11 @@ const Doctor = () => {
         });
     }
   }, [selected, deleteLabTestMessage]);
+
+  // Fetch dropdown data on component mount
+  useEffect(() => {
+    fetchDropdownData();
+  }, []);
 
   // useEffect(() => {
   //   if (doctorStatus !== 'checked-in') {
@@ -841,6 +880,11 @@ const Doctor = () => {
         {selected === 'labtest' && (
           <div className="doctor-content">
             <h2 className="doctor-table-title">Thêm LabTest mới</h2>
+            {loadingDropdownData && (
+              <div className="loading-dropdown">
+                <i className="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...
+              </div>
+            )}
             <form
               className="labtest-form"
               onSubmit={async (e) => {
@@ -860,6 +904,8 @@ const Doctor = () => {
                     Status: '',
                     Description: ''
                   });
+                  // Refresh dropdown data
+                  fetchDropdownData();
                 } catch (err) {
                   setLabTestMessage('Có lỗi khi thêm LabTest!');
                 }
@@ -868,52 +914,170 @@ const Doctor = () => {
               {/* Các trường nhập liệu */}
               <div className="labtest-row">
                 <label>Mã yêu cầu (RequestID):</label>
-                <input value={labTestForm.RequestID} onChange={e => setLabTestForm({...labTestForm, RequestID: e.target.value})} required />
+                <div className="dropdown-container">
+                  <select 
+                    className="labtest-dropdown"
+                    value={labTestForm.RequestID} 
+                    onChange={e => setLabTestForm({...labTestForm, RequestID: e.target.value})} 
+                    required
+                  >
+                    <option value="">-- Chọn mã yêu cầu --</option>
+                    {dropdownData.requestIds.map(id => (
+                      <option key={id} value={id}>{id}</option>
+                    ))}
+                  </select>
+                  <input 
+                    type="text"
+                    className="labtest-input-custom"
+                    placeholder="Hoặc nhập mã mới"
+                    value={labTestForm.RequestID} 
+                    onChange={e => setLabTestForm({...labTestForm, RequestID: e.target.value})}
+                    style={{marginTop: '8px'}}
+                  />
+                </div>
               </div>
               <div className="labtest-row">
                 <label>Mã hồ sơ điều trị (TreatmentPlantID):</label>
-                <input value={labTestForm.TreatmentPlantID} onChange={e => setLabTestForm({...labTestForm, TreatmentPlantID: e.target.value})} required />
+                <div className="dropdown-container">
+                  <select 
+                    className="labtest-dropdown"
+                    value={labTestForm.TreatmentPlantID} 
+                    onChange={e => setLabTestForm({...labTestForm, TreatmentPlantID: e.target.value})} 
+                    required
+                  >
+                    <option value="">-- Chọn mã hồ sơ điều trị --</option>
+                    {dropdownData.treatmentPlanIds.map(id => (
+                      <option key={id} value={id}>{id}</option>
+                    ))}
+                  </select>
+                  <input 
+                    type="text"
+                    className="labtest-input-custom"
+                    placeholder="Hoặc nhập mã mới"
+                    value={labTestForm.TreatmentPlantID} 
+                    onChange={e => setLabTestForm({...labTestForm, TreatmentPlantID: e.target.value})}
+                    style={{marginTop: '8px'}}
+                  />
+                </div>
               </div>
               <div className="labtest-row">
                 <label>Tên xét nghiệm (TestName):</label>
-                <input value={labTestForm.TestName} onChange={e => setLabTestForm({...labTestForm, TestName: e.target.value})} required />
+                <input 
+                  className="labtest-input"
+                  value={labTestForm.TestName} 
+                  onChange={e => setLabTestForm({...labTestForm, TestName: e.target.value})} 
+                  placeholder="Nhập tên xét nghiệm"
+                  required 
+                />
               </div>
               <div className="labtest-row">
                 <label>Mã xét nghiệm (TestCode):</label>
-                <input value={labTestForm.TestCode} onChange={e => setLabTestForm({...labTestForm, TestCode: e.target.value})} required />
+                <input 
+                  className="labtest-input"
+                  value={labTestForm.TestCode} 
+                  onChange={e => setLabTestForm({...labTestForm, TestCode: e.target.value})} 
+                  placeholder="Nhập mã xét nghiệm"
+                  required 
+                />
               </div>
               <div className="labtest-row">
                 <label>Loại xét nghiệm (TestType):</label>
-                <input value={labTestForm.TestType} onChange={e => setLabTestForm({...labTestForm, TestType: e.target.value})} required />
+                <select 
+                  className="labtest-dropdown"
+                  value={labTestForm.TestType} 
+                  onChange={e => setLabTestForm({...labTestForm, TestType: e.target.value})} 
+                  required
+                >
+                  <option value="">-- Chọn loại xét nghiệm --</option>
+                  <option value="CD4">CD4</option>
+                  <option value="Viral Load">Viral Load</option>
+                  <option value="HbA1c">HbA1c</option>
+                  <option value="Glucose">Glucose</option>
+                  <option value="Cholesterol">Cholesterol</option>
+                  <option value="Triglycerides">Triglycerides</option>
+                  <option value="Complete Blood Count">Complete Blood Count</option>
+                  <option value="Liver Function">Liver Function</option>
+                  <option value="Kidney Function">Kidney Function</option>
+                  <option value="Other">Khác</option>
+                </select>
               </div>
               <div className="labtest-row">
                 <label>Kết quả (ResultValue):</label>
-                <input value={labTestForm.ResultValue} onChange={e => setLabTestForm({...labTestForm, ResultValue: e.target.value})} required />
+                <input 
+                  className="labtest-input"
+                  value={labTestForm.ResultValue} 
+                  onChange={e => setLabTestForm({...labTestForm, ResultValue: e.target.value})} 
+                  placeholder="Nhập kết quả xét nghiệm"
+                  required 
+                />
               </div>
               <div className="labtest-row">
                 <label>CD4 ban đầu:</label>
-                <input type="number" value={labTestForm.CD4Initial} onChange={e => setLabTestForm({...labTestForm, CD4Initial: e.target.value})} required />
+                <input 
+                  type="number" 
+                  className="labtest-input"
+                  value={labTestForm.CD4Initial} 
+                  onChange={e => setLabTestForm({...labTestForm, CD4Initial: e.target.value})} 
+                  placeholder="Nhập giá trị CD4"
+                  min="0"
+                  required 
+                />
               </div>
               <div className="labtest-row">
                 <label>Viral Load ban đầu:</label>
-                <input type="number" value={labTestForm.ViralLoadInitial} onChange={e => setLabTestForm({...labTestForm, ViralLoadInitial: e.target.value})} required />
+                <input 
+                  type="number" 
+                  className="labtest-input"
+                  value={labTestForm.ViralLoadInitial} 
+                  onChange={e => setLabTestForm({...labTestForm, ViralLoadInitial: e.target.value})} 
+                  placeholder="Nhập giá trị Viral Load"
+                  min="0"
+                  required 
+                />
               </div>
               <div className="labtest-row">
                 <label>Trạng thái:</label>
-                <input value={labTestForm.Status} onChange={e => setLabTestForm({...labTestForm, Status: e.target.value})} required />
+                <select 
+                  className="labtest-dropdown"
+                  value={labTestForm.Status} 
+                  onChange={e => setLabTestForm({...labTestForm, Status: e.target.value})} 
+                  required
+                >
+                  <option value="In Progress">Đang xử lý</option>
+                 <option value="Completed">Hoàn thành</option>
+                 
+                </select>
               </div>
               <div className="labtest-row">
                 <label>Mô tả:</label>
-                <input value={labTestForm.Description} onChange={e => setLabTestForm({...labTestForm, Description: e.target.value})} />
+                <textarea 
+                  className="labtest-textarea"
+                  value={labTestForm.Description} 
+                  onChange={e => setLabTestForm({...labTestForm, Description: e.target.value})}
+                  placeholder="Nhập mô tả chi tiết (không bắt buộc)"
+                  rows="3"
+                />
               </div>
-              <button className="labtest-submit-btn" type="submit">Thêm LabTest</button>
-              {labTestMessage && <div className="labtest-message">{labTestMessage}</div>}
+              <button className="labtest-submit-btn" type="submit">
+                <i className="fas fa-plus-circle"></i> Thêm LabTest
+              </button>
+              {labTestMessage && (
+                <div className={`labtest-message ${labTestMessage.includes('thành công') ? 'success' : 'error'}`}>
+                  <i className={`fas ${labTestMessage.includes('thành công') ? 'fa-check-circle' : 'fa-exclamation-circle'}`}></i>
+                  {labTestMessage}
+                </div>
+              )}
             </form>
           </div>
         )}
         {selected === 'update-labtest' && (
           <div className="doctor-content">
             <h2 className="doctor-table-title">Cập nhật LabTest</h2>
+            {loadingDropdownData && (
+              <div className="loading-dropdown">
+                <i className="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...
+              </div>
+            )}
             <form
               className="labtest-form"
               onSubmit={async (e) => {
@@ -932,6 +1096,8 @@ const Doctor = () => {
                     Description: updateLabTestForm.Description
                   });
                   setUpdateLabTestMessage('Cập nhật LabTest thành công!');
+                  // Refresh dropdown data
+                  fetchDropdownData();
                 } catch (err) {
                   setUpdateLabTestMessage('Có lỗi khi cập nhật LabTest!');
                 }
@@ -939,50 +1105,184 @@ const Doctor = () => {
             >
               <div className="labtest-row">
                 <label>ID LabTest (labTestId):</label>
-                <input value={updateLabTestForm.labTestId} onChange={e => setUpdateLabTestForm({...updateLabTestForm, labTestId: e.target.value})} required />
+                <div className="dropdown-container">
+                  <select 
+                    className="labtest-dropdown"
+                    value={updateLabTestForm.labTestId} 
+                    onChange={e => setUpdateLabTestForm({...updateLabTestForm, labTestId: e.target.value})} 
+                    required
+                  >
+                    <option value="">-- Chọn ID LabTest --</option>
+                    {dropdownData.labTestIds.map(id => (
+                      <option key={id} value={id}>{id}</option>
+                    ))}
+                  </select>
+                  <input 
+                    type="text"
+                    className="labtest-input-custom"
+                    placeholder="Hoặc nhập ID mới"
+                    value={updateLabTestForm.labTestId} 
+                    onChange={e => setUpdateLabTestForm({...updateLabTestForm, labTestId: e.target.value})}
+                    style={{marginTop: '8px'}}
+                  />
+                </div>
               </div>
               <div className="labtest-row">
                 <label>Mã yêu cầu (RequestID):</label>
-                <input value={updateLabTestForm.RequestID} onChange={e => setUpdateLabTestForm({...updateLabTestForm, RequestID: e.target.value})} required />
+                <div className="dropdown-container">
+                  <select 
+                    className="labtest-dropdown"
+                    value={updateLabTestForm.RequestID} 
+                    onChange={e => setUpdateLabTestForm({...updateLabTestForm, RequestID: e.target.value})} 
+                    required
+                  >
+                    <option value="">-- Chọn mã yêu cầu --</option>
+                    {dropdownData.requestIds.map(id => (
+                      <option key={id} value={id}>{id}</option>
+                    ))}
+                  </select>
+                  <input 
+                    type="text"
+                    className="labtest-input-custom"
+                    placeholder="Hoặc nhập mã mới"
+                    value={updateLabTestForm.RequestID} 
+                    onChange={e => setUpdateLabTestForm({...updateLabTestForm, RequestID: e.target.value})}
+                    style={{marginTop: '8px'}}
+                  />
+                </div>
               </div>
               <div className="labtest-row">
                 <label>Mã hồ sơ điều trị (TreatmentPlantID):</label>
-                <input value={updateLabTestForm.TreatmentPlantID} onChange={e => setUpdateLabTestForm({...updateLabTestForm, TreatmentPlantID: e.target.value})} required />
+                <div className="dropdown-container">
+                  <select 
+                    className="labtest-dropdown"
+                    value={updateLabTestForm.TreatmentPlantID} 
+                    onChange={e => setUpdateLabTestForm({...updateLabTestForm, TreatmentPlantID: e.target.value})} 
+                    required
+                  >
+                    <option value="">-- Chọn mã hồ sơ điều trị --</option>
+                    {dropdownData.treatmentPlanIds.map(id => (
+                      <option key={id} value={id}>{id}</option>
+                    ))}
+                  </select>
+                  <input 
+                    type="text"
+                    className="labtest-input-custom"
+                    placeholder="Hoặc nhập mã mới"
+                    value={updateLabTestForm.TreatmentPlantID} 
+                    onChange={e => setUpdateLabTestForm({...updateLabTestForm, TreatmentPlantID: e.target.value})}
+                    style={{marginTop: '8px'}}
+                  />
+                </div>
               </div>
               <div className="labtest-row">
                 <label>Tên xét nghiệm (TestName):</label>
-                <input value={updateLabTestForm.TestName} onChange={e => setUpdateLabTestForm({...updateLabTestForm, TestName: e.target.value})} required />
+                <input 
+                  className="labtest-input"
+                  value={updateLabTestForm.TestName} 
+                  onChange={e => setUpdateLabTestForm({...updateLabTestForm, TestName: e.target.value})} 
+                  placeholder="Nhập tên xét nghiệm"
+                  required 
+                />
               </div>
               <div className="labtest-row">
                 <label>Mã xét nghiệm (TestCode):</label>
-                <input value={updateLabTestForm.TestCode} onChange={e => setUpdateLabTestForm({...updateLabTestForm, TestCode: e.target.value})} required />
+                <input 
+                  className="labtest-input"
+                  value={updateLabTestForm.TestCode} 
+                  onChange={e => setUpdateLabTestForm({...updateLabTestForm, TestCode: e.target.value})} 
+                  placeholder="Nhập mã xét nghiệm"
+                  required 
+                />
               </div>
               <div className="labtest-row">
                 <label>Loại xét nghiệm (TestType):</label>
-                <input value={updateLabTestForm.TestType} onChange={e => setUpdateLabTestForm({...updateLabTestForm, TestType: e.target.value})} required />
+                <select 
+                  className="labtest-dropdown"
+                  value={updateLabTestForm.TestType} 
+                  onChange={e => setUpdateLabTestForm({...updateLabTestForm, TestType: e.target.value})} 
+                  required
+                >
+                  <option value="">-- Chọn loại xét nghiệm --</option>
+                  <option value="CD4">CD4</option>
+                  <option value="Viral Load">Viral Load</option>
+                  <option value="HbA1c">HbA1c</option>
+                  <option value="Glucose">Glucose</option>
+                  <option value="Cholesterol">Cholesterol</option>
+                  <option value="Triglycerides">Triglycerides</option>
+                  <option value="Complete Blood Count">Complete Blood Count</option>
+                  <option value="Liver Function">Liver Function</option>
+                  <option value="Kidney Function">Kidney Function</option>
+                  <option value="Other">Khác</option>
+                </select>
               </div>
               <div className="labtest-row">
                 <label>Kết quả (ResultValue):</label>
-                <input value={updateLabTestForm.ResultValue} onChange={e => setUpdateLabTestForm({...updateLabTestForm, ResultValue: e.target.value})} required />
+                <input 
+                  className="labtest-input"
+                  value={updateLabTestForm.ResultValue} 
+                  onChange={e => setUpdateLabTestForm({...updateLabTestForm, ResultValue: e.target.value})} 
+                  placeholder="Nhập kết quả xét nghiệm"
+                  required 
+                />
               </div>
               <div className="labtest-row">
                 <label>CD4 ban đầu:</label>
-                <input type="number" value={updateLabTestForm.CD4Initial} onChange={e => setUpdateLabTestForm({...updateLabTestForm, CD4Initial: e.target.value})} required />
+                <input 
+                  type="number" 
+                  className="labtest-input"
+                  value={updateLabTestForm.CD4Initial} 
+                  onChange={e => setUpdateLabTestForm({...updateLabTestForm, CD4Initial: e.target.value})} 
+                  placeholder="Nhập giá trị CD4"
+                  min="0"
+                  required 
+                />
               </div>
               <div className="labtest-row">
                 <label>Viral Load ban đầu:</label>
-                <input type="number" value={updateLabTestForm.ViralLoadInitial} onChange={e => setUpdateLabTestForm({...updateLabTestForm, ViralLoadInitial: e.target.value})} required />
+                <input 
+                  type="number" 
+                  className="labtest-input"
+                  value={updateLabTestForm.ViralLoadInitial} 
+                  onChange={e => setUpdateLabTestForm({...updateLabTestForm, ViralLoadInitial: e.target.value})} 
+                  placeholder="Nhập giá trị Viral Load"
+                  min="0"
+                  required 
+                />
               </div>
               <div className="labtest-row">
                 <label>Trạng thái:</label>
-                <input value={updateLabTestForm.Status} onChange={e => setUpdateLabTestForm({...updateLabTestForm, Status: e.target.value})} required />
+                <select 
+                  className="labtest-dropdown"
+                  value={updateLabTestForm.Status} 
+                  onChange={e => setUpdateLabTestForm({...updateLabTestForm, Status: e.target.value})} 
+                  required
+                >
+                  <option value="">-- Chọn trạng thái --</option>
+                  
+                  <option value="Completed">Hoàn thành</option>
+                  
+                </select>
               </div>
               <div className="labtest-row">
                 <label>Mô tả:</label>
-                <input value={updateLabTestForm.Description} onChange={e => setUpdateLabTestForm({...updateLabTestForm, Description: e.target.value})} />
+                <textarea 
+                  className="labtest-textarea"
+                  value={updateLabTestForm.Description} 
+                  onChange={e => setUpdateLabTestForm({...updateLabTestForm, Description: e.target.value})}
+                  placeholder="Nhập mô tả chi tiết (không bắt buộc)"
+                  rows="3"
+                />
               </div>
-              <button className="labtest-submit-btn" type="submit">Cập nhật LabTest</button>
-              {updateLabTestMessage && <div className="labtest-message">{updateLabTestMessage}</div>}
+              <button className="labtest-submit-btn" type="submit">
+                <i className="fas fa-edit"></i> Cập nhật LabTest
+              </button>
+              {updateLabTestMessage && (
+                <div className={`labtest-message ${updateLabTestMessage.includes('thành công') ? 'success' : 'error'}`}>
+                  <i className={`fas ${updateLabTestMessage.includes('thành công') ? 'fa-check-circle' : 'fa-exclamation-circle'}`}></i>
+                  {updateLabTestMessage}
+                </div>
+              )}
             </form>
           </div>
         )}

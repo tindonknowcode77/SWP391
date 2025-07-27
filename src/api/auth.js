@@ -436,3 +436,29 @@ export const quenmatkhau = (data) => {
     headers: { 'Content-Type': 'application/json' }
   });
 };
+export const  xoastaff = (userId) => {
+  return axiosClient.delete('Manager/DeleteStaff/'+ userId);
+};
+export const laytatcaquanly =() => {
+  return axiosClient.get('Manager/GetAllManagers');
+};
+
+export const layManagerById = (userId) => {
+  return axiosClient.get(`Manager/GetManagerById/${userId}`);
+};
+
+export const themManager = (data) => {
+  return axiosClient.post('Manager/AddManager', data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+};
+
+export const capnhatManager = (userId, data) => {
+  return axiosClient.put(`Manager/UpdateManager/${userId}`, data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+};
+
+export const xoaManager = (userId) => {
+  return axiosClient.delete(`Manager/DeleteManager/${userId}`);
+};
