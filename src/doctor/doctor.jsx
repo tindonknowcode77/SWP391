@@ -391,63 +391,71 @@ const Doctor = () => {
   return (
     <div className="doctor-container">
       <aside className="doctor-sidebar">
-        <div className="sidebar-user-row">
-          <span className="sidebar-user">
-          <span style={{ color: '#9de0ad', fontWeight: 'bold' }}>DOCTOR : </span> {currentUser?.name || 'Bác Sĩ'}</span>
-          <button className="admin-sidebar-logout-btn" onClick={handleLogout} title="Đăng xuất" aria-label="Đăng xuất">
+        <div className="doctor-sidebar-user-row">
+          <span className="doctor-sidebar-user">
+            <span style={{ color: '#9de0ad', fontWeight: 'bold' }}>DOCTOR : </span> {currentUser?.name || 'Bác Sĩ'}
+          </span>
+          <button className="doctor-sidebar-logout-btn" onClick={handleLogout} title="Đăng xuất" aria-label="Đăng xuất">
             <i className="fas fa-sign-out-alt"></i>
           </button>
         </div>
-        <ul className="sidebar-menu">
+        <ul className="doctor-sidebar-menu">
           <li
             className={selected === 'appointments' ? 'active' : ''}
             onClick={() => setSelected('appointments')}
           >
-            Lịch hẹn của tôi
+            <i className="fas fa-calendar-check"></i>
+            <span>Lịch hẹn của tôi</span>
           </li>
           <li
             className={selected === 'all-appointments' ? 'active' : ''}
             onClick={() => setSelected('all-appointments')}
           >
-            Tất cả lịch hẹn
+            <i className="fas fa-calendar-alt"></i>
+            <span>Tất cả lịch hẹn</span>
           </li>
           <li
             className={selected === 'cancelled-appointments' ? 'active' : ''}
             onClick={() => setSelected('cancelled-appointments')}
           >
-            Hủy lịch hẹn 
+            <i className="fas fa-calendar-times"></i>
+            <span>Hủy lịch hẹn</span>
           </li>
           <li
             className={selected === 'patients' ? 'active' : ''}
             onClick={() => setSelected('patients')}
           >
-            Danh sách hồ sơ điều trị
+            <i className="fas fa-notes-medical"></i>
+            <span>Danh sách hồ sơ điều trị</span>
           </li>
           <li
             className={selected === 'my-patients' ? 'active' : ''}
             onClick={() => setSelected('my-patients')}
           >
-            Bệnh nhân của tôi
+            <i className="fas fa-user-injured"></i>
+            <span>Bệnh nhân của tôi</span>
           </li>
           <li
             className={selected === 'all-labtests' ? 'active' : ''}
             onClick={() => setSelected('all-labtests')}
           >
-            Danh sách LabTest
+            <i className="fas fa-vial"></i>
+            <span>Danh sách LabTest</span>
           </li>
           <li
             className={selected === 'labtest' ? 'active' : ''}
             onClick={() => setSelected('labtest')}
           >
-            Thêm LabTest
+            <i className="fas fa-plus-circle"></i>
+            <span>Thêm LabTest</span>
           </li>
           <li
             className={selected === 'update-labtest' ? 'active' : ''}
             onClick={() => setSelected('update-labtest')}
           >
-            Cập nhật LabTest
+            <i className="fas fa-edit"></i>
+            <span>Cập nhật LabTest</span>
           </li>
-          
         </ul>
       </aside>
       <main className="doctor-main">
