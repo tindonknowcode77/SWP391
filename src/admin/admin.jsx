@@ -107,6 +107,7 @@ const Admin = () => {
   });
   const [updateARVMsg, setUpdateARVMsg] = useState('');
   const [updatedARV, setUpdatedARV] = useState(null);
+  const [showARVUpdateModal, setShowARVUpdateModal] = useState(false);
 
   const [addStaffForm, setAddStaffForm] = useState({
     Fullname: '',
@@ -131,12 +132,15 @@ const Admin = () => {
   const [doctorSchedules, setDoctorSchedules] = useState([]);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [scheduleToDelete, setScheduleToDelete] = useState(null);
+  const [showScheduleUpdateModal, setShowScheduleUpdateModal] = useState(false);
   const [staffToDelete, setStaffToDelete] = useState(null);
   const [showDeleteStaffPopup, setShowDeleteStaffPopup] = useState(false);
   const [deleteStaffMsg, setDeleteStaffMsg] = useState('');
+  const [showStaffUpdateModal, setShowStaffUpdateModal] = useState(false);
   const [managerToDelete, setManagerToDelete] = useState(null);
   const [showDeleteManagerPopup, setShowDeleteManagerPopup] = useState(false);
   const [deleteManagerMsg, setDeleteManagerMsg] = useState('');
+  const [showManagerUpdateModal, setShowManagerUpdateModal] = useState(false);
   const [deleteMsg, setDeleteMsg] = useState('');
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [doctorsList, setDoctorsList] = useState([]);
@@ -257,6 +261,32 @@ const Admin = () => {
       });
       setUpdateScheduleMsg('Cập nhật lịch làm việc thành công!');
       setUpdatedSchedule({ ...updateScheduleForm });
+      
+      // Refresh danh sách lịch làm việc nếu đang ở tab danh sách
+      if (selectedTab === 'doctorschedule') {
+        fetchDoctorSchedules();
+      }
+      
+      // Hiển thị thông báo toàn trang
+      const successNotification = document.createElement('div');
+      successNotification.className = 'global-success-notification';
+      successNotification.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        Đã cập nhật lịch làm việc thành công
+      `;
+      document.body.appendChild(successNotification);
+      
+      // Xóa thông báo sau 3 giây
+      setTimeout(() => {
+        successNotification.style.opacity = '0';
+        setTimeout(() => document.body.removeChild(successNotification), 300);
+      }, 3000);
+      
+      // Đóng modal sau 1.5 giây
+      setTimeout(() => {
+        setShowScheduleUpdateModal(false);
+      }, 1500);
+      
     } catch (err) {
       setUpdateScheduleMsg('Cập nhật lịch làm việc thất bại!');
       setUpdatedSchedule(null);
@@ -292,6 +322,32 @@ const Admin = () => {
       await capnhatARVProtocol(updateARVForm);
       setUpdateARVMsg('Cập nhật ARV thành công!');
       setUpdatedARV({ ...updateARVForm });
+      
+      // Refresh danh sách ARV nếu đang ở tab danh sách
+      if (selectedTab === 'allarvprotocols') {
+        fetchARVProtocolsList();
+      }
+      
+      // Hiển thị thông báo toàn trang
+      const successNotification = document.createElement('div');
+      successNotification.className = 'global-success-notification';
+      successNotification.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        Đã cập nhật phác đồ ARV <strong>${updateARVForm.ARVName}</strong> thành công
+      `;
+      document.body.appendChild(successNotification);
+      
+      // Xóa thông báo sau 3 giây
+      setTimeout(() => {
+        successNotification.style.opacity = '0';
+        setTimeout(() => document.body.removeChild(successNotification), 300);
+      }, 3000);
+      
+      // Đóng modal sau 1.5 giây
+      setTimeout(() => {
+        setShowARVUpdateModal(false);
+      }, 1500);
+      
     } catch (err) {
       setUpdateARVMsg('Cập nhật ARV thất bại!');
       setUpdatedARV(null);
@@ -330,6 +386,32 @@ const Admin = () => {
       await updateStaff(updateStaffId, updateStaffForm);
       setUpdateStaffMsg('Cập nhật nhân viên thành công!');
       setUpdatedStaff({ ...updateStaffForm });
+      
+      // Refresh danh sách nhân viên nếu đang ở tab danh sách
+      if (selectedTab === 'allstaff') {
+        fetchStaffList();
+      }
+      
+      // Hiển thị thông báo toàn trang
+      const successNotification = document.createElement('div');
+      successNotification.className = 'global-success-notification';
+      successNotification.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        Đã cập nhật nhân viên <strong>${updateStaffForm.Fullname}</strong> thành công
+      `;
+      document.body.appendChild(successNotification);
+      
+      // Xóa thông báo sau 3 giây
+      setTimeout(() => {
+        successNotification.style.opacity = '0';
+        setTimeout(() => document.body.removeChild(successNotification), 300);
+      }, 3000);
+      
+      // Đóng modal sau 1.5 giây
+      setTimeout(() => {
+        setShowStaffUpdateModal(false);
+      }, 1500);
+      
     } catch (err) {
       setUpdateStaffMsg('Cập nhật nhân viên thất bại!');
       setUpdatedStaff(null);
@@ -415,11 +497,7 @@ const Admin = () => {
   };
   
   // Effect để tải thông tin quản lý khi ID thay đổi và có giá trị
-  useEffect(() => {
-    if (updateManagerId && selectedTab === 'updatemanager') {
-      loadManagerData();
-    }
-  }, [updateManagerId]);
+  // Effect removed as updatemanager tab has been removed
   
   const handleUpdateManagerSubmit = async (e) => {
     e.preventDefault();
@@ -432,6 +510,11 @@ const Admin = () => {
       await capnhatManager(updateManagerId, updateManagerForm);
       setUpdateManagerMsg('Cập nhật quản lý thành công!');
       setUpdatedManager({ ...updateManagerForm });
+      
+      // Refresh danh sách quản lý
+      if (selectedTab === 'allmanagers') {
+        fetchManagersList();
+      }
       
       // Hiển thị thông báo toàn trang
       const successNotification = document.createElement('div');
@@ -447,6 +530,11 @@ const Admin = () => {
         successNotification.style.opacity = '0';
         setTimeout(() => document.body.removeChild(successNotification), 300);
       }, 3000);
+      
+      // Đóng modal sau 1.5 giây
+      setTimeout(() => {
+        setShowManagerUpdateModal(false);
+      }, 1500);
       
     } catch (err) {
       setUpdateManagerMsg('Cập nhật quản lý thất bại!');
@@ -526,7 +614,7 @@ const Admin = () => {
     if (selectedTab === 'doctorschedule') {
       fetchDoctorSchedules();
     }
-    if (selectedTab === 'addschedule' || selectedTab === 'updateschedule' || selectedTab === 'alldoctors') {
+    if (selectedTab === 'addschedule' || selectedTab === 'alldoctors') {
       fetchDoctorsList();
     }
     if (selectedTab === 'allarvprotocols') {
@@ -535,7 +623,7 @@ const Admin = () => {
     if (selectedTab === 'allstaff') {
       fetchStaffList();
     }
-    if (selectedTab === 'allmanagers' || selectedTab === 'updatemanager') {
+    if (selectedTab === 'allmanagers') {
       fetchManagersList();
     }
   }, [selectedTab]);
@@ -545,6 +633,18 @@ const Admin = () => {
     setScheduleToDelete(schedule);
     setShowDeletePopup(true);
     setDeleteMsg('');
+  };
+  
+  // Hàm xử lý cập nhật lịch làm việc từ danh sách
+  const handleUpdateSchedule = (schedule) => {
+    setUpdateScheduleId(schedule.ScheduleID);
+    setUpdateScheduleForm({
+      DoctorID: schedule.DoctorID || '',
+      SlotID: schedule.SlotID || '',
+      DateWork: schedule.DateWork ? new Date(schedule.DateWork).toISOString().split('T')[0] : ''
+    });
+    setShowScheduleUpdateModal(true);
+    setUpdateScheduleMsg('');
   };
   const confirmDeleteSchedule = async () => {
     if (!scheduleToDelete) return;
@@ -568,6 +668,18 @@ const Admin = () => {
     setStaffToDelete(staff);
     setShowDeleteStaffPopup(true);
     setDeleteStaffMsg('');
+  };
+  
+  // Hàm xử lý cập nhật nhân viên từ danh sách
+  const handleUpdateStaff = (staff) => {
+    setUpdateStaffId(staff.UserID || staff.UserId || staff.ID);
+    setUpdateStaffForm({
+      Fullname: staff.Fullname || staff.FullName || '',
+      Email: staff.Email || '',
+      Address: staff.Address || '',
+      Image: staff.Image || ''
+    });
+    setShowStaffUpdateModal(true);
   };
   
   const confirmDeleteStaff = async () => {
@@ -617,6 +729,31 @@ const Admin = () => {
     setManagerToDelete(manager);
     setShowDeleteManagerPopup(true);
     setDeleteManagerMsg('');
+  };
+  
+  // Hàm xử lý cập nhật quản lý từ danh sách
+  const handleUpdateManager = (manager) => {
+    setUpdateManagerId(manager.UserID || manager.UserId || manager.ID);
+    setUpdateManagerForm({
+      Fullname: manager.Fullname || manager.FullName || '',
+      Email: manager.Email || '',
+      Address: manager.Address || '',
+      Image: manager.Image || ''
+    });
+    setShowManagerUpdateModal(true);
+  };
+  
+  // Hàm xử lý cập nhật ARV từ danh sách
+  const handleUpdateARV = (arv) => {
+    setUpdateARVForm({
+      ARVID: arv.ARVID || '',
+      ARVCode: arv.ARVCode || '',
+      ARVName: arv.ARVName || '',
+      Description: arv.Description || '',
+      AgeRange: arv.AgeRange || '',
+      ForGroup: arv.ForGroup || ''
+    });
+    setShowARVUpdateModal(true);
   };
   
   const confirmDeleteManager = async () => {
@@ -696,17 +833,9 @@ const Admin = () => {
             <i className="fas fa-calendar-plus"></i>
             <span>Thêm lịch làm việc</span>
           </li>
-          <li className={selectedTab === 'updateschedule' ? 'active' : ''} onClick={() => setSelectedTab('updateschedule')}>
-            <i className="fas fa-calendar-alt"></i>
-            <span>Cập nhật lịch làm việc</span>
-          </li>
           <li className={selectedTab === 'addarv' ? 'active' : ''} onClick={() => setSelectedTab('addarv')}>
             <i className="fas fa-pills"></i>
             <span>Thêm ARV</span>
-          </li>
-          <li className={selectedTab === 'updatearv' ? 'active' : ''} onClick={() => setSelectedTab('updatearv')}>
-            <i className="fas fa-capsules"></i>
-            <span>Cập nhật ARV</span>
           </li>
           <li className={selectedTab === 'allarvprotocols' ? 'active' : ''} onClick={() => setSelectedTab('allarvprotocols')}>
             <i className="fas fa-list-alt"></i>
@@ -715,10 +844,6 @@ const Admin = () => {
           <li className={selectedTab === 'addstaff' ? 'active' : ''} onClick={() => setSelectedTab('addstaff')}>
             <i className="fas fa-user-plus"></i>
             <span>Thêm nhân viên</span>
-          </li>
-          <li className={selectedTab === 'updatestaff' ? 'active' : ''} onClick={() => setSelectedTab('updatestaff')}>
-            <i className="fas fa-user-friends"></i>
-            <span>Cập nhật nhân viên</span>
           </li>
           <li className={selectedTab === 'allstaff' ? 'active' : ''} onClick={() => setSelectedTab('allstaff')}>
             <i className="fas fa-users"></i>
@@ -731,10 +856,6 @@ const Admin = () => {
           <li className={selectedTab === 'addmanager' ? 'active' : ''} onClick={() => setSelectedTab('addmanager')}>
             <i className="fas fa-user-plus"></i>
             <span>Thêm quản lý</span>
-          </li>
-          <li className={selectedTab === 'updatemanager' ? 'active' : ''} onClick={() => setSelectedTab('updatemanager')}>
-            <i className="fas fa-user-edit"></i>
-            <span>Cập nhật quản lý</span>
           </li>
         
         </ul>
@@ -933,59 +1054,6 @@ const Admin = () => {
             )}
           </div>
         )}
-        {selectedTab === 'updateschedule' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Cập nhật lịch làm việc bác sĩ</h2>
-            <form className="add-doctor-form" onSubmit={handleUpdateScheduleSubmit} style={{maxWidth: 500, margin: '0 auto'}}>
-              <div className="form-group">
-                <label>ScheduleID</label>
-                <input name="ScheduleID" value={updateScheduleId} onChange={e => setUpdateScheduleId(e.target.value)} required />
-              </div>
-              <div className="form-group">
-                <label>DoctorID</label>
-                <select name="DoctorID" value={updateScheduleForm.DoctorID} onChange={handleUpdateScheduleChange} required>
-                  <option value="">-- Chọn bác sĩ --</option>
-                  {doctorsList.map(doctor => (
-                    <option key={doctor.DoctorId} value={doctor.DoctorId}>
-                      {doctor.DoctorId} - {doctor.Fullname}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label>SlotID</label>
-                <input name="SlotID" value={updateScheduleForm.SlotID} onChange={handleUpdateScheduleChange} required />
-              </div>
-              <div className="form-group">
-                <label>DateWork</label>
-                <input name="DateWork" value={updateScheduleForm.DateWork} onChange={handleUpdateScheduleChange} required type="datetime-local" />
-              </div>
-              <button type="submit" className="admin-action-btn" style={{marginTop: 16}}>Cập nhật lịch</button>
-              {updateScheduleMsg && <div style={{marginTop: 12, color: updateScheduleMsg.includes('thành công') ? '#27ae60' : '#e74c3c'}}>{updateScheduleMsg}</div>}
-            </form>
-            {updatedSchedule && updateScheduleMsg.includes('thành công') && (
-              <div style={{marginTop: 32}}>
-                <h3>Thông tin lịch vừa cập nhật</h3>
-                <table className="admin-appointments-table">
-                  <thead>
-                    <tr>
-                      <th>DoctorID</th>
-                      <th>SlotID</th>
-                      <th>DateWork</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{updatedSchedule.DoctorID}</td>
-                      <td>{updatedSchedule.SlotID}</td>
-                      <td>{updatedSchedule.DateWork}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
         {selectedTab === 'addarv' && (
           <div className="admin-content">
             <h2 className="admin-table-title">Thêm ARV Protocol</h2>
@@ -1040,66 +1108,6 @@ const Admin = () => {
             )}
           </div>
         )}
-        {selectedTab === 'updatearv' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Cập nhật ARV Protocol</h2>
-            <form className="add-doctor-form" onSubmit={handleUpdateARVSubmit} style={{maxWidth: 500, margin: '0 auto'}}>
-              <div className="form-group">
-                <label>ARVID</label>
-                <input name="ARVID" value={updateARVForm.ARVID} onChange={handleUpdateARVChange} required />
-              </div>
-              <div className="form-group">
-                <label>ARVCode</label>
-                <input name="ARVCode" value={updateARVForm.ARVCode} onChange={handleUpdateARVChange} required />
-              </div>
-              <div className="form-group">
-                <label>ARVName</label>
-                <input name="ARVName" value={updateARVForm.ARVName} onChange={handleUpdateARVChange} required />
-              </div>
-              <div className="form-group">
-                <label>Description</label>
-                <input name="Description" value={updateARVForm.Description} onChange={handleUpdateARVChange} required />
-              </div>
-              <div className="form-group">
-                <label>AgeRange</label>
-                <input name="AgeRange" value={updateARVForm.AgeRange} onChange={handleUpdateARVChange} required />
-              </div>
-              <div className="form-group">
-                <label>ForGroup</label>
-                <input name="ForGroup" value={updateARVForm.ForGroup} onChange={handleUpdateARVChange} required />
-              </div>
-              <button type="submit" className="admin-action-btn" style={{marginTop: 16}}>Cập nhật ARV</button>
-              {updateARVMsg && <div style={{marginTop: 12, color: updateARVMsg.includes('thành công') ? '#27ae60' : '#e74c3c'}}>{updateARVMsg}</div>}
-            </form>
-            {updatedARV && updateARVMsg.includes('thành công') && (
-              <div style={{marginTop: 32}}>
-                <h3>Thông tin ARV vừa cập nhật</h3>
-                <table className="admin-appointments-table">
-                  <thead>
-                    <tr>
-                      <th>ARVID</th>
-                      <th>ARVCode</th>
-                      <th>ARVName</th>
-                      <th>Description</th>
-                      <th>AgeRange</th>
-                      <th>ForGroup</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{updatedARV.ARVID}</td>
-                      <td>{updatedARV.ARVCode}</td>
-                      <td>{updatedARV.ARVName}</td>
-                      <td>{updatedARV.Description}</td>
-                      <td>{updatedARV.AgeRange}</td>
-                      <td>{updatedARV.ForGroup}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
         {selectedTab === 'allarvprotocols' && (
           <div className="admin-content">
             <h2 className="admin-table-title">Danh sách tất cả các phác đồ ARV</h2>
@@ -1112,23 +1120,306 @@ const Admin = () => {
                   <th>Description</th>
                   <th>AgeRange</th>
                   <th>ForGroup</th>
+                  <th>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
                 {arvProtocolsList && arvProtocolsList.length > 0 ? arvProtocolsList.map(arv => (
-                  <tr key={arv.ARVID}>
+                  <tr key={arv.ARVID} style={{cursor: 'pointer'}} onClick={() => handleUpdateARV(arv)}>
                     <td>{arv.ARVID}</td>
                     <td>{arv.ARVCode}</td>
                     <td>{arv.ARVName}</td>
                     <td>{arv.Description}</td>
                     <td>{arv.AgeRange}</td>
                     <td>{arv.ForGroup}</td>
+                    <td>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent row click event
+                          handleUpdateARV(arv);
+                        }} 
+                        className="admin-action-btn" 
+                        style={{
+                          backgroundColor: '#3498db', 
+                          padding: '6px 12px', 
+                          fontSize: '14px', 
+                          borderRadius: '6px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          boxShadow: '0 2px 5px rgba(52, 152, 219, 0.2)',
+                          transition: 'all 0.2s ease'
+                        }}
+                        title="Cập nhật thông tin phác đồ ARV này"
+                      >
+                        <i className="fas fa-edit"></i> Cập nhật
+                      </button>
+                    </td>
                   </tr>
                 )) : (
                   <tr><td colSpan={6} style={{textAlign:'center'}}>Không có dữ liệu</td></tr>
                 )}
               </tbody>
             </table>
+            
+            {/* Popup cập nhật thông tin ARV */}
+            {showARVUpdateModal && (
+              <div className="delete-popup-overlay" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
+                <div className="delete-popup" style={{ 
+                  width: '600px',
+                  maxWidth: '90%',
+                  backgroundColor: '#fff',
+                  borderRadius: '8px',
+                  boxShadow: '0 5px 20px rgba(0,0,0,0.2)',
+                  padding: '25px'
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    borderBottom: '2px solid #3498db',
+                    paddingBottom: '15px',
+                    marginBottom: '20px'
+                  }}>
+                    <h3 style={{ 
+                      margin: '0', 
+                      color: '#2c3e50',
+                      fontWeight: '700',
+                      fontSize: '1.5rem',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}>
+                      <i className="fas fa-capsules" style={{ marginRight: '10px', color: '#3498db' }}></i>
+                      Cập nhật thông tin phác đồ ARV
+                    </h3>
+                    <button 
+                      onClick={() => setShowARVUpdateModal(false)} 
+                      style={{ 
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '1.5rem',
+                        cursor: 'pointer',
+                        color: '#7f8c8d'
+                      }}
+                      title="Đóng"
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
+                  </div>
+                  
+                  <form onSubmit={handleUpdateARVSubmit}>
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-fingerprint" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Mã ARV (ARVID):
+                      </label>
+                      <input 
+                        type="text" 
+                        name="ARVID"
+                        value={updateARVForm.ARVID}
+                        readOnly
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd',
+                          backgroundColor: '#f0f0f0',
+                          fontWeight: '600',
+                          color: '#555'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-code" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Mã ARVCode:
+                      </label>
+                      <input 
+                        type="text" 
+                        name="ARVCode"
+                        value={updateARVForm.ARVCode}
+                        onChange={handleUpdateARVChange}
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-prescription-bottle-alt" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Tên ARV:
+                      </label>
+                      <input 
+                        type="text" 
+                        name="ARVName"
+                        value={updateARVForm.ARVName}
+                        onChange={handleUpdateARVChange}
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-align-left" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Mô tả:
+                      </label>
+                      <textarea 
+                        name="Description"
+                        value={updateARVForm.Description}
+                        onChange={handleUpdateARVChange}
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd',
+                          minHeight: '80px'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-baby-carriage" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Độ tuổi (AgeRange):
+                      </label>
+                      <input 
+                        type="text" 
+                        name="AgeRange"
+                        value={updateARVForm.AgeRange}
+                        onChange={handleUpdateARVChange}
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '20px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-users" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Nhóm đối tượng (ForGroup):
+                      </label>
+                      <input 
+                        type="text" 
+                        name="ForGroup"
+                        value={updateARVForm.ForGroup}
+                        onChange={handleUpdateARVChange}
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      gap: '15px',
+                      marginTop: '25px',
+                      borderTop: '1px solid #eee',
+                      paddingTop: '20px'
+                    }}>
+                      <button 
+                        type="button"
+                        onClick={() => setShowARVUpdateModal(false)}
+                        style={{
+                          padding: '10px 20px',
+                          borderRadius: '6px',
+                          border: 'none',
+                          backgroundColor: '#e74c3c',
+                          color: '#fff',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <i className="fas fa-times" style={{ marginRight: '8px' }}></i>
+                        Hủy bỏ
+                      </button>
+                      <button 
+                        type="submit"
+                        style={{
+                          padding: '10px 20px',
+                          borderRadius: '6px',
+                          border: 'none',
+                          backgroundColor: '#2ecc71',
+                          color: '#fff',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <i className="fas fa-save" style={{ marginRight: '8px' }}></i>
+                        Lưu thay đổi
+                      </button>
+                    </div>
+                    
+                    {updateARVMsg && (
+                      <div style={{
+                        marginTop: '15px',
+                        padding: '10px',
+                        borderRadius: '4px',
+                        backgroundColor: updateARVMsg.includes('thành công') ? '#d4edda' : '#f8d7da',
+                        color: updateARVMsg.includes('thành công') ? '#155724' : '#721c24',
+                        textAlign: 'center',
+                        fontWeight: '500'
+                      }}>
+                        <i className={updateARVMsg.includes('thành công') ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'} style={{ marginRight: '8px' }}></i>
+                        {updateARVMsg}
+                      </div>
+                    )}
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
         )}
         {selectedTab === 'addstaff' && (
@@ -1183,58 +1474,6 @@ const Admin = () => {
             )}
           </div>
         )}
-        {selectedTab === 'updatestaff' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Cập nhật nhân viên</h2>
-            <form className="add-doctor-form" onSubmit={handleUpdateStaffSubmit} style={{maxWidth: 500, margin: '0 auto'}}>
-              <div className="form-group">
-                <label>UserId</label>
-                <input name="userId" value={updateStaffId} onChange={e => setUpdateStaffId(e.target.value)} required />
-              </div>
-              <div className="form-group">
-                <label>Họ tên</label>
-                <input name="Fullname" value={updateStaffForm.Fullname} onChange={handleUpdateStaffChange} />
-              </div>
-              <div className="form-group">
-                <label>Email</label>
-                <input name="Email" value={updateStaffForm.Email} onChange={handleUpdateStaffChange} type="email" />
-              </div>
-              <div className="form-group">
-                <label>Địa chỉ</label>
-                <input name="Address" value={updateStaffForm.Address} onChange={handleUpdateStaffChange} />
-              </div>
-              <div className="form-group">
-                <label>Ảnh (URL)</label>
-                <input name="Image" value={updateStaffForm.Image} onChange={handleUpdateStaffChange} />
-              </div>
-              <button type="submit" className="admin-action-btn" style={{marginTop: 16}}>Cập nhật nhân viên</button>
-              {updateStaffMsg && <div style={{marginTop: 12, color: updateStaffMsg.includes('thành công') ? '#27ae60' : '#e74c3c'}}>{updateStaffMsg}</div>}
-            </form>
-            {updatedStaff && updateStaffMsg.includes('thành công') && (
-              <div style={{marginTop: 32}}>
-                <h3>Thông tin nhân viên vừa cập nhật</h3>
-                <table className="admin-appointments-table">
-                  <thead>
-                    <tr>
-                      <th>Họ tên</th>
-                      <th>Email</th>
-                      <th>Địa chỉ</th>
-                      <th>Ảnh</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{updatedStaff.Fullname}</td>
-                      <td>{updatedStaff.Email}</td>
-                      <td>{updatedStaff.Address}</td>
-                      <td>{updatedStaff.Image ? <img src={updatedStaff.Image} alt="staff" style={{width:40, height:40, objectFit:'cover', borderRadius:4}} /> : 'Không có'}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
         {selectedTab === 'allstaff' && (
           <div className="admin-content">
             <h2 className="admin-table-title">Danh sách tất cả các nhân viên</h2>
@@ -1263,24 +1502,44 @@ const Admin = () => {
                       }
                     </td>
                     <td>
-                      <button 
-                        onClick={() => handleDeleteStaff(staff)} 
-                        className="admin-action-btn" 
-                        style={{
-                          backgroundColor: '#e74c3c', 
-                          padding: '6px 12px', 
-                          fontSize: '14px', 
-                          borderRadius: '6px',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '5px',
-                          boxShadow: '0 2px 5px rgba(231, 76, 60, 0.2)',
-                          transition: 'all 0.2s ease'
-                        }}
-                        title="Xóa nhân viên này"
-                      >
-                        <i className="fas fa-trash-alt"></i> Xóa
-                      </button>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button 
+                          onClick={() => handleUpdateStaff(staff)} 
+                          className="admin-action-btn" 
+                          style={{
+                            backgroundColor: '#3498db', 
+                            padding: '6px 12px', 
+                            fontSize: '14px', 
+                            borderRadius: '6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            boxShadow: '0 2px 5px rgba(52, 152, 219, 0.2)',
+                            transition: 'all 0.2s ease'
+                          }}
+                          title="Cập nhật thông tin nhân viên này"
+                        >
+                          <i className="fas fa-edit"></i> Cập nhật
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteStaff(staff)} 
+                          className="admin-action-btn" 
+                          style={{
+                            backgroundColor: '#e74c3c', 
+                            padding: '6px 12px', 
+                            fontSize: '14px', 
+                            borderRadius: '6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            boxShadow: '0 2px 5px rgba(231, 76, 60, 0.2)',
+                            transition: 'all 0.2s ease'
+                          }}
+                          title="Xóa nhân viên này"
+                        >
+                          <i className="fas fa-trash-alt"></i> Xóa
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 )) : (
@@ -1309,6 +1568,241 @@ const Admin = () => {
                     </button>
                   </div>
                   {deleteStaffMsg && <p className={deleteStaffMsg.includes("thành công") ? "success-msg" : "error-msg"}>{deleteStaffMsg}</p>}
+                </div>
+              </div>
+            )}
+            
+            {/* Popup cập nhật thông tin nhân viên */}
+            {showStaffUpdateModal && (
+              <div className="delete-popup-overlay" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
+                <div className="delete-popup" style={{ 
+                  width: '600px',
+                  maxWidth: '90%',
+                  backgroundColor: '#fff',
+                  borderRadius: '8px',
+                  boxShadow: '0 5px 20px rgba(0,0,0,0.2)',
+                  padding: '25px'
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    borderBottom: '2px solid #3498db',
+                    paddingBottom: '15px',
+                    marginBottom: '20px'
+                  }}>
+                    <h3 style={{ 
+                      margin: '0', 
+                      color: '#2c3e50',
+                      fontWeight: '700',
+                      fontSize: '1.5rem',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}>
+                      <i className="fas fa-user-edit" style={{ marginRight: '10px', color: '#3498db' }}></i>
+                      Cập nhật thông tin nhân viên
+                    </h3>
+                    <button 
+                      onClick={() => setShowStaffUpdateModal(false)} 
+                      style={{ 
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '1.5rem',
+                        cursor: 'pointer',
+                        color: '#7f8c8d'
+                      }}
+                      title="Đóng"
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
+                  </div>
+                  
+                  <form onSubmit={handleUpdateStaffSubmit}>
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-fingerprint" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        ID Nhân viên:
+                      </label>
+                      <input 
+                        type="text" 
+                        value={updateStaffId}
+                        readOnly
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd',
+                          backgroundColor: '#f0f0f0',
+                          fontWeight: '600',
+                          color: '#555'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-user" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Họ và tên:
+                      </label>
+                      <input 
+                        type="text" 
+                        name="Fullname"
+                        value={updateStaffForm.Fullname}
+                        onChange={handleUpdateStaffChange}
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-envelope" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Email:
+                      </label>
+                      <input 
+                        type="email" 
+                        name="Email"
+                        value={updateStaffForm.Email}
+                        onChange={handleUpdateStaffChange}
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-map-marker-alt" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Địa chỉ:
+                      </label>
+                      <input 
+                        type="text" 
+                        name="Address"
+                        value={updateStaffForm.Address}
+                        onChange={handleUpdateStaffChange}
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '20px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-image" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        URL ảnh:
+                      </label>
+                      <input 
+                        type="text" 
+                        name="Image"
+                        value={updateStaffForm.Image}
+                        onChange={handleUpdateStaffChange}
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                        placeholder="https://example.com/image.jpg"
+                      />
+                    </div>
+                    
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      gap: '15px',
+                      marginTop: '25px',
+                      borderTop: '1px solid #eee',
+                      paddingTop: '20px'
+                    }}>
+                      <button 
+                        type="button"
+                        onClick={() => setShowStaffUpdateModal(false)}
+                        style={{
+                          padding: '10px 20px',
+                          borderRadius: '6px',
+                          border: 'none',
+                          backgroundColor: '#e74c3c',
+                          color: '#fff',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <i className="fas fa-times" style={{ marginRight: '8px' }}></i>
+                        Hủy bỏ
+                      </button>
+                      <button 
+                        type="submit"
+                        style={{
+                          padding: '10px 20px',
+                          borderRadius: '6px',
+                          border: 'none',
+                          backgroundColor: '#2ecc71',
+                          color: '#fff',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <i className="fas fa-save" style={{ marginRight: '8px' }}></i>
+                        Lưu thay đổi
+                      </button>
+                    </div>
+                    
+                    {updateStaffMsg && (
+                      <div style={{
+                        marginTop: '15px',
+                        padding: '10px',
+                        borderRadius: '4px',
+                        backgroundColor: updateStaffMsg.includes('thành công') ? '#d4edda' : '#f8d7da',
+                        color: updateStaffMsg.includes('thành công') ? '#155724' : '#721c24',
+                        textAlign: 'center',
+                        fontWeight: '500'
+                      }}>
+                        <i className={updateStaffMsg.includes('thành công') ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'} style={{ marginRight: '8px' }}></i>
+                        {updateStaffMsg}
+                      </div>
+                    )}
+                  </form>
                 </div>
               </div>
             )}
@@ -1367,64 +1861,7 @@ const Admin = () => {
           </div>
         )}
         
-        {selectedTab === 'updatemanager' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Cập nhật thông tin quản lý</h2>
-            
-            <form className="update-doctor-form" onSubmit={handleUpdateManagerSubmit} style={{maxWidth: 500, margin: '0 auto'}}>
-              <div className="form-group">
-                <label>ID quản lý</label>
-                <input 
-                  value={updateManagerId} 
-                  onChange={(e) => setUpdateManagerId(e.target.value)} 
-                  required 
-                  placeholder="Nhập ID quản lý cần cập nhật"
-                />
-              </div>
-              <div className="form-group">
-                <label>Họ tên</label>
-                <input name="Fullname" value={updateManagerForm.Fullname} onChange={handleUpdateManagerChange} required />
-              </div>
-              <div className="form-group">
-                <label>Email</label>
-                <input name="Email" value={updateManagerForm.Email} onChange={handleUpdateManagerChange} required type="email" />
-              </div>
-              <div className="form-group">
-                <label>Địa chỉ</label>
-                <input name="Address" value={updateManagerForm.Address} onChange={handleUpdateManagerChange} required />
-              </div>
-              <div className="form-group">
-                <label>Ảnh (URL)</label>
-                <input name="Image" value={updateManagerForm.Image} onChange={handleUpdateManagerChange} />
-              </div>
-              <button type="submit" className="admin-action-btn" style={{marginTop: 16}}>Cập nhật quản lý</button>
-              {updateManagerMsg && <div style={{marginTop: 12, color: updateManagerMsg.includes('thành công') || updateManagerMsg.includes('Đã tìm thấy') ? '#27ae60' : '#e74c3c'}}>{updateManagerMsg}</div>}
-            </form>
-            {updatedManager && updateManagerMsg.includes('thành công') && (
-              <div style={{marginTop: 32}}>
-                <h3>Thông tin quản lý vừa cập nhật</h3>
-                <table className="admin-appointments-table">
-                  <thead>
-                    <tr>
-                      <th>Họ tên</th>
-                      <th>Email</th>
-                      <th>Địa chỉ</th>
-                      <th>Ảnh</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{updatedManager.Fullname}</td>
-                      <td>{updatedManager.Email}</td>
-                      <td>{updatedManager.Address}</td>
-                      <td>{updatedManager.Image ? <img src={updatedManager.Image} alt="manager" style={{width:40, height:40, objectFit:'cover', borderRadius:4}} /> : 'Không có'}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
+
         {selectedTab === 'allmanagers' && (
           <div className="admin-content">
             <h2 className="admin-table-title">Danh sách tất cả các quản lý</h2>
@@ -1453,24 +1890,44 @@ const Admin = () => {
                       }
                     </td>
                     <td>
-                      <button 
-                        onClick={() => handleDeleteManager(manager)} 
-                        className="admin-action-btn" 
-                        style={{
-                          backgroundColor: '#e74c3c', 
-                          padding: '6px 12px', 
-                          fontSize: '14px', 
-                          borderRadius: '6px',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '5px',
-                          boxShadow: '0 2px 5px rgba(231, 76, 60, 0.2)',
-                          transition: 'all 0.2s ease'
-                        }}
-                        title="Xóa quản lý này"
-                      >
-                        <i className="fas fa-trash-alt"></i> Xóa
-                      </button>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button 
+                          onClick={() => handleUpdateManager(manager)} 
+                          className="admin-action-btn" 
+                          style={{
+                            backgroundColor: '#3498db', 
+                            padding: '6px 12px', 
+                            fontSize: '14px', 
+                            borderRadius: '6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            boxShadow: '0 2px 5px rgba(52, 152, 219, 0.2)',
+                            transition: 'all 0.2s ease'
+                          }}
+                          title="Cập nhật thông tin quản lý này"
+                        >
+                          <i className="fas fa-edit"></i> Cập nhật
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteManager(manager)} 
+                          className="admin-action-btn" 
+                          style={{
+                            backgroundColor: '#e74c3c', 
+                            padding: '6px 12px', 
+                            fontSize: '14px', 
+                            borderRadius: '6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            boxShadow: '0 2px 5px rgba(231, 76, 60, 0.2)',
+                            transition: 'all 0.2s ease'
+                          }}
+                          title="Xóa quản lý này"
+                        >
+                          <i className="fas fa-trash-alt"></i> Xóa
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 )) : (
@@ -1499,6 +1956,241 @@ const Admin = () => {
                     </button>
                   </div>
                   {deleteManagerMsg && <p className={deleteManagerMsg.includes("thành công") ? "success-msg" : "error-msg"}>{deleteManagerMsg}</p>}
+                </div>
+              </div>
+            )}
+            
+            {/* Popup cập nhật thông tin quản lý */}
+            {showManagerUpdateModal && (
+              <div className="delete-popup-overlay" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
+                <div className="delete-popup" style={{ 
+                  width: '600px',
+                  maxWidth: '90%',
+                  backgroundColor: '#fff',
+                  borderRadius: '8px',
+                  boxShadow: '0 5px 20px rgba(0,0,0,0.2)',
+                  padding: '25px'
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    borderBottom: '2px solid #3498db',
+                    paddingBottom: '15px',
+                    marginBottom: '20px'
+                  }}>
+                    <h3 style={{ 
+                      margin: '0', 
+                      color: '#2c3e50',
+                      fontWeight: '700',
+                      fontSize: '1.5rem',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}>
+                      <i className="fas fa-user-edit" style={{ marginRight: '10px', color: '#3498db' }}></i>
+                      Cập nhật thông tin quản lý
+                    </h3>
+                    <button 
+                      onClick={() => setShowManagerUpdateModal(false)} 
+                      style={{ 
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '1.5rem',
+                        cursor: 'pointer',
+                        color: '#7f8c8d'
+                      }}
+                      title="Đóng"
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
+                  </div>
+                  
+                  <form onSubmit={handleUpdateManagerSubmit}>
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-fingerprint" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        ID Quản lý:
+                      </label>
+                      <input 
+                        type="text" 
+                        value={updateManagerId}
+                        readOnly
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd',
+                          backgroundColor: '#f0f0f0',
+                          fontWeight: '600',
+                          color: '#555'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-user" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Họ và tên:
+                      </label>
+                      <input 
+                        type="text" 
+                        name="Fullname"
+                        value={updateManagerForm.Fullname}
+                        onChange={handleUpdateManagerChange}
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-envelope" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Email:
+                      </label>
+                      <input 
+                        type="email" 
+                        name="Email"
+                        value={updateManagerForm.Email}
+                        onChange={handleUpdateManagerChange}
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-map-marker-alt" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Địa chỉ:
+                      </label>
+                      <input 
+                        type="text" 
+                        name="Address"
+                        value={updateManagerForm.Address}
+                        onChange={handleUpdateManagerChange}
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '20px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-image" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        URL ảnh:
+                      </label>
+                      <input 
+                        type="text" 
+                        name="Image"
+                        value={updateManagerForm.Image}
+                        onChange={handleUpdateManagerChange}
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                        placeholder="https://example.com/image.jpg"
+                      />
+                    </div>
+                    
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      gap: '15px',
+                      marginTop: '25px',
+                      borderTop: '1px solid #eee',
+                      paddingTop: '20px'
+                    }}>
+                      <button 
+                        type="button"
+                        onClick={() => setShowManagerUpdateModal(false)}
+                        style={{
+                          padding: '10px 20px',
+                          borderRadius: '6px',
+                          border: 'none',
+                          backgroundColor: '#e74c3c',
+                          color: '#fff',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <i className="fas fa-times" style={{ marginRight: '8px' }}></i>
+                        Hủy bỏ
+                      </button>
+                      <button 
+                        type="submit"
+                        style={{
+                          padding: '10px 20px',
+                          borderRadius: '6px',
+                          border: 'none',
+                          backgroundColor: '#2ecc71',
+                          color: '#fff',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <i className="fas fa-save" style={{ marginRight: '8px' }}></i>
+                        Lưu thay đổi
+                      </button>
+                    </div>
+                    
+                    {updateManagerMsg && (
+                      <div style={{
+                        marginTop: '15px',
+                        padding: '10px',
+                        borderRadius: '4px',
+                        backgroundColor: updateManagerMsg.includes('thành công') ? '#d4edda' : '#f8d7da',
+                        color: updateManagerMsg.includes('thành công') ? '#155724' : '#721c24',
+                        textAlign: 'center',
+                        fontWeight: '500'
+                      }}>
+                        <i className={updateManagerMsg.includes('thành công') ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'} style={{ marginRight: '8px' }}></i>
+                        {updateManagerMsg}
+                      </div>
+                    )}
+                  </form>
                 </div>
               </div>
             )}
@@ -1566,7 +2258,42 @@ const Admin = () => {
                     <td>{sch.SlotID}</td>
                     <td>{sch.DateWork}</td>
                     <td>
-                      <button className="admin-action-btn" style={{background:'#e74c3c'}} onClick={() => handleDeleteSchedule(sch)}>Xóa</button>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button 
+                          onClick={() => handleUpdateSchedule(sch)} 
+                          className="admin-action-btn" 
+                          style={{
+                            backgroundColor: '#3498db', 
+                            padding: '6px 12px', 
+                            fontSize: '14px', 
+                            borderRadius: '6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            boxShadow: '0 2px 5px rgba(52, 152, 219, 0.2)',
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          <i className="fas fa-edit"></i> Cập nhật
+                        </button>
+                        <button 
+                          className="admin-action-btn" 
+                          style={{
+                            background:'#e74c3c',
+                            padding: '6px 12px', 
+                            fontSize: '14px', 
+                            borderRadius: '6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            boxShadow: '0 2px 5px rgba(231, 76, 60, 0.2)',
+                            transition: 'all 0.2s ease'
+                          }} 
+                          onClick={() => handleDeleteSchedule(sch)}
+                        >
+                          <i className="fas fa-trash-alt"></i> Xóa
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 )) : (
@@ -1588,6 +2315,217 @@ const Admin = () => {
                   </div>
                   <button className="admin-action-btn" style={{background:'#red', marginRight:8}} onClick={confirmDeleteSchedule}>Xóa</button>
                   <button className="admin-action-btn" onClick={cancelDeleteSchedule}>Hủy</button>
+                </div>
+              </div>
+            )}
+            
+            {/* Popup cập nhật lịch làm việc */}
+            {showScheduleUpdateModal && (
+              <div className="delete-popup-overlay" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
+                <div className="delete-popup" style={{ 
+                  width: '500px',
+                  maxWidth: '90%',
+                  backgroundColor: '#fff',
+                  borderRadius: '8px',
+                  boxShadow: '0 5px 20px rgba(0,0,0,0.2)',
+                  padding: '25px'
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    borderBottom: '2px solid #3498db',
+                    paddingBottom: '15px',
+                    marginBottom: '20px'
+                  }}>
+                    <h3 style={{ 
+                      margin: '0', 
+                      color: '#2c3e50',
+                      fontWeight: '700',
+                      fontSize: '1.5rem',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}>
+                      <i className="fas fa-calendar-alt" style={{ marginRight: '10px', color: '#3498db' }}></i>
+                      Cập nhật lịch làm việc
+                    </h3>
+                    <button 
+                      onClick={() => setShowScheduleUpdateModal(false)} 
+                      style={{ 
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '1.5rem',
+                        cursor: 'pointer',
+                        color: '#7f8c8d'
+                      }}
+                      title="Đóng"
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
+                  </div>
+                  
+                  <form onSubmit={handleUpdateScheduleSubmit}>
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-fingerprint" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Mã lịch (ScheduleID):
+                      </label>
+                      <input 
+                        type="text" 
+                        value={updateScheduleId}
+                        readOnly
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd',
+                          backgroundColor: '#f0f0f0',
+                          fontWeight: '600',
+                          color: '#555'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-user-md" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Mã bác sĩ (DoctorID):
+                      </label>
+                      <input 
+                        type="text" 
+                        name="DoctorID"
+                        value={updateScheduleForm.DoctorID}
+                        onChange={handleUpdateScheduleChange}
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-clock" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Mã khung giờ (SlotID):
+                      </label>
+                      <input 
+                        type="text" 
+                        name="SlotID"
+                        value={updateScheduleForm.SlotID}
+                        onChange={handleUpdateScheduleChange}
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ marginBottom: '20px' }}>
+                      <label style={{ 
+                        display: 'block', 
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        color: '#2c3e50'
+                      }}>
+                        <i className="fas fa-calendar-day" style={{ marginRight: '8px', color: '#3498db' }}></i>
+                        Ngày làm việc (DateWork):
+                      </label>
+                      <input 
+                        type="date" 
+                        name="DateWork"
+                        value={updateScheduleForm.DateWork}
+                        onChange={handleUpdateScheduleChange}
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      gap: '15px',
+                      marginTop: '25px',
+                      borderTop: '1px solid #eee',
+                      paddingTop: '20px'
+                    }}>
+                      <button 
+                        type="button"
+                        onClick={() => setShowScheduleUpdateModal(false)}
+                        style={{
+                          padding: '10px 20px',
+                          borderRadius: '6px',
+                          border: 'none',
+                          backgroundColor: '#e74c3c',
+                          color: '#fff',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <i className="fas fa-times" style={{ marginRight: '8px' }}></i>
+                        Hủy bỏ
+                      </button>
+                      <button 
+                        type="submit"
+                        style={{
+                          padding: '10px 20px',
+                          borderRadius: '6px',
+                          border: 'none',
+                          backgroundColor: '#2ecc71',
+                          color: '#fff',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <i className="fas fa-save" style={{ marginRight: '8px' }}></i>
+                        Lưu thay đổi
+                      </button>
+                    </div>
+                    
+                    {updateScheduleMsg && (
+                      <div style={{
+                        marginTop: '15px',
+                        padding: '10px',
+                        borderRadius: '4px',
+                        backgroundColor: updateScheduleMsg.includes('thành công') ? '#d4edda' : '#f8d7da',
+                        color: updateScheduleMsg.includes('thành công') ? '#155724' : '#721c24',
+                        textAlign: 'center',
+                        fontWeight: '500'
+                      }}>
+                        <i className={updateScheduleMsg.includes('thành công') ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'} style={{ marginRight: '8px' }}></i>
+                        {updateScheduleMsg}
+                      </div>
+                    )}
+                  </form>
                 </div>
               </div>
             )}
