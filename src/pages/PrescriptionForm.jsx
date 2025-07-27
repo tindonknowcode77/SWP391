@@ -23,6 +23,10 @@ const PrescriptionForm = () => {
   const [error, setError] = useState('');
   const [medications, setMedications] = useState([]);
   const [treatmentPlan, setTreatmentPlan] = useState(null);
+  
+  // Lấy thông tin bệnh nhân từ state navigation
+  const patientInfo = location.state?.patientInfo;
+  const treatmentPlanFromState = location.state?.treatmentPlan;
 
   useEffect(() => {
     getAllMedications()
@@ -74,37 +78,220 @@ const PrescriptionForm = () => {
   };
 
   return (
-    <div className="prescription-container">
-      <button className="back-btn" onClick={() => navigate(-1)}>Quay lại</button>
-      <h2>Thêm đơn thuốc</h2>
-      <form className="prescription-form" onSubmit={handleSubmit}>
-        <label htmlFor="MedicationId"><strong>Chọn loại thuốc</strong></label>
-        <select
-          id="MedicationId"
-          name="MedicationId"
-          value={prescription.MedicationId}
-          onChange={handleChange}
-          required
-        >
-          <option value="">-- Chọn thuốc --</option>
-          {medications.map(med => (
-            <option key={med.MedicationId} value={med.MedicationId}>
-              {med.MedicationName}
-            </option>
-          ))}
-        </select>
-        <label htmlFor="StartDate"><strong>Ngày bắt đầu</strong></label>
-        <input type="date" id="StartDate" name="StartDate" value={prescription.StartDate} onChange={handleChange} required />
-        <label htmlFor="EndDate"><strong>Ngày kết thúc</strong></label>
-        <input type="date" id="EndDate" name="EndDate" value={prescription.EndDate} onChange={handleChange} required />
-        <label htmlFor="Dosage"><strong>Liều lượng thuốc</strong></label>
-        <input id="Dosage" name="Dosage" value={prescription.Dosage} onChange={handleChange} placeholder="Liều lượng" required />
-        <label htmlFor="LineOfTreatment"><strong>Số lần khám</strong></label>
-        <input id="LineOfTreatment" name="LineOfTreatment" value={prescription.LineOfTreatment} onChange={handleChange} placeholder="Số lần điều trị" required />
-        <button type="submit">Thêm đơn thuốc</button>
-      </form>
-      {success && <div className="success-msg">{success}</div>}
-      {error && <div className="error-msg">{error}</div>}
+    <div className="prescription-page">
+      <div className="prescription-header">
+        <div className="header-content">
+          <button className="back-btn" onClick={() => navigate(-1)}>
+            <i className="fas fa-arrow-left"></i>
+            <span>Quay lại</span>
+          </button>
+          <div className="header-title">
+            <i className="fas fa-prescription-bottle-medical"></i>
+            <h1>Đơn Thuốc</h1>
+          </div>
+        </div>
+      </div>
+
+      <div className="prescription-container">
+        {/* Thông tin bệnh nhân */}
+        {(patientInfo || treatmentPlan) && (
+          <div className="patient-info-section">
+            <div className="section-header">
+              <i className="fas fa-user-injured"></i>
+              <h3>Thông tin bệnh nhân</h3>
+            </div>
+            <div className="patient-details">
+              <div className="detail-row">
+                <div className="detail-item">
+                  <span className="label">Mã bệnh nhân:</span>
+                  <span className="value">
+                    {patientInfo?.Patient?.PatientID || treatmentPlan?.Patient?.PatientID || 'N/A'}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Họ tên:</span>
+                  <span className="value">
+                    {patientInfo?.PatientFullname || 
+                     patientInfo?.Patient?.Fullname || 
+                     treatmentPlan?.Patient?.User?.Fullname || 'N/A'}
+                  </span>
+                </div>
+              </div>
+              <div className="detail-row">
+                <div className="detail-item">
+                  <span className="label">Ngày sinh:</span>
+                  <span className="value">
+                    {patientInfo?.Patient?.DateOfBirth ? 
+                      new Date(patientInfo.Patient.DateOfBirth).toLocaleDateString('vi-VN') :
+                      treatmentPlan?.Patient?.DateOfBirth ? 
+                      new Date(treatmentPlan.Patient.DateOfBirth).toLocaleDateString('vi-VN') : 'N/A'}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Giới tính:</span>
+                  <span className="value">
+                    {patientInfo?.Patient?.Gender || treatmentPlan?.Patient?.Gender || 'N/A'}
+                  </span>
+                </div>
+              </div>
+              <div className="detail-row">
+                <div className="detail-item">
+                  <span className="label">Nhóm máu:</span>
+                  <span className="value">
+                    {patientInfo?.Patient?.BloodType || 'N/A'}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Dị ứng:</span>
+                  <span className="value">
+                    {patientInfo?.Patient?.Allergy || 'Không có'}
+                  </span>
+                </div>
+              </div>
+              <div className="detail-row">
+                <div className="detail-item">
+                  <span className="label">Số điện thoại:</span>
+                  <span className="value">
+                    {patientInfo?.Patient?.Phone || 'N/A'}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Email:</span>
+                  <span className="value">
+                    {patientInfo?.Patient?.User?.Email || 'N/A'}
+                  </span>
+                </div>
+              </div>
+              <div className="detail-row">
+                <div className="detail-item">
+                  <span className="label">Chẩn đoán:</span>
+                  <span className="value diagnosis">
+                    {treatmentPlanFromState?.Diagnosis || treatmentPlan?.Diagnosis || 'N/A'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Form đơn thuốc */}
+        <div className="prescription-form-section">
+          <div className="section-header">
+            <i className="fas fa-pills"></i>
+            <h3>Thông tin đơn thuốc</h3>
+          </div>
+          
+          <form className="prescription-form" onSubmit={handleSubmit}>
+            <div className="form-grid">
+              <div className="form-group">
+                <label htmlFor="MedicationId">
+                  <i className="fas fa-medication"></i>
+                  <span>Loại thuốc</span>
+                </label>
+                <select
+                  id="MedicationId"
+                  name="MedicationId"
+                  value={prescription.MedicationId}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">-- Chọn loại thuốc --</option>
+                  {medications.map(med => (
+                    <option key={med.MedicationId} value={med.MedicationId}>
+                      {med.MedicationName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="Dosage">
+                  <i className="fas fa-weight"></i>
+                  <span>Liều lượng</span>
+                </label>
+                <input 
+                  id="Dosage" 
+                  name="Dosage" 
+                  value={prescription.Dosage} 
+                  onChange={handleChange} 
+                  placeholder="Ví dụ: 1 viên x 2 lần/ngày" 
+                  required 
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="StartDate">
+                  <i className="fas fa-calendar-plus"></i>
+                  <span>Ngày bắt đầu</span>
+                </label>
+                <input 
+                  type="date" 
+                  id="StartDate" 
+                  name="StartDate" 
+                  value={prescription.StartDate} 
+                  onChange={handleChange} 
+                  required 
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="EndDate">
+                  <i className="fas fa-calendar-minus"></i>
+                  <span>Ngày kết thúc</span>
+                </label>
+                <input 
+                  type="date" 
+                  id="EndDate" 
+                  name="EndDate" 
+                  value={prescription.EndDate} 
+                  onChange={handleChange} 
+                  required 
+                />
+              </div>
+
+              <div className="form-group full-width">
+                <label htmlFor="LineOfTreatment">
+                  <i className="fas fa-stethoscope"></i>
+                  <span>Số lần điều trị</span>
+                </label>
+                <input 
+                  id="LineOfTreatment" 
+                  name="LineOfTreatment" 
+                  value={prescription.LineOfTreatment} 
+                  onChange={handleChange} 
+                  placeholder="Ví dụ: Lần 1, Lần 2..." 
+                  required 
+                />
+              </div>
+            </div>
+
+            <div className="form-actions">
+              <button type="button" className="cancel-btn" onClick={() => navigate(-1)}>
+                <i className="fas fa-times"></i>
+                <span>Hủy bỏ</span>
+              </button>
+              <button type="submit" className="submit-btn">
+                <i className="fas fa-save"></i>
+                <span>Lưu đơn thuốc</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Thông báo */}
+        {success && (
+          <div className="success-msg">
+            <i className="fas fa-check-circle"></i>
+            <span>{success}</span>
+          </div>
+        )}
+        {error && (
+          <div className="error-msg">
+            <i className="fas fa-exclamation-circle"></i>
+            <span>{error}</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

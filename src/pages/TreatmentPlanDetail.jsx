@@ -273,12 +273,19 @@ const TreatmentPlanDetail = () => {
           <button
             className="tpd-add-btn"
             onClick={() => {
+              const navigationState = {
+                fromDoctor: location.state?.fromDoctor || false,
+                patientInfo: patientInfo,
+                treatmentPlan: plan,
+                BookID: location.state?.BookID
+              };
+              
               if (location.state && location.state.fromDoctor && location.state.BookID) {
-                navigate(`/prescription/${plan.TreatmentPlanID}`, { state: { fromDoctor: true, BookID: location.state.BookID } });
+                navigate(`/prescription/${plan.TreatmentPlanID}`, { state: navigationState });
               } else if (location.state && location.state.fromDoctor) {
-                navigate(`/prescription/${plan.TreatmentPlanID}`, { state: { fromDoctor: true } });
+                navigate(`/prescription/${plan.TreatmentPlanID}`, { state: navigationState });
               } else {
-                navigate(`/prescription/${plan.TreatmentPlanID}`);
+                navigate(`/prescription/${plan.TreatmentPlanID}`, { state: navigationState });
               }
             }}
           >
