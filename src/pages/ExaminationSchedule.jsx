@@ -36,6 +36,9 @@ export default function ExaminationSchedule() {
   const [conflictErrorMessage, setConflictErrorMessage] = useState('');
   const [examschPage, setExamschPage] = useState(0); // Pagination for doctor grid
   const doctorsPerPage = 5;
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterSpecialty, setFilterSpecialty] = useState('');
+  const [sortBy, setSortBy] = useState('name');
   
   // Fetch doctors data from API
   useEffect(() => {
@@ -96,6 +99,61 @@ export default function ExaminationSchedule() {
 
     fetchDoctors();
   }, []);
+
+  //Function hỗ trợ sort
+  const safeToLowerCase = (text) => {
+    if (text && typeof text === 'string') {
+      return text.toLowerCase();
+    }
+    return '';
+  };
+
+  // Hỗ trợ Sort theo teen và chuyên khoa
+  const filteredDoctors = doctors.filter(doctor => {
+    const doctorName = safeToLowerCase(doctor.name);
+    const doctorSpecialty = safeToLowerCase(doctor.specialty);
+    const searchTermLower = safeToLowerCase(searchTerm);
+    
+    const matchesSearch = doctorName.includes(searchTermLower) ||
+                         doctorSpecialty.includes(searchTermLower);
+                         
+    const matchesSpecialty = filterSpecialty === '' || 
+                            doctor.specialty === filterSpecialty;
+    return matchesSearch && matchesSpecialty;
+  });
+
+
+  const sortedDoctors = [...filteredDoctors].sort((a, b) => {
+    switch (sortBy) {
+      case 'name':
+        const nameA = (a.name || '').toLowerCase();
+        const nameB = (b.name || '').toLowerCase();
+        return nameA.localeCompare(nameB);
+      
+      case 'specialization':
+        const specA = (a.specialty || '').toLowerCase();
+        const specB = (b.specialty || '').toLowerCase();
+        return specA.localeCompare(specB);
+      
+      case 'rating':
+        return (b.rating || 0) - (a.rating || 0);
+      
+      default:
+        return 0;
+    }
+  });
+
+ 
+  const specialties = [...new Set(
+    doctors
+      .map(doctor => doctor.specialty)
+      .filter(Boolean)
+  )].sort();
+
+
+  useEffect(() => {
+    setExamschPage(0);
+  }, [searchTerm, filterSpecialty, sortBy]);
   
   const [form, setForm] = useState({
     phone: '',
@@ -934,23 +992,51 @@ export default function ExaminationSchedule() {
             <div className="filter-container">
               <div className="search-filter">
                 <i className="fas fa-search"></i>
-                <input type="text" placeholder="Tìm kiếm theo tên bác sĩ, chuyên khoa..." />
+                <input 
+                  type="text" 
+                  placeholder="Tìm kiếm theo tên bác sĩ, chuyên khoa..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
               <div className="specialty-filter">
-                <select>
+                <select 
+                  value={filterSpecialty} 
+                  onChange={(e) => setFilterSpecialty(e.target.value)}
+                >
                   <option value="">Tất cả chuyên khoa</option>
-                  <option value="HIV/AIDS">HIV/AIDS</option>
-                  <option value="Truyền nhiễm">Truyền nhiễm</option>
-                  <option value="Nội">Nội</option>
+                  {specialties.map(specialty => (
+                    <option key={specialty} value={specialty}>{specialty}</option>
+                  ))}
                 </select>
               </div>
+              <div className="sort-filter">
+                <select 
+                  value={sortBy} 
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="name">Sắp xếp theo tên</option>
+                  <option value="specialization">Sắp xếp theo chuyên khoa</option>
+                  <option value="rating">Sắp xếp theo đánh giá</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Search results summary */}
+            <div className="search-summary">
+              <p>
+                Tìm thấy <strong>{sortedDoctors.length}</strong> bác sĩ
+                {searchTerm && ` cho "${searchTerm}"`}
+                {filterSpecialty && ` trong chuyên khoa "${filterSpecialty}"`}
+              </p>
             </div>
             
             <h2 className="section-title">Chọn bác sĩ chuyên khoa</h2>
             <div className="doctor-grid">
-              {doctors
-                .slice(examschPage * doctorsPerPage, examschPage * doctorsPerPage + doctorsPerPage)
-                .map((doc) => (
+              {sortedDoctors.length > 0 ? (
+                sortedDoctors
+                  .slice(examschPage * doctorsPerPage, examschPage * doctorsPerPage + doctorsPerPage)
+                  .map((doc) => (
                   <div className="doctor-card" key={doc.id} onClick={() => handleDoctorSelect(doc)}>
                     <img className="doctor-avatar" src={doc.avatar} alt={doc.name} />
                     <div className="doctor-card-info">
@@ -970,10 +1056,35 @@ export default function ExaminationSchedule() {
                       <button className="view-profile-btn">Xem hồ sơ</button>
                     </div>
                   </div>
-                ))}
+                ))
+              ) : (
+                <div className="no-results">
+                  <i className="fas fa-user-md"></i>
+                  <h3>Không tìm thấy bác sĩ phù hợp</h3>
+                  <p>
+                    {searchTerm || filterSpecialty 
+                      ? `Không có bác sĩ nào phù hợp với tiêu chí tìm kiếm${searchTerm ? ` "${searchTerm}"` : ''}${filterSpecialty ? ` trong chuyên khoa "${filterSpecialty}"` : ''}`
+                      : 'Hiện tại không có bác sĩ nào trong hệ thống'
+                    }
+                  </p>
+                  {(searchTerm || filterSpecialty) && (
+                    <button 
+                      className="clear-filters-btn"
+                      onClick={() => {
+                        setSearchTerm('');
+                        setFilterSpecialty('');
+                        setSortBy('name');
+                      }}
+                    >
+                      <i className="fas fa-times"></i>
+                      Xóa bộ lọc
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
             {/* Pagination controls */}
-            {doctors.length > doctorsPerPage && (
+            {sortedDoctors.length > doctorsPerPage && (
               <div className="examsch-pagination">
                 <button
                   className="examsch-pagination-arrow"
@@ -981,16 +1092,19 @@ export default function ExaminationSchedule() {
                   disabled={examschPage === 0}
                   aria-label="Trang trước"
                 >
-                  &lt;
+                  <i className="fas fa-chevron-left"></i>
                 </button>
-                <span className="examsch-pagination-info">{examschPage + 1} / {Math.ceil(doctors.length / doctorsPerPage)}</span>
+                <div className="pagination-info">
+                  <span>Trang {examschPage + 1} / {Math.ceil(sortedDoctors.length / doctorsPerPage)}</span>
+                  <span className="total-doctors">({sortedDoctors.length} bác sĩ)</span>
+                </div>
                 <button
                   className="examsch-pagination-arrow"
-                  onClick={() => setExamschPage((prev) => Math.min(prev + 1, Math.ceil(doctors.length / doctorsPerPage) - 1))}
-                  disabled={examschPage === Math.ceil(doctors.length / doctorsPerPage) - 1}
+                  onClick={() => setExamschPage((prev) => Math.min(prev + 1, Math.ceil(sortedDoctors.length / doctorsPerPage) - 1))}
+                  disabled={examschPage === Math.ceil(sortedDoctors.length / doctorsPerPage) - 1}
                   aria-label="Trang sau"
                 >
-                  &gt;
+                  <i className="fas fa-chevron-right"></i>
                 </button>
               </div>
             )}

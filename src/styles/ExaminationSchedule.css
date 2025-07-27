@@ -465,11 +465,13 @@ h1 {
   color: #999;
 }
 
-.specialty-filter {
+.specialty-filter,
+.sort-filter {
   width: 220px;
 }
 
-.specialty-filter select {
+.specialty-filter select,
+.sort-filter select {
   width: 100%;
   padding: 12px 15px;
   border-radius: 8px;
@@ -479,9 +481,12 @@ h1 {
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat;
   background-position: right 15px center;
   background-color: white;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
 }
 
-.specialty-filter select:focus {
+.specialty-filter select:focus,
+.sort-filter select:focus {
   border-color: #0078bf;
   box-shadow: 0 0 0 2px rgba(0, 120, 191, 0.1);
   outline: none;
@@ -505,6 +510,80 @@ h1 {
   width: 80px;
   height: 2px;
   background-color: #0078bf;
+}
+
+/* Search Summary */
+.search-summary {
+  background: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 8px;
+  padding: 15px 20px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.search-summary p {
+  margin: 0;
+  color: #1565c0;
+  font-size: 1rem;
+}
+
+.search-summary strong {
+  color: #0d47a1;
+  font-weight: 600;
+}
+
+/* Clear Filters Button */
+.clear-filters-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.clear-filters-btn:hover {
+  background: #c82333;
+}
+
+.clear-filters-btn i {
+  font-size: 0.8rem;
+}
+
+/* No Results */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.no-results i {
+  font-size: 3rem;
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+.no-results h3 {
+  color: #495057;
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+}
+
+.no-results p {
+  color: #6c757d;
+  margin-bottom: 20px;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 /* Time slot selection styling */
@@ -3092,6 +3171,25 @@ h1 {
   text-align: center;
 }
 
+.pagination-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.95rem;
+  color: #495057;
+}
+
+.pagination-info span:first-child {
+  font-weight: 600;
+  color: #333;
+}
+
+.total-doctors {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
 /* Popup thông báo lỗi lịch trùng */
 .conflict-error-popup {
   background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
@@ -3224,6 +3322,29 @@ h1 {
 
 /* Responsive cho popup lỗi */
 @media (max-width: 768px) {
+  .filter-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-filter {
+    min-width: auto;
+  }
+
+  .specialty-filter,
+  .sort-filter {
+    width: 100%;
+  }
+
+  .examsch-pagination {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .pagination-info {
+    order: -1;
+  }
+
   .conflict-error-popup {
     margin: 20px;
     padding: 25px 20px;
@@ -3246,5 +3367,22 @@ h1 {
   .retry-btn, .conflict-error-popup .close-btn {
     width: 100%;
     padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-summary {
+    padding: 12px 15px;
+    font-size: 0.9rem;
+  }
+
+  .examsch-pagination-arrow {
+    padding: 10px 14px;
+    min-width: 40px;
+    height: 40px;
+  }
+
+  .pagination-info {
+    font-size: 0.9rem;
   }
 }
