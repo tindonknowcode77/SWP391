@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
@@ -132,29 +132,7 @@ const Profile = () => {
 };
   
   
-  const [notifications] = useState([
-    {
-      id: 1,
-      date: '10/05/2025',
-      title: 'Nhắc lịch hẹn',
-      message: 'Bạn có lịch hẹn tái khám vào ngày 15/05/2025',
-      isRead: false
-    },
-    {
-      id: 2,
-      date: '05/05/2025',
-      title: 'Nhắc uống thuốc',
-      message: 'Hãy đảm bảo bạn uống thuốc đầy đủ theo lịch, không bỏ liều',
-      isRead: true
-    },
-    {
-      id: 3,
-      date: '01/05/2025',
-      title: 'Kết quả xét nghiệm',
-      message: 'Kết quả xét nghiệm mới nhất của bạn đã có sẵn',
-      isRead: true
-    }
-  ]);
+  const [notifications, setNotifications] = useState([]);
 
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
@@ -417,6 +395,59 @@ const Profile = () => {
     navigate('/login');
   };
 
+  const handleSetReminder = (item) => {
+    const startDate = item.StartDate?.split('T')[0] || '';
+    const endDate = item.EndDate?.split('T')[0] || '';
+  
+    const newNotification = {
+      id: Date.now(),
+      date: new Date().toLocaleDateString('vi-VN'),
+      title: `🔔 Nhắc uống thuốc`,
+      message: 
+      `<strong>Tên thuốc: ${item.MedicalName}</strong><br/>` +
+      `<strong>Liều lượng: ${item.Dosage}</strong><br/>` +
+      `<strong>Ngày bắt đầu: ${startDate}</strong><br/>` +
+      `<strong>Ngày kết thúc: ${endDate}</strong><br/><br/>` +
+      `💡<strong> <em>Hãy uống thuốc đúng giờ và đủ liều để đạt hiệu quả điều trị tốt nhất.</em> </strong>`,
+      isRead: false
+    };
+  
+    setNotifications(prev => [newNotification, ...prev]);
+    setActiveTab('notifications');
+  };
+
+  // Load notifications từ localStorage khi có currentUser
+  useEffect(() => {
+    if (currentUser?.id) {
+      const saved = localStorage.getItem('notifications_' + currentUser.id);
+      console.log('LOAD notifications for', currentUser.id, saved);
+      if (saved) {
+        try {
+          setNotifications(JSON.parse(saved));
+        } catch {}
+      }
+    }
+  }, [currentUser?.id]);
+
+  // Khi notifications thay đổi, lưu vào localStorage
+  const isFirstLoad = useRef(true);
+
+  useEffect(() => {
+    if (currentUser?.id) {
+      if (isFirstLoad.current) {
+        isFirstLoad.current = false;
+        return; // Bỏ qua lần đầu tiên khi mount
+      }
+      localStorage.setItem('notifications_' + currentUser.id, JSON.stringify(notifications));
+    }
+  }, [notifications, currentUser?.id]);
+
+  // Xóa notification id khỏi localStorage để tránh bị trùng lịch 
+  const handleDeleteNotification = (id) => {
+    const updated = notifications.filter(n => n.id !== id);
+    setNotifications(updated);
+  };
+
   if (loading) {
     return <div>Đang tải...</div>;
   }
@@ -493,7 +524,9 @@ const Profile = () => {
             >
               <i className="fas fa-bell"></i>
               <span>Thông báo</span>
-              <span className="notification-badge">1</span>
+              {notifications.length > 0 && (
+                <span className="notification-badge">{notifications.length}</span>
+              )}
             </button>
           </div>
           
@@ -936,7 +969,7 @@ const Profile = () => {
                               <i className="fas fa-info-circle"></i>
                              <span>Thông tin thuốc</span>
                           </button>
-                          <button className="medication-btn1 reminder">
+                          <button className="medication-btn1 reminder" onClick={() => handleSetReminder(item)}>
                             <i className="fas fa-bell"></i>
                             <span>Thiết lập nhắc nhở</span>
                           </button>
@@ -1066,17 +1099,16 @@ const Profile = () => {
                           <h4>{notification.title}</h4>
                           <span className="notification-date">{notification.date}</span>
                         </div>
-                        <p>{notification.message}</p>
-                      </div>
-                      
-                      <div className="notification-actions">
-                        <button className="mark-read-btn">
-                          <i className="fas fa-check"></i>
-                        </button>
-                        <button className="delete-notification-btn">
-                          <i className="fas fa-trash"></i>
-                        </button>
-                      </div>
+                        <div
+                           className="notification-message"
+                           dangerouslySetInnerHTML={{ __html: notification.message }}>
+                       </div>
+                      </div> 
+                      <button
+                        className="delete-notification-btn"
+                        title="Xóa thông báo"
+                        onClick={() => handleDeleteNotification(notification.id)}><i className="fas fa-trash"></i>
+                      </button>
                     </div>
                   ))}
                 </div>
