@@ -120,7 +120,7 @@ const Doctor = () => {
     <>
       <Navbar />
       <div className="doctor-container-1">
-        <aside className="doctor-sidebar">
+        <aside className="doctor-sidebar1">
           <ul className="sidebar-menu">
             <li
               className={selected === 'appointments' ? 'active' : ''}
@@ -142,7 +142,7 @@ const Doctor = () => {
             </li> */}
           </ul>
         </aside>
-        <main className="doctor-main">
+        <main className="doctor-main1">
           {selected === 'appointments' && (
             <div className="doctor-content">
               <h2 className="doctor-table-title">Lịch Hẹn Của Tôi</h2>
