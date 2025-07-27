@@ -1112,18 +1112,6 @@ const Profile = () => {
                     </div>
                   ))}
                 </div>
-                
-                <div className="notification-settings">
-                  <button className="notification-settings-btn">
-                    <i className="fas fa-cog"></i>
-                    <span>Cài đặt thông báo</span>
-                  </button>
-                  
-                  <button className="mark-all-read-btn">
-                    <i className="fas fa-check-double"></i>
-                    <span>Đánh dấu tất cả đã đọc</span>
-                  </button>
-                </div>
               </div>
             )}
           </div>
