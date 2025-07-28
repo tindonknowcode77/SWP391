@@ -196,17 +196,14 @@ const Login = () => {
               <Link to="/forgot-password" className="forgot-link">Quên mật khẩu?</Link>
             </div>
 
-            <form onSubmit={handleSubmit}>
-             <div className="button-wrapper">
-            <button
+            <div className="button-wrapper">
+              <button
                 type="submit"
                 className="login-button"
                 disabled={isSubmitting}>
-             {isSubmitting ? 'Đang xử lý...' : 'Đăng nhập'}
-            </button>
-         </div>
-         </form>
-
+                {isSubmitting ? 'Đang xử lý...' : 'Đăng nhập'}
+              </button>
+            </div>
           </form>
 
 
