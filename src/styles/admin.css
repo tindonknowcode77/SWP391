@@ -415,3 +415,339 @@
   background-color: #fdeae9;
   border-radius: 5px;
 }
+
+/* Dashboard Styles */
+.dashboard-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #666;
+  font-size: 16px;
+}
+
+.dashboard-loading i {
+  font-size: 32px;
+  margin-bottom: 16px;
+  color: #3498db;
+}
+
+.dashboard-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.dashboard-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  transition: all 0.3s ease;
+  border-left: 4px solid #e0e0e0;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+  transform: rotate(25deg) translate(30px, -30px);
+}
+
+.stats-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.stats-card.primary {
+  border-left-color: #3498db;
+}
+
+.stats-card.success {
+  border-left-color: #27ae60;
+}
+
+.stats-card.info {
+  border-left-color: #17a2b8;
+}
+
+.stats-card.warning {
+  border-left-color: #f39c12;
+}
+
+.stats-card.secondary {
+  border-left-color: #6c757d;
+}
+
+.stats-card.danger {
+  border-left-color: #e74c3c;
+}
+
+.card-icon {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 24px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.stats-card.primary .card-icon {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.stats-card.success .card-icon {
+  background: linear-gradient(135deg, #27ae60, #229954);
+}
+
+.stats-card.info .card-icon {
+  background: linear-gradient(135deg, #17a2b8, #138496);
+}
+
+.stats-card.warning .card-icon {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.stats-card.secondary .card-icon {
+  background: linear-gradient(135deg, #6c757d, #5a6268);
+}
+
+.stats-card.danger .card-icon {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.card-content h3 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  line-height: 1;
+}
+
+.card-content p {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin: 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dashboard-section {
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #ecf0f1;
+}
+
+.section-title i {
+  color: #3498db;
+}
+
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.role-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+}
+
+.role-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.role-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.role-card.admin .role-icon {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+
+.role-card.manager .role-icon {
+  background: linear-gradient(135deg, #34495e, #2c3e50);
+}
+
+.role-card.patient .role-icon {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.role-card.staff .role-icon {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.role-card.doctor .role-icon {
+  background: linear-gradient(135deg, #27ae60, #229954);
+}
+
+.role-info h4 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #2c3e50;
+}
+
+.role-info p {
+  font-size: 13px;
+  color: #7f8c8d;
+  margin: 0;
+  font-weight: 500;
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.quick-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #fff;
+  text-decoration: none;
+  justify-content: center;
+  text-align: center;
+}
+
+.quick-action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.quick-action-btn.primary {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.quick-action-btn.success {
+  background: linear-gradient(135deg, #27ae60, #229954);
+}
+
+.quick-action-btn.info {
+  background: linear-gradient(135deg, #17a2b8, #138496);
+}
+
+.quick-action-btn.warning {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.quick-action-btn.secondary {
+  background: linear-gradient(135deg, #6c757d, #5a6268);
+}
+
+.quick-action-btn.refresh {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+
+.quick-action-btn i {
+  font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 16px;
+  }
+  
+  .dashboard-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .roles-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .quick-actions {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .stats-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .role-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-content h3 {
+    font-size: 24px;
+  }
+  
+  .role-info h4 {
+    font-size: 20px;
+  }
+  
+  .section-title {
+    font-size: 18px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

@@ -467,3 +467,6 @@ export const datlichtaikham = (data) => {
     headers: { 'Content-Type': 'application/json' }
   });
 }
+export const getDashBoardData = () => {
+  return axiosClient.get('/Manager/dashboard');
+}

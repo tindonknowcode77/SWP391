@@ -21,6 +21,7 @@ import { themManager } from '../api/auth';
 import { layManagerById } from '../api/auth';
 import { capnhatManager } from '../api/auth';
 import { xoaManager } from '../api/auth';
+import { getDashBoardData } from '../api/auth';
 const Admin = () => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
@@ -55,7 +56,26 @@ const Admin = () => {
   const [addDoctorMsg, setAddDoctorMsg] = useState('');
   const [addedDoctor, setAddedDoctor] = useState(null);
 
-  const [selectedTab, setSelectedTab] = useState('adddoctor');
+  const [selectedTab, setSelectedTab] = useState('dashboard');
+  
+  // Dashboard states
+  const [dashboardData, setDashboardData] = useState({
+    TotalUsers: 0,
+    UsersRole: {
+      R001: 0,
+      R002: 0,
+      R003: 0,
+      R004: 0,
+      R005: 0
+    },
+    TotalDoctors: 0,
+    TotalPatients: 0,
+    TotalLabTests: 0,
+    TotalTreatmentPlans: 0,
+    TotalPrescriptions: 0
+  });
+  const [dashboardLoading, setDashboardLoading] = useState(false);
+  
   const [updateDoctorId, setUpdateDoctorId] = useState('');
   const [updateDoctorForm, setUpdateDoctorForm] = useState({
     FullName: '',
@@ -190,6 +210,8 @@ const Admin = () => {
       setAddDoctorForm({
         FullName: '', Password: '', Email: '', Specialization: '', LicenseNumber: '', ExperienceYears: '', Address: '', Image: ''
       });
+      // Refresh dashboard data
+      fetchDashboardData();
     } catch (err) {
       setAddDoctorMsg('Thêm bác sĩ thất bại!');
       setAddedDoctor(null);
@@ -265,6 +287,8 @@ const Admin = () => {
       setAddScheduleMsg('Thêm lịch làm việc thành công!');
       setAddedSchedule({ ...addScheduleForm });
       setAddScheduleForm({ DoctorID: '', SlotID: '', DateWork: '' });
+      // Refresh dashboard data
+      fetchDashboardData();
     } catch (err) {
       setAddScheduleMsg('Thêm lịch làm việc thất bại!');
       setAddedSchedule(null);
@@ -332,6 +356,8 @@ const Admin = () => {
       setAddARVMsg('Thêm ARV thành công!');
       setAddedARV({ ...addARVForm });
       setAddARVForm({ ARVCode: '', ARVName: '', Description: '', AgeRange: '', ForGroup: '' });
+      // Refresh dashboard data
+      fetchDashboardData();
     } catch (err) {
       setAddARVMsg('Thêm ARV thất bại!');
       setAddedARV(null);
@@ -393,6 +419,8 @@ const Admin = () => {
       setAddStaffMsg('Thêm nhân viên thành công!');
       setAddedStaff({ ...addStaffForm });
       setAddStaffForm({ Fullname: '', Email: '', Password: '', Address: '', Image: '' });
+      // Refresh dashboard data
+      fetchDashboardData();
     } catch (err) {
       setAddStaffMsg('Thêm nhân viên thất bại!');
       setAddedStaff(null);
@@ -476,6 +504,8 @@ const Admin = () => {
       
       // Reset form
       setAddManagerForm({ Fullname: '', Email: '', Password: '', Address: '', Image: '' });
+      // Refresh dashboard data
+      fetchDashboardData();
     } catch (err) {
       setAddManagerMsg('Thêm quản lý thất bại!');
       setAddedManager(null);
@@ -636,8 +666,39 @@ const Admin = () => {
     }
   };
 
+  // Lấy dữ liệu dashboard
+  const fetchDashboardData = async () => {
+    setDashboardLoading(true);
+    try {
+      const res = await getDashBoardData();
+      setDashboardData(res);
+    } catch (err) {
+      console.error("Lỗi khi lấy dữ liệu dashboard:", err);
+      setDashboardData({
+        TotalUsers: 0,
+        UsersRole: {
+          R001: 0,
+          R002: 0,
+          R003: 0,
+          R004: 0,
+          R005: 0
+        },
+        TotalDoctors: 0,
+        TotalPatients: 0,
+        TotalLabTests: 0,
+        TotalTreatmentPlans: 0,
+        TotalPrescriptions: 0
+      });
+    } finally {
+      setDashboardLoading(false);
+    }
+  };
+
   // Khi chọn tab, load danh sách
   useEffect(() => {
+    if (selectedTab === 'dashboard') {
+      fetchDashboardData();
+    }
     if (selectedTab === 'doctorschedule') {
       fetchDoctorSchedules();
     }
@@ -681,6 +742,8 @@ const Admin = () => {
       setShowDeletePopup(false);
       setScheduleToDelete(null);
       fetchDoctorSchedules();
+      // Refresh dashboard data
+      fetchDashboardData();
     } catch (err) {
       setDeleteMsg('Xóa lịch thất bại!');
     }
@@ -740,6 +803,8 @@ const Admin = () => {
         
         // Cập nhật danh sách nhân viên
         fetchStaffList();
+        // Refresh dashboard data
+        fetchDashboardData();
       }, 1000);
     } catch (err) {
       setDeleteStaffMsg('Xóa nhân viên thất bại!');
@@ -830,6 +895,8 @@ const Admin = () => {
         
         // Cập nhật danh sách quản lý
         fetchManagersList();
+        // Refresh dashboard data
+        fetchDashboardData();
       }, 1000);
     } catch (err) {
       setDeleteManagerMsg('Xóa quản lý thất bại!');
@@ -856,6 +923,10 @@ const Admin = () => {
           </button>
         </div>
         <ul className="admin-sidebar-menu">
+          <li className={selectedTab === 'dashboard' ? 'active' : ''} onClick={() => setSelectedTab('dashboard')}>
+            <i className="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </li>
           <li className={selectedTab === 'adddoctor' ? 'active' : ''} onClick={() => setSelectedTab('adddoctor')}>
             <i className="fas fa-user-md"></i>
             <span>Thêm bác sĩ</span>
@@ -904,6 +975,203 @@ const Admin = () => {
         </ul>
       </aside>
       <main className="admin-main">
+        {selectedTab === 'dashboard' && (
+          <div className="admin-content">
+            <h2 className="admin-table-title">
+              <i className="fas fa-tachometer-alt"></i>
+              Dashboard - Tổng quan hệ thống
+            </h2>
+            
+            {dashboardLoading ? (
+              <div className="dashboard-loading">
+                <i className="fas fa-spinner fa-spin"></i>
+                <span>Đang tải dữ liệu...</span>
+              </div>
+            ) : (
+              <div className="dashboard-container">
+                {/* Main Stats Cards */}
+                <div className="dashboard-stats-grid">
+                  <div className="dashboard-card stats-card primary">
+                    <div className="card-icon">
+                      <i className="fas fa-users"></i>
+                    </div>
+                    <div className="card-content">
+                      <h3>{dashboardData.TotalUsers}</h3>
+                      <p>Tổng người dùng</p>
+                    </div>
+                  </div>
+                  
+                  <div className="dashboard-card stats-card success">
+                    <div className="card-icon">
+                      <i className="fas fa-user-md"></i>
+                    </div>
+                    <div className="card-content">
+                      <h3>{dashboardData.TotalDoctors}</h3>
+                      <p>Tổng bác sĩ</p>
+                    </div>
+                  </div>
+                  
+                  <div className="dashboard-card stats-card info">
+                    <div className="card-icon">
+                      <i className="fas fa-procedures"></i>
+                    </div>
+                    <div className="card-content">
+                      <h3>{dashboardData.TotalPatients}</h3>
+                      <p>Tổng bệnh nhân</p>
+                    </div>
+                  </div>
+                  
+                  <div className="dashboard-card stats-card warning">
+                    <div className="card-icon">
+                      <i className="fas fa-flask"></i>
+                    </div>
+                    <div className="card-content">
+                      <h3>{dashboardData.TotalLabTests}</h3>
+                      <p>Tổng xét nghiệm</p>
+                    </div>
+                  </div>
+                  
+                  <div className="dashboard-card stats-card secondary">
+                    <div className="card-icon">
+                      <i className="fas fa-clipboard-list"></i>
+                    </div>
+                    <div className="card-content">
+                      <h3>{dashboardData.TotalTreatmentPlans}</h3>
+                      <p>Kế hoạch điều trị</p>
+                    </div>
+                  </div>
+                  
+                  <div className="dashboard-card stats-card danger">
+                    <div className="card-icon">
+                      <i className="fas fa-prescription-bottle"></i>
+                    </div>
+                    <div className="card-content">
+                      <h3>{dashboardData.TotalPrescriptions}</h3>
+                      <p>Toa thuốc</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* User Roles Breakdown */}
+                <div className="dashboard-section">
+                  <h3 className="section-title">
+                    <i className="fas fa-user-tag"></i>
+                    Phân bố người dùng theo vai trò
+                  </h3>
+                  <div className="roles-grid">
+                    <div className="role-card admin">
+                      <div className="role-icon">
+                        <i className="fas fa-user-shield"></i>
+                      </div>
+                      <div className="role-info">
+                        <h4>{dashboardData.UsersByRole?.R001 || 10}</h4>
+                        <p>Quản trị viên</p>
+                      </div>
+                    </div>
+                    
+                    <div className="role-card manager">
+                      <div className="role-icon">
+                        <i className="fas fa-user-tie"></i>
+                      </div>
+                      <div className="role-info">
+                        <h4>{dashboardData.UsersByRole?.R002 || 0}</h4>
+                        <p>Quản lý</p>
+                      </div>
+                    </div>
+                    
+                    <div className="role-card patient">
+                      <div className="role-icon">
+                        <i className="fas fa-user-injured"></i>
+                      </div>
+                      <div className="role-info">
+                        <h4>{dashboardData.UsersByRole?.R003 || 0}</h4>
+                        <p>Bệnh nhân</p>
+                      </div>
+                    </div>
+                    
+                    <div className="role-card staff">
+                      <div className="role-icon">
+                        <i className="fas fa-user-nurse"></i>
+                      </div>
+                      <div className="role-info">
+                        <h4>{dashboardData.UsersByRole?.R004 || 0}</h4>
+                        <p>Nhân viên</p>
+                      </div>
+                    </div>
+                    
+                    <div className="role-card doctor">
+                      <div className="role-icon">
+                        <i className="fas fa-user-md"></i>
+                      </div>
+                      <div className="role-info">
+                        <h4>{dashboardData.UsersByRole?.R005 || 0}</h4>
+                        <p>Bác sĩ</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="dashboard-section">
+                  <h3 className="section-title">
+                    <i className="fas fa-bolt"></i>
+                    Thao tác nhanh
+                  </h3>
+                  <div className="quick-actions">
+                    <button 
+                      className="quick-action-btn primary"
+                      onClick={() => setSelectedTab('adddoctor')}
+                    >
+                      <i className="fas fa-user-md"></i>
+                      <span>Thêm bác sĩ</span>
+                    </button>
+                    
+                    <button 
+                      className="quick-action-btn success"
+                      onClick={() => setSelectedTab('addstaff')}
+                    >
+                      <i className="fas fa-user-plus"></i>
+                      <span>Thêm nhân viên</span>
+                    </button>
+                    
+                    <button 
+                      className="quick-action-btn info"
+                      onClick={() => setSelectedTab('addmanager')}
+                    >
+                      <i className="fas fa-user-tie"></i>
+                      <span>Thêm quản lý</span>
+                    </button>
+                    
+                    <button 
+                      className="quick-action-btn warning"
+                      onClick={() => setSelectedTab('addschedule')}
+                    >
+                      <i className="fas fa-calendar-plus"></i>
+                      <span>Thêm lịch làm việc</span>
+                    </button>
+                    
+                    <button 
+                      className="quick-action-btn secondary"
+                      onClick={() => setSelectedTab('addarv')}
+                    >
+                      <i className="fas fa-pills"></i>
+                      <span>Thêm ARV</span>
+                    </button>
+                    
+                    <button 
+                      className="quick-action-btn refresh"
+                      onClick={fetchDashboardData}
+                    >
+                      <i className="fas fa-sync-alt"></i>
+                      <span>Làm mới dữ liệu</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+        
         {selectedTab === 'adddoctor' && (
           <div className="admin-content">
             <h2 className="admin-table-title">Thêm bác sĩ mới</h2>
