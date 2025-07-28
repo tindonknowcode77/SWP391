@@ -66,55 +66,76 @@ const Profile = () => {
   const [medicalHistory, setMedicalHistory] = useState([]);
   const [prescriptionData, setPrescriptionData] = useState(null);
   const medicationInfo = {
-    Tenofovir: {
-      tacDung: "Ức chế enzyme sao chép ngược của virus HIV và HBV, giúp giảm lượng virus trong cơ thể.",
-      tacDungPhu: "Buồn nôn, tiêu chảy, nhức đầu, giảm mật độ xương, ảnh hưởng chức năng thận.",
-      luuY: "Theo dõi chức năng thận định kỳ. Dùng thận trọng với bệnh nhân có tiền sử bệnh thận hoặc loãng xương."
+    "Abacavir-Lamivudine-Dolutegravir": {
+      thanhPhan: ["Abacavir", "Lamivudine", "Dolutegravir"],
+      dangDung: "Viên nén phối hợp liều cố định (FDC): Triumeq",
+      doiTuong: "Người lớn và thanh thiếu niên ≥12 tuổi không mang HLA-B*5701",
+      uuDiem: "Uống 1 viên/ngày, ít tương tác thuốc, hiệu quả ức chế virus cao, dung nạp tốt",
+      luuY: "Không dùng nếu dương tính với HLA-B*5701 do nguy cơ phản ứng quá mẫn với Abacavir",
+      suDung: "Phác đồ điều trị khởi đầu ưu tiên của WHO và Việt Nam"
     },
-    Lamivudine: {
-      tacDung: "Ức chế enzyme sao chép ngược, làm giảm sự nhân lên của HIV và HBV.",
-      tacDungPhu: "Đau bụng, nhức đầu, buồn nôn, tiêu chảy nhẹ.",
-      luuY: "Không dùng đồng thời với emtricitabine. Theo dõi chức năng gan nếu có viêm gan B kèm theo."
+  
+    "Abacavir-Lamivudine-Lopinavir/Ritonavir": {
+      thanhPhan: ["Abacavir", "Lamivudine", "Lopinavir", "Ritonavir"],
+      dangDung: "Viên riêng lẻ, dùng phối hợp",
+      doiTuong: "Người trưởng thành thất bại phác đồ khởi đầu hoặc có chống chỉ định với EFV/DTG",
+      uuDiem: "Hiệu quả cao do dùng nhóm PI có rào cản kháng thuốc cao",
+      luuY: "Cần kiểm tra HLA-B*5701, không dùng nếu có bệnh gan nặng",
+      suDung: "Phác đồ bậc 2 trong điều trị HIV"
     },
-    Dolutegravir: {
-      tacDung: "Ức chế enzyme tích hợp của HIV, ngăn virus tích hợp vào DNA của tế bào người.",
-      tacDungPhu: "Mất ngủ, đau đầu, tăng men gan, phát ban.",
-      luuY: "Không nên dùng cho phụ nữ đang mang thai 3 tháng đầu. Có thể gây tăng cân nhẹ khi dùng lâu dài."
+  
+    "Zidovudine(or Abacavir)-Lamivudine-Raltegravir": {
+      thanhPhan: ["Zidovudine hoặc Abacavir", "Lamivudine", "Raltegravir"],
+      dangDung: "Viên riêng lẻ, dùng 2 lần/ngày",
+      doiTuong: "Phụ nữ mang thai hoặc bệnh nhân không dung nạp DTG",
+      uuDiem: "Raltegravir an toàn cho thai kỳ, ít tương tác thuốc",
+      luuY: "Zidovudine có thể gây thiếu máu, nên theo dõi công thức máu định kỳ",
+      suDung: "Khởi đầu thay thế cho phụ nữ có thai"
     },
-    Efavirenz: {
-      tacDung: "Ức chế enzyme sao chép ngược không nucleoside, giúp làm giảm tải lượng virus HIV.",
-      tacDungPhu: "Ác mộng, chóng mặt, thay đổi tâm trạng, phát ban da.",
-      luuY: "Dùng vào buổi tối để hạn chế tác dụng phụ lên hệ thần kinh. Tránh sử dụng với rượu hoặc thuốc an thần."
+  
+    "Zidovudine-Lamivudine-Nevirapine": {
+      thanhPhan: ["Zidovudine", "Lamivudine", "Nevirapine"],
+      dangDung: "Viên rời, dùng 2 lần/ngày",
+      doiTuong: "Phụ nữ mang thai, bệnh nhân không tiếp cận được thuốc mới",
+      uuDiem: "Rẻ tiền, có trong chương trình điều trị quốc gia lâu đời",
+      luuY: "Nguy cơ phát ban nặng, tăng men gan, cần tăng liều từ từ",
+      suDung: "PMTCT (dự phòng lây mẹ - con) tại vùng có hạn chế thuốc"
     },
-    Zidovudine: {
-      tacDung: "Ức chế enzyme sao chép ngược, là thuốc kháng HIV đầu tiên được sử dụng.",
-      tacDungPhu: "Thiếu máu, buồn nôn, mất ngủ, thay đổi chỉ số huyết học.",
-      luuY: "Theo dõi công thức máu định kỳ. Thận trọng với người có bệnh về tủy xương hoặc gan."
+  
+    "Tenofovir-Lamivudine(or Emtricitabine)-Protease inhibitor/Ritonavir": {
+      thanhPhan: ["Tenofovir", "Lamivudine hoặc Emtricitabine", "PI (Lopinavir, Darunavir...)", "Ritonavir"],
+      dangDung: "Dùng viên rời phối hợp, thường ngày 1-2 lần",
+      doiTuong: "Bệnh nhân thất bại phác đồ khởi đầu có chứa EFV hoặc DTG",
+      uuDiem: "PI có rào cản kháng thuốc cao, hiệu quả tốt",
+      luuY: "Theo dõi chức năng thận và mỡ máu. Cần dùng kèm Ritonavir để tăng hiệu lực PI",
+      suDung: "Phác đồ bậc 2 trong hướng dẫn quốc gia"
     },
-    Nevirapine: {
-      tacDung: "Ức chế enzyme sao chép ngược không nucleoside, làm chậm sự nhân lên của HIV.",
-      tacDungPhu: "Phát ban da, tăng men gan, buồn nôn.",
-      luuY: "Theo dõi chặt chẽ chức năng gan trong 6 tuần đầu. Tăng liều từ từ để giảm nguy cơ phát ban nghiêm trọng."
+  
+    "Abacavir-Lamivudine-Efavirenz(or Nevirapine)": {
+      thanhPhan: ["Abacavir", "Lamivudine", "Efavirenz hoặc Nevirapine"],
+      dangDung: "Viên rời, dùng 1 lần/ngày",
+      doiTuong: "Bệnh nhân không thể dùng Tenofovir do vấn đề về thận",
+      uuDiem: "Giá thành thấp, dễ phân phối, phổ biến ở vùng tài nguyên hạn chế",
+      luuY: "Nguy cơ tác dụng phụ thần kinh với EFV, cần kiểm tra HLA-B*5701 nếu dùng Abacavir",
+      suDung: "Phác đồ thay thế nếu không dùng được TDF"
     },
-    Abacavir: {
-      tacDung: "Ức chế enzyme sao chép ngược, giúp giảm lượng virus HIV trong máu.",
-      tacDungPhu: "Buồn nôn, sốt, phát ban, đau bụng.",
-      luuY: "Kiểm tra HLA-B*5701 trước khi dùng để tránh phản ứng quá mẫn nghiêm trọng có thể gây tử vong."
+  
+    "Zidovudine-Lamivudine-Lopinavir/Ritonavir": {
+      thanhPhan: ["Zidovudine", "Lamivudine", "Lopinavir", "Ritonavir"],
+      dangDung: "Viên rời, ngày uống 2 lần",
+      doiTuong: "Trẻ nhỏ hoặc người lớn thất bại điều trị bậc 1",
+      uuDiem: "PI có rào cản kháng thuốc cao, ít bị ảnh hưởng bởi đột biến",
+      luuY: "Zidovudine có thể gây thiếu máu, cần theo dõi huyết học",
+      suDung: "Điều trị bậc 2 hoặc cho trẻ em"
     },
-    Raltegravir: {
-      tacDung: "Ức chế enzyme tích hợp của HIV, giúp ngăn virus xâm nhập vào DNA tế bào người.",
-      tacDungPhu: "Mệt mỏi, đau đầu, tiêu chảy, tăng men gan.",
-      luuY: "Thích hợp cho phụ nữ mang thai. Cần theo dõi men gan định kỳ khi dùng lâu dài."
-    },
-    Darunavir: {
-      tacDung: "Ức chế enzyme protease của HIV, ngăn virus cắt protein để tạo virus mới.",
-      tacDungPhu: "Phát ban, buồn nôn, đau bụng, tăng lipid máu.",
-      luuY: "Luôn dùng kết hợp với ritonavir hoặc cobicistat để tăng sinh khả dụng. Theo dõi chỉ số mỡ máu."
-    },
-    Ritonavir: {
-      tacDung: "Chính: ức chế protease; Phổ biến: dùng để tăng hiệu lực các thuốc khác bằng cách ức chế enzyme CYP3A4.",
-      tacDungPhu: "Tiêu chảy, vị kim loại trong miệng, tăng triglyceride, tăng men gan.",
-      luuY: "Thường không dùng đơn độc. Theo dõi tương tác thuốc kỹ lưỡng vì ảnh hưởng đến nhiều thuốc chuyển hóa qua gan."
+  
+    "Zidovudine + Lamivudine + Lopinavir/ritonavir": {
+      thanhPhan: ["Zidovudine", "Lamivudine", "Lopinavir", "Ritonavir"],
+      dangDung: "Tương tự dòng trên – chỉ khác cách viết",
+      doiTuong: "Như trên",
+      uuDiem: "Như trên",
+      luuY: "Như trên",
+      suDung: "Phác đồ điều trị bậc 2 trong chương trình ARV quốc gia"
     }
   };
 
@@ -1420,32 +1441,56 @@ const Profile = () => {
   </div>
 )}
 {showPopup && (
-  <div className="popup-overlay" onClick={closePopup}>
-    <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-      <button className="popup-close" onClick={closePopup}>×</button>
-      <h3>🧪 Thông tin thuốc: <span>{selectedDrug}</span></h3>
+  <div className="medication-popup-overlay" onClick={closePopup}>
+    <div className="medication-popup-content" onClick={(e) => e.stopPropagation()}>
+      <button className="medication-popup-close" onClick={closePopup}>×</button>
+      <h3 className="medication-title">
+        📋 Thông tin phác đồ: <span>{selectedDrug}</span>
+      </h3>
 
       {medicationInfo[selectedDrug] ? (
         <>
-          <div className="info-section">
-            <strong>Tác dụng:</strong>
-            <p>{medicationInfo[selectedDrug].tacDung}</p>
+          <div className="medication-section">
+            <strong>📌 Thành phần:</strong>
+            <ul>
+              {medicationInfo[selectedDrug].thanhPhan.map((tp, index) => (
+                <li key={index}>– {tp}</li>
+              ))}
+            </ul>
           </div>
-          <div className="info-section">
-            <strong>Tác dụng phụ:</strong>
-            <p>{medicationInfo[selectedDrug].tacDungPhu}</p>
+
+          <div className="medication-section">
+            <strong>💊 Dạng dùng:</strong>
+            <p>{medicationInfo[selectedDrug].dangDung}</p>
           </div>
-          <div className="info-section">
-            <strong>Lưu ý:</strong>
+
+          <div className="medication-section">
+            <strong>👤 Đối tượng phù hợp:</strong>
+            <p>{medicationInfo[selectedDrug].doiTuong}</p>
+          </div>
+
+          <div className="medication-section">
+            <strong>✅ Ưu điểm:</strong>
+            <p>{medicationInfo[selectedDrug].uuDiem}</p>
+          </div>
+
+          <div className="medication-section">
+            <strong>⚠️ Lưu ý:</strong>
             <p>{medicationInfo[selectedDrug].luuY}</p>
+          </div>
+
+          <div className="medication-section">
+            <strong>📌 Ứng dụng:</strong>
+            <p>{medicationInfo[selectedDrug].suDung}</p>
           </div>
         </>
       ) : (
-        <p>Không có thông tin về loại thuốc này.</p>
+        <p className="medication-error">Không có thông tin về phác đồ này.</p>
       )}
     </div>
   </div>
 )}
+
 
     </>
   );
