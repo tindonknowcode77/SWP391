@@ -15,6 +15,9 @@ const defaultServices = {
   // 'Khám tổng quát': ,
 };
 
+// Thêm mảng avatar cho tối đa 30 bác sĩ
+const doctorImages = Array.from({ length: 20 }, (_, i) => `https://localhost:7246/image/doctor${i + 21}.png`);
+
 export default function ExaminationSchedule() {
   const navigate = useNavigate();
   const [doctors, setDoctors] = useState([]);
@@ -50,13 +53,13 @@ export default function ExaminationSchedule() {
         
         if (doctorsData && Array.isArray(doctorsData)) {
           // Process doctors data to add schedule and work hours if they don't exist
-          const processedDoctors = doctorsData.map(doctor => ({
+          const processedDoctors = doctorsData.map((doctor, idx) => ({
             id: doctor.DoctorId,
             userId: doctor.UserID,
             name: doctor.Fullname || doctor.name || 'Bác sĩ',
             specialty: doctor.Specialization || doctor.specialty || 'Chuyên khoa chung',
             experience: doctor.ExperienceYears ? `${doctor.ExperienceYears} năm kinh nghiệm` : doctor.experience || 'Chuyên gia y tế',
-            avatar: doctor.image || `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 100)}.jpg`,
+            avatar: doctor.image || doctorImages[idx],
             education: doctor.education || 'Đại học Y',
             description: doctor.Description || doctor.description || 'Thông tin đang được cập nhật',
             rating: doctor.rating || (4 + Math.random()).toFixed(1),
@@ -1038,7 +1041,11 @@ export default function ExaminationSchedule() {
                   .slice(examschPage * doctorsPerPage, examschPage * doctorsPerPage + doctorsPerPage)
                   .map((doc) => (
                   <div className="doctor-card" key={doc.id} onClick={() => handleDoctorSelect(doc)}>
-                    <img className="doctor-avatar" src={doc.avatar} alt={doc.name} />
+                    <img
+                      className="doctor-avatar"
+                      src={doc.avatar}
+                      alt={doc.name}
+                    />
                     <div className="doctor-card-info">
                       <h3 className="doctor-name">{doc.name}</h3>
                       <p className="doctor-specialty">{doc.specialty}</p>
