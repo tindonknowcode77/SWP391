@@ -15,7 +15,7 @@ const defaultServices = {
   // 'Khám tổng quát': ,
 };
 
-// Thêm mảng avatar cho tối đa 30 bác sĩ
+// Mảng hình bác sĩ
 const doctorImages = Array.from({ length: 20 }, (_, i) => `https://localhost:7246/image/doctor${i + 21}.png`);
 
 export default function ExaminationSchedule() {
