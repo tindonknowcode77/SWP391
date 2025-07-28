@@ -14,6 +14,9 @@ const DoctorsList = () => {
   const doctorsPerPage = 3;
   const navigate = useNavigate();
 
+  // Thêm mảng avatar cho tối đa 20 bác sĩ (21-40)
+  const doctorImages = Array.from({ length: 20 }, (_, i) => `https://localhost:7246/image/doctor${i + 21}.png`);
+
   useEffect(() => {
     // Fetch doctors data from API
     const fetchData = async () => {
@@ -67,8 +70,16 @@ const DoctorsList = () => {
     return matchesSearch && matchesSpecialty;
   });
 
-  // Sort doctors based on selected criteria
+  //Hiển thị bác sĩ theo đúng thứ tự
   const sortedDoctors = [...filteredDoctors].sort((a, b) => {
+    // Sắp xếp theo UserID tăng dần nếu có
+    if (a.UserID && b.UserID) {
+      // Lấy số từ UserID (UI000021 -> 21)
+      const numA = parseInt((a.UserID.match(/\d+/) || [0])[0], 10);
+      const numB = parseInt((b.UserID.match(/\d+/) || [0])[0], 10);
+      if (numA !== numB) return numA - numB;
+    }
+    // Nếu không có UserID hoặc giống nhau thì sort theo tiêu chí cũ
     switch (sortBy) {
       case 'name':
         const nameA = (a.Fullname || a.name || '').toLowerCase();
@@ -172,34 +183,38 @@ const DoctorsList = () => {
             {sortedDoctors.length > 0 ? (
               sortedDoctors
                 .slice(currentPage * doctorsPerPage, currentPage * doctorsPerPage + doctorsPerPage)
-                .map(doctor => (
-                  <div className="doctor-card" key={doctor.UserID || doctor.id}>
-                    <div className="doctor-image">
-                      <img 
-                        src={doctor.image || "https://randomuser.me/api/portraits/med/men/32.jpg"} 
-                        alt={doctor.Fullname || doctor.name || "Bác sĩ"} 
-                      />
-                    </div>
-                    <div className="doctor-info">
-                      <h3>{doctor.Fullname || doctor.name}</h3>
-                      <p className="specialty">
-                        <i className="fas fa-stethoscope"></i> {doctor.Specialization || doctor.specialization || doctor.specialty || "Chuyên khoa chung"}
-                      </p>
-                      <p className="experience">
-                        <i className="fas fa-history"></i> {doctor.ExperienceYears ? `${doctor.ExperienceYears} năm kinh nghiệm` : doctor.Experience || ""}
-                      </p>
-                      <p className="license-number">
-                        <i className="fas fa-id-card"></i> Số giấy phép: {doctor.LicenseNumber || "N/A"}
-                      </p>
-                      <p className="email">
-                        <i className="fas fa-envelope"></i> {doctor.Email || "Email không có sẵn"}
-                      </p>
-                      <div className="doctor-contact">
-                        <Link to={`/hospital/bac-si/${doctor.UserID || doctor.id}`} className="doctor-btn">Xem hồ sơ</Link>
+                .map((doctor, idx) => {
+                  const realIdx = currentPage * doctorsPerPage + idx;
+                  return (
+                    <div className="doctor-card" key={doctor.UserID || doctor.id}>
+                      <div className="doctor-image">
+                        <img 
+                          className="doctor-avatar"
+                          src={doctor.image || doctorImages[realIdx]} 
+                          alt={doctor.Fullname || doctor.name || "Bác sĩ"} 
+                        />
+                      </div>
+                      <div className="doctor-info">
+                        <h3>{doctor.Fullname || doctor.name}</h3>
+                        <p className="specialty">
+                          <i className="fas fa-stethoscope"></i> {doctor.Specialization || doctor.specialization || doctor.specialty || "Chuyên khoa chung"}
+                        </p>
+                        <p className="experience">
+                          <i className="fas fa-history"></i> {doctor.ExperienceYears ? `${doctor.ExperienceYears} năm kinh nghiệm` : doctor.Experience || ""}
+                        </p>
+                        <p className="license-number">
+                          <i className="fas fa-id-card"></i> Số giấy phép: {doctor.LicenseNumber || "N/A"}
+                        </p>
+                        <p className="email">
+                          <i className="fas fa-envelope"></i> {doctor.Email || "Email không có sẵn"}
+                        </p>
+                        <div className="doctor-contact">
+                          <Link to={`/hospital/bac-si/${doctor.UserID || doctor.id}`} className="doctor-btn">Xem hồ sơ</Link>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
             ) : (
               <div className="no-results">
                 <i className="fas fa-user-md"></i>

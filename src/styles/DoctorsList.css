@@ -153,16 +153,22 @@
 }
 
 .doctor-image {
-  height: 200px;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9f9f9;
   overflow: hidden;
-  position: relative;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.doctor-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s;
+.doctor-image img,
+.doctor-avatar {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain; 
+  object-position: center;
+  transition: transform 0.3s ease;
 }
 
 .doctor-card:hover .doctor-image img {
