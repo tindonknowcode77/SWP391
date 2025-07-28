@@ -462,3 +462,8 @@ export const capnhatManager = (userId, data) => {
 export const xoaManager = (userId) => {
   return axiosClient.delete(`Manager/DeleteManager/${userId}`);
 };
+export const datlichtaikham = (data) => {
+  return axiosClient.post('/Appointment/re-examination', data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}

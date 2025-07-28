@@ -11,6 +11,7 @@ import { getAllLabTests} from '../api/auth';
 import { addLabTest} from '../api/auth';
 import { updateLabTest} from '../api/auth';
 import { deleteLabTest} from '../api/auth';
+import { datlichtaikham } from '../api/auth';
 
 
 
@@ -88,6 +89,18 @@ const Doctor = () => {
     labTestIds: []
   });
   const [loadingDropdownData, setLoadingDropdownData] = useState(false);
+  // State for re-examination form
+  const [reExamForm, setReExamForm] = useState({
+    PatientID: '',
+    DoctorID: '',
+    BookingType: '',
+    BookDate: '',
+    BookTime: '',
+    Note: ''
+  });
+  const [reExamMessage, setReExamMessage] = useState('');
+  const [reExamLoading, setReExamLoading] = useState(false);
+  const [selectedPatientName, setSelectedPatientName] = useState('');
 
 
   const patientNameMap = {
@@ -141,7 +154,31 @@ const Doctor = () => {
   };
 
   useEffect(() => {
-    if (selected === 'appointments') {
+    if (selected === 're-examination') {
+      // Set default doctor ID when selecting the re-examination tab
+      const doctorId = currentUser?.DoctorId || currentUser?.doctorId || currentUser?.DoctorID || 'DT000003'; // Fallback to DT000003 if no ID found
+      setReExamForm(prev => ({
+        ...prev,
+        DoctorID: doctorId,
+        BookingType: 'Tái khám' // Always set to "Tái khám" regardless of previous value
+      }));
+      
+      // Fetch patients data if not already loaded
+      if (patients.length === 0 && !loadingPatients) {
+        setLoadingPatients(true);
+        setPatientsError(null);
+        bacsilaydanhsachbenhnhan()
+          .then((data) => {
+            const patientsData = Array.isArray(data) ? data : (data?.data || []);
+            setPatients(patientsData);
+            setLoadingPatients(false);
+          })
+          .catch((err) => {
+            setPatientsError('Không thể tải danh sách bệnh nhân');
+            setLoadingPatients(false);
+          });
+      }
+    } else if (selected === 'appointments') {
       setLoading(true);
       setError(null);
       bacsilaydanhsachbenhnhan()
@@ -368,6 +405,91 @@ const Doctor = () => {
     }
   };
 
+  // Handler for re-examination form
+  const handleReExamFormChange = (e) => {
+    const { name, value } = e.target;
+    setReExamForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Submit re-examination form
+  const handleReExamSubmit = async (e) => {
+    e.preventDefault();
+    setReExamLoading(true);
+    setReExamMessage('');
+    
+    try {
+      // Make sure all required fields are filled properly
+      if (!reExamForm.PatientID) {
+        throw new Error('Vui lòng chọn bệnh nhân');
+      }
+      
+      if (!reExamForm.BookDate) {
+        throw new Error('Vui lòng chọn ngày tái khám');
+      }
+      
+      if (!reExamForm.BookTime) {
+        throw new Error('Vui lòng chọn giờ tái khám');
+      }
+      
+      // Format date and time for API while preserving the exact time selected by user
+      const [year, month, day] = reExamForm.BookDate.split('-');
+      const [hours, minutes] = reExamForm.BookTime.split(':');
+      
+      // Log the original input values for debugging
+      console.log('Original input - Date:', reExamForm.BookDate, 'Time:', reExamForm.BookTime);
+      
+      // Create a formatted date string in the format "YYYY-MM-DDThh:mm:00.000Z"
+      // but keep the exact time as entered without timezone conversion
+      const exactTimeFormatted = `${year}-${month}-${day}T${hours}:${minutes}:00.000Z`;
+      
+      // Log the formatted time to verify it's correct
+      console.log('Formatted date time (preserving exact user input):', exactTimeFormatted);
+      
+      // Ensure DoctorID is in the correct format
+      const doctorId = reExamForm.DoctorID || currentUser?.DoctorId || currentUser?.DoctorID || currentUser?.doctorId || 'DT000003';
+      
+      // BookingType is always "Tái khám", no need to validate
+      
+      // Prepare the data for submission according to the exact format in the screenshot
+      const formData = {
+        "PatientID": reExamForm.PatientID,
+        "DoctorID": doctorId,
+        "BookingType": "Tái khám", // Always set to "Tái khám"
+        "BookDate": exactTimeFormatted,
+        "note": reExamForm.Note || ""
+      };
+      
+      console.log('Submitting re-examination appointment:', formData);
+      const response = await datlichtaikham(formData);
+      
+      // Extract BookID from the response if available
+      const bookId = response?.data?.BookID || response?.BookID;
+      
+      setReExamMessage(`Đặt lịch tái khám thành công${bookId ? ` với mã: ${bookId}` : ''}`);
+      setShowSuccessPopup(true); // Show success popup
+      setSuccessMessage(`Đặt lịch tái khám thành công${bookId ? ` với mã: ${bookId}` : ''}`);
+      
+      setReExamForm({
+        PatientID: '',
+        DoctorID: doctorId,
+        BookingType: 'Tái khám', // Use a meaningful default value
+        BookDate: '',
+        BookTime: '',
+        Note: ''
+      });
+      setSelectedPatientName('');
+      console.log('Re-examination scheduled:', response);
+    } catch (error) {
+      console.error('Error scheduling re-examination:', error);
+      setReExamMessage(error.message || 'Lỗi khi đặt lịch tái khám. Vui lòng thử lại.');
+    } finally {
+      setReExamLoading(false);
+    }
+  };
+
   const handleCheckin = async (bookId) => {
     const appointment = appointments.find(a => a.BookID === bookId);
     if (appointment && appointment.Status === 'Đã khám') {
@@ -455,6 +577,13 @@ const Doctor = () => {
           >
             <i className="fas fa-edit"></i>
             <span>Cập nhật LabTest</span>
+          </li>
+          <li
+            className={selected === 're-examination' ? 'active' : ''}
+            onClick={() => setSelected('re-examination')}
+          >
+            <i className="fas fa-calendar-plus"></i>
+            <span>Đặt lịch tái khám</span>
           </li>
         </ul>
       </aside>
@@ -1294,6 +1423,157 @@ const Doctor = () => {
             </form>
           </div>
         )}
+        {selected === 're-examination' && (
+          <div className="doctor-content">
+            <h2 className="doctor-table-title">Đặt lịch tái khám</h2>
+            {reExamMessage && !showSuccessPopup && (
+              <div className={reExamMessage.includes('thành công') ? 'success-message' : 'error-message'} style={{marginBottom: '20px'}}>
+                {reExamMessage}
+              </div>
+            )}
+            
+            {loadingPatients && (
+              <div className="loading-dropdown" style={{margin: '20px 0'}}>
+                <i className="fas fa-spinner fa-spin"></i> Đang tải danh sách bệnh nhân...
+              </div>
+            )}
+            
+            {patientsError && (
+              <div className="error-message" style={{margin: '20px 0'}}>
+                {patientsError}
+              </div>
+            )}
+            
+            <form onSubmit={handleReExamSubmit} className="labtest-form">
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="PatientID">Tên bệnh nhân <span className="required">*</span></label>
+                  <select
+                    id="PatientID"
+                    name="PatientID"
+                    value={reExamForm.PatientID}
+                    onChange={(e) => {
+                      const selectedPatient = patients.find(p => 
+                        p.Patient?.PatientID === e.target.value
+                      );
+                      const patientName = selectedPatient?.PatientFullname || 
+                                         selectedPatient?.Patient?.User?.Fullname || 
+                                         patientNameMap[e.target.value] ||
+                                         e.target.value;
+                      setSelectedPatientName(patientName);
+                      handleReExamFormChange(e);
+                    }}
+                    required
+                  >
+                    <option value="">Chọn bệnh nhân</option>
+                    {patients.map((p, idx) => (
+                      <option key={p.Patient?.PatientID || idx} value={p.Patient?.PatientID}>
+                        {p.PatientFullname || p.Patient?.User?.Fullname || patientNameMap[p.Patient?.PatientID] || p.Patient?.PatientID}
+                      </option>
+                    ))}
+                    {Object.keys(patientNameMap).map(id => (
+                      !patients.some(p => p.Patient?.PatientID === id) && 
+                      <option key={id} value={id}>
+                        {patientNameMap[id]} - {id}
+                      </option>
+                    ))}
+                  </select>
+                  {reExamForm.PatientID && (
+                    <small style={{ color: '#666', marginTop: '4px', display: 'block' }}>
+                      Mã bệnh nhân: {reExamForm.PatientID}
+                    </small>
+                  )}
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="DoctorID">Bác sĩ phụ trách <span className="required">*</span></label>
+                  <input
+                    type="text"
+                    value={currentUser?.name || 'Không xác định'}
+                    disabled
+                    style={{ background: '#f7fafd', fontWeight: 'bold' }}
+                  />
+                </div>
+              </div>
+              
+              <div className="form-row">
+                <div className="form-group" style={{width: '100%'}}>
+                  <label htmlFor="BookingType">Loại dịch vụ</label>
+                  <input
+                    type="text"
+                    id="BookingType"
+                    value="Tái khám"
+                    disabled
+                    style={{ background: '#f7fafd', fontWeight: 'bold' }}
+                  />
+                  <small style={{ color: '#666', marginTop: '4px', display: 'block' }}>
+                    Dịch vụ mặc định cho tái khám
+                  </small>
+                </div>
+              </div>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="BookDate">Ngày khám <span className="required">*</span></label>
+                  <input
+                    type="date"
+                    id="BookDate"
+                    name="BookDate"
+                    value={reExamForm.BookDate}
+                    onChange={handleReExamFormChange}
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="BookTime">Giờ khám <span className="required">*</span></label>
+                  <input
+                    type="time"
+                    id="BookTime"
+                    name="BookTime"
+                    value={reExamForm.BookTime}
+                    onChange={handleReExamFormChange}
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="form-row">
+                <div className="form-group" style={{width: '100%'}}>
+                  <label htmlFor="Note">Ghi chú</label>
+                  <textarea
+                    id="Note"
+                    name="Note"
+                    value={reExamForm.Note}
+                    onChange={handleReExamFormChange}
+                    placeholder="Nhập ghi chú về lý do tái khám"
+                    rows="3"
+                    style={{width: '100%'}}
+                  />
+                </div>
+              </div>
+              
+              <div className="form-actions" style={{marginTop: '20px'}}>
+                <button 
+                  type="submit" 
+                  className="submit-btn" 
+                  disabled={reExamLoading}
+                  style={{
+                    padding: '10px 20px',
+                    backgroundColor: '#4CAF50',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: reExamLoading ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {reExamLoading ? 'Đang xử lý...' : 'Đặt lịch tái khám'}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+        
         {selected === 'all-labtests' && (
           <div className="doctor-content">
             <h2 className="doctor-table-title">Danh sách tất cả LabTest</h2>
@@ -1452,6 +1732,71 @@ const Doctor = () => {
                 Đăng xuất
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Success Popup for Re-examination */}
+      {showSuccessPopup && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '30px',
+            textAlign: 'center',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+            maxWidth: '400px',
+            width: '90%'
+          }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              borderRadius: '50%',
+              backgroundColor: '#4CAF50',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              margin: '0 auto 20px',
+              fontSize: '30px',
+              color: 'white'
+            }}>
+              ✓
+            </div>
+            <h3 style={{
+              margin: '0 0 15px 0',
+              color: '#333',
+              fontSize: '18px',
+              fontWeight: '600'
+            }}>
+              {successMessage}
+            </h3>
+            <button
+              onClick={() => setShowSuccessPopup(false)}
+              style={{
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '10px 24px',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+              }}
+            >
+              Đóng
+            </button>
           </div>
         </div>
       )}
