@@ -141,6 +141,7 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-top: 10px;
+  align-items: center;
 }
 
 .login-button:hover {
@@ -150,6 +151,11 @@
 .login-button:disabled {
   background-color: #95a5a6;
   cursor: not-allowed;
+}
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
 }
 
 .login-divider {

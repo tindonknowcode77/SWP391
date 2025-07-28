@@ -196,29 +196,19 @@ const Login = () => {
               <Link to="/forgot-password" className="forgot-link">Quên mật khẩu?</Link>
             </div>
 
+            <form onSubmit={handleSubmit}>
+             <div className="button-wrapper">
             <button
-              type="submit"
-              className="login-button"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Đang xử lý...' : 'Đăng nhập'}
+                type="submit"
+                className="login-button"
+                disabled={isSubmitting}>
+             {isSubmitting ? 'Đang xử lý...' : 'Đăng nhập'}
             </button>
+         </div>
+         </form>
+
           </form>
 
-          <div className="login-divider">
-            <span>Hoặc đăng nhập với</span>
-          </div>
-
-          <div className="social-login">
-            <button className="google-btn">
-              <i className="fab fa-google"></i>
-              Google
-            </button>
-            <button className="facebook-btn">
-              <i className="fab fa-facebook-f"></i>
-              Facebook
-            </button>
-          </div>
 
           <div className="login-footer">
             <p>Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link></p>
