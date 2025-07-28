@@ -74,7 +74,22 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
+    // Validate mật khẩu
+    if (formData.password.length < 8) {
+      setFormError('Mật khẩu phải có ít nhất 8 ký tự');
+      return;
+    }
     
+    if (formData.password !== formData.confirmPassword) {
+      setFormError('Mật khẩu xác nhận không khớp');
+      return;
+    }
+    
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      setFormError('Email không hợp lệ');
+      return;
+    }
   
     setIsSubmitting(true);
     setFormError('');
