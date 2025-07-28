@@ -1085,7 +1085,7 @@ const Admin = () => {
                       </div>
                       <div className="role-info">
                         <h4>{dashboardData.UsersByRole?.R003 || 0}</h4>
-                        <p>Bệnh nhân</p>
+                        <p>Bác sĩ</p>
                       </div>
                     </div>
                     
@@ -1105,7 +1105,7 @@ const Admin = () => {
                       </div>
                       <div className="role-info">
                         <h4>{dashboardData.UsersByRole?.R005 || 0}</h4>
-                        <p>Bác sĩ</p>
+                        <p>Bệnh Nhân </p>
                       </div>
                     </div>
                   </div>
