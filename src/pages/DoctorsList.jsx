@@ -15,7 +15,7 @@ const DoctorsList = () => {
   const navigate = useNavigate();
 
   // Thêm mảng avatar cho tối đa 20 bác sĩ (21-40)
-  const doctorImages = Array.from({ length: 20 }, (_, i) => `https://localhost:7246/image/doctor${i + 21}.png`);
+  const doctorImages = Array.from({ length: 30 }, (_, i) => `https://localhost:7246/image/doctor${i + 21}.png`);
 
   useEffect(() => {
     // Fetch doctors data from API

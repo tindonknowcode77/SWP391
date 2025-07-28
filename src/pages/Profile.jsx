@@ -461,7 +461,7 @@ const Profile = () => {
             <div className="profile-avatar">
               {formData.image ? (
                 <img
-                  src={`https://localhost:7246/image/${formData.image}` || "fa fa-user"}
+                  src={`https://localhost:7246/image/patient.png` || "fa fa-user"}
                   alt=""
                   className="profile-avatar-img"
                   style={{ width: 150, height: 150, borderRadius: '50%', zIndex: 1  }}
