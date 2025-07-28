@@ -932,10 +932,6 @@ const Admin = () => {
             <i className="fas fa-user-md"></i>
             <span>Thêm bác sĩ</span>
           </li>
-          <li className={selectedTab === 'updatedoctor' ? 'active' : ''} onClick={() => setSelectedTab('updatedoctor')}>
-            <i className="fas fa-user-edit"></i>
-            <span>Cập nhật bác sĩ</span>
-          </li>
           <li className={selectedTab === 'alldoctors' ? 'active' : ''} onClick={() => setSelectedTab('alldoctors')}>
             <i className="fas fa-users"></i>
             <span>Danh sách tất cả bác sĩ</span>
@@ -1318,7 +1314,14 @@ const Admin = () => {
               </div>
               <div className="form-group">
                 <label>SlotID</label>
-                <input name="SlotID" value={addScheduleForm.SlotID} onChange={handleAddScheduleChange} required />
+                <select name="SlotID" value={addScheduleForm.SlotID} onChange={handleAddScheduleChange} required>
+                  <option value="">-- Chọn SlotID --</option>
+                  <option value="SL000001">SL000001</option>
+                  <option value="SL000002">SL000002</option>
+                  <option value="SL000003">SL000003</option>
+                  <option value="SL000004">SL000004</option>
+                  <option value="SL000005">SL000005</option>
+                </select>
               </div>
               <div className="form-group">
                 <label>DateWork</label>

@@ -931,10 +931,6 @@ const Admin = () => {
             <i className="fas fa-user-md"></i>
             <span>Thêm bác sĩ</span>
           </li>
-          <li className={selectedTab === 'updatedoctor' ? 'active' : ''} onClick={() => setSelectedTab('updatedoctor')}>
-            <i className="fas fa-user-edit"></i>
-            <span>Cập nhật bác sĩ</span>
-          </li>
           <li className={selectedTab === 'alldoctors' ? 'active' : ''} onClick={() => setSelectedTab('alldoctors')}>
             <i className="fas fa-users"></i>
             <span>Danh sách tất cả bác sĩ</span>
