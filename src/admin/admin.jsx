@@ -141,6 +141,7 @@ const Admin = () => {
   const [showDeleteManagerPopup, setShowDeleteManagerPopup] = useState(false);
   const [deleteManagerMsg, setDeleteManagerMsg] = useState('');
   const [showManagerUpdateModal, setShowManagerUpdateModal] = useState(false);
+  const [showDoctorUpdateModal, setShowDoctorUpdateModal] = useState(false);
   const [deleteMsg, setDeleteMsg] = useState('');
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [doctorsList, setDoctorsList] = useState([]);
@@ -217,6 +218,32 @@ const Admin = () => {
         ...updateDoctorForm,
         ExperienceYears: Number(updateDoctorForm.ExperienceYears)
       });
+      
+      // Refresh danh sách bác sĩ nếu đang ở tab danh sách
+      if (selectedTab === 'alldoctors') {
+        fetchDoctorsList();
+      }
+      
+      // Hiển thị thông báo toàn trang
+      const successNotification = document.createElement('div');
+      successNotification.className = 'global-success-notification';
+      successNotification.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        Đã cập nhật bác sĩ <strong>${updateDoctorForm.FullName}</strong> thành công
+      `;
+      document.body.appendChild(successNotification);
+      
+      // Xóa thông báo sau 3 giây
+      setTimeout(() => {
+        successNotification.style.opacity = '0';
+        setTimeout(() => document.body.removeChild(successNotification), 300);
+      }, 3000);
+      
+      // Đóng modal sau 1.5 giây
+      setTimeout(() => {
+        setShowDoctorUpdateModal(false);
+      }, 1500);
+      
     } catch (err) {
       setUpdateDoctorMsg('Cập nhật thất bại!');
       setUpdatedDoctor(null);
@@ -754,6 +781,22 @@ const Admin = () => {
       ForGroup: arv.ForGroup || ''
     });
     setShowARVUpdateModal(true);
+  };
+  
+  // Hàm xử lý cập nhật bác sĩ từ danh sách
+  const handleUpdateDoctor = (doctor) => {
+    setUpdateDoctorId(doctor.DoctorId);
+    setUpdateDoctorForm({
+      FullName: doctor.Fullname || '',
+      Email: doctor.Email || '',
+      Specialization: doctor.Specialization || '',
+      LicenseNumber: doctor.LicenseNumber || '',
+      ExperienceYears: doctor.ExperienceYears || '',
+      Address: doctor.Address || '',
+      Image: doctor.Image || ''
+    });
+    setShowDoctorUpdateModal(true);
+    setUpdateDoctorMsg('');
   };
   
   const confirmDeleteManager = async () => {
@@ -2208,8 +2251,8 @@ const Admin = () => {
                   <th>Chuyên khoa</th>
                   <th>Mã số hành nghề</th>
                   <th>Kinh nghiệm (năm)</th>
-                  <th>Địa chỉ</th>
                   <th>Ảnh</th>
+                  <th>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
@@ -2221,16 +2264,24 @@ const Admin = () => {
                     <td>{doctor.Specialization}</td>
                     <td>{doctor.LicenseNumber}</td>
                     <td>{doctor.ExperienceYears}</td>
-                    <td>{doctor.Address}</td>
                     <td>
                       {doctor.Image ? 
                         <img src={doctor.Image} alt="doctor" style={{width:40, height:40, objectFit:'cover', borderRadius:4}} /> : 
                         'Không có'
                       }
                     </td>
+                    <td>
+                      <button 
+                        onClick={() => handleUpdateDoctor(doctor)} 
+                        className="admin-action-btn" 
+                        style={{backgroundColor: '#4a90e2', fontSize: '12px', padding: '4px 8px'}}
+                      >
+                        <i className="fas fa-edit"></i> Cập nhật
+                      </button>
+                    </td>
                   </tr>
                 )) : (
-                  <tr><td colSpan={8} style={{textAlign:'center'}}>Không có dữ liệu</td></tr>
+                  <tr><td colSpan={7} style={{textAlign:'center'}}>Không có dữ liệu</td></tr>
                 )}
               </tbody>
             </table>
@@ -2529,6 +2580,67 @@ const Admin = () => {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Modal cập nhật bác sĩ */}
+        {showDoctorUpdateModal && (
+          <div className="modal-overlay">
+            <div className="modal-container">
+              <div className="modal-header">
+                <h3>Cập nhật thông tin bác sĩ</h3>
+                <button className="close-btn" onClick={() => setShowDoctorUpdateModal(false)}>×</button>
+              </div>
+              <div className="modal-body">
+                <form className="update-form" onSubmit={handleUpdateDoctorSubmit}>
+                  <div className="form-group">
+                    <label>Họ tên</label>
+                    <input name="FullName" value={updateDoctorForm.FullName} onChange={handleUpdateDoctorChange} required />
+                  </div>
+                  <div className="form-group">
+                    <label>Email</label>
+                    <input name="Email" value={updateDoctorForm.Email} onChange={handleUpdateDoctorChange} required type="email" />
+                  </div>
+                  <div className="form-group">
+                    <label>Chuyên khoa</label>
+                    <input name="Specialization" value={updateDoctorForm.Specialization} onChange={handleUpdateDoctorChange} required />
+                  </div>
+                  <div className="form-group">
+                    <label>Mã số hành nghề</label>
+                    <input name="LicenseNumber" value={updateDoctorForm.LicenseNumber} onChange={handleUpdateDoctorChange} required />
+                  </div>
+                  <div className="form-group">
+                    <label>Kinh nghiệm (năm)</label>
+                    <input name="ExperienceYears" value={updateDoctorForm.ExperienceYears} onChange={handleUpdateDoctorChange} required type="number" min="0" />
+                  </div>
+                  <div className="form-group">
+                    <label>Địa chỉ</label>
+                    <input name="Address" value={updateDoctorForm.Address} onChange={handleUpdateDoctorChange} required />
+                  </div>
+                  <div className="form-group">
+                    <label>Ảnh (URL)</label>
+                    <input name="Image" value={updateDoctorForm.Image} onChange={handleUpdateDoctorChange} />
+                  </div>
+                  <div className="form-actions">
+                    <button type="button" className="cancel-btn" onClick={() => setShowDoctorUpdateModal(false)}>Hủy bỏ</button>
+                    <button type="submit" className="submit-btn">Cập nhật</button>
+                  </div>
+                  {updateDoctorMsg && (
+                    <div className={`message ${updateDoctorMsg.includes('thành công') ? 'success' : 'error'}`} style={{
+                      marginTop: '15px',
+                      padding: '10px',
+                      borderRadius: '4px',
+                      backgroundColor: updateDoctorMsg.includes('thành công') ? '#d4edda' : '#f8d7da',
+                      color: updateDoctorMsg.includes('thành công') ? '#155724' : '#721c24',
+                      textAlign: 'center'
+                    }}>
+                      <i className={updateDoctorMsg.includes('thành công') ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'} style={{ marginRight: '8px' }}></i>
+                      {updateDoctorMsg}
+                    </div>
+                  )}
+                </form>
+              </div>
+            </div>
           </div>
         )}
       </main>
