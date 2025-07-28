@@ -1316,11 +1316,11 @@ const Admin = () => {
                 <label>SlotID</label>
                 <select name="SlotID" value={addScheduleForm.SlotID} onChange={handleAddScheduleChange} required>
                   <option value="">-- Chọn SlotID --</option>
-                  <option value="SL000001">SL000001</option>
-                  <option value="SL000002">SL000002</option>
-                  <option value="SL000003">SL000003</option>
-                  <option value="SL000004">SL000004</option>
-                  <option value="SL000005">SL000005</option>
+                  <option value="SL000001">Slot 1</option>
+                  <option value="SL000002">Slot 2</option>
+                  <option value="SL000003">Slot 3</option>
+                  <option value="SL000004">Slot 4</option>
+                  <option value="SL000005">Slot 5</option>
                 </select>
               </div>
               <div className="form-group">
