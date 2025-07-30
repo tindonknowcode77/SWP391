@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import '../styles/admin.css';
+import '../styles/Manager.css';
 import {tatcacacuser} from '../api/auth';
 import { getAllDoctorsManager} from '../api/auth';
 import { getAllDoctorWorkSchedules } from '../api/auth';
@@ -22,26 +22,28 @@ import { layManagerById } from '../api/auth';
 import { capnhatManager } from '../api/auth';
 import { xoaManager } from '../api/auth';
 import { getDashBoardData } from '../api/auth';
-const Admin = () => {
+const Manager = () => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const [selected, setSelected] = useState('appointments');
 
-  if (!currentUser || currentUser.role !== 'R002') {
-    return (
-      <div className="admin-warning-banner" style={{flexDirection: 'column', gap: '18px'}}>
-        <div style={{display: 'flex', alignItems: 'center', gap: 18}}>
-          <span className="admin-warning-icon">&#9888;</span>
-          Không phận sự miễn vào !!!
-        </div>
-        <button className="admin-warning-btn" onClick={() => navigate('/hospital')}>
-          Quay lại trang chủ
-        </button>
-      </div>
-    );
-  }
-  // Placeholder states for admin data
+  // const isUnauthorized = !currentUser || currentUser.role !== 'R002';
+
+  // if (isUnauthorized) {
+  //   return (
+  //     <div className="admin-warning-banner" style={{ flexDirection: 'column', gap: '18px' }}>
+  //       <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+  //         <span className="admin-warning-icon">&#9888;</span>
+  //         Không có quyền truy cập trang này!
+  //       </div>
+  //       <button className="admin-warning-btn" onClick={() => navigate('/hospital')}>
+  //         Quay lại trang chủ
+  //       </button>
+  //     </div>
+  //   );
+  // }
   
+  // Placeholder states for manager data 
   const [showAddDoctor, setShowAddDoctor] = useState(false);
   const [addDoctorForm, setAddDoctorForm] = useState({
     FullName: '',
@@ -909,13 +911,13 @@ const Admin = () => {
   };
 
   return (
-    <div className="admin-container">
-      <aside className="admin-sidebar">
-        <div className="admin-sidebar-user-row">
+    <div className="manager-container">
+      <aside className="manager-sidebar">
+        <div className="manager-sidebar-user-row">
         <span className="sidebar-user">
         <span style={{ color: '#9de0ad', fontWeight: 'bold' }}>MANAGER</span> : {currentUser?.name || 'Nhân viên'}</span>
           <button
-            className="admin-sidebar-logout-btn"
+            className="manager-sidebar-logout-btn"
             title="Đăng xuất"
             aria-label="Đăng xuất"
             onClick={handleLogout}
@@ -923,7 +925,7 @@ const Admin = () => {
             <i className="fas fa-sign-out-alt"></i>
           </button>
         </div>
-        <ul className="admin-sidebar-menu">
+        <ul className="manager-sidebar-menu">
           <li className={selectedTab === 'dashboard' ? 'active' : ''} onClick={() => setSelectedTab('dashboard')}>
             <i className="fas fa-tachometer-alt"></i>
             <span>Dashboard</span>
@@ -962,10 +964,10 @@ const Admin = () => {
           </li>
         </ul>
       </aside>
-      <main className="admin-main">
+      <main className="manager-main">
         {selectedTab === 'dashboard' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">
+          <div className="manager-content">
+            <h2 className="manager-table-title">
               <i className="fas fa-tachometer-alt"></i>
               Dashboard - Tổng quan hệ thống
             </h2>
@@ -1154,8 +1156,8 @@ const Admin = () => {
         )}
         
         {selectedTab === 'adddoctor' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Thêm bác sĩ mới</h2>
+                  <div className="manager-content">
+          <h2 className="manager-table-title">Thêm bác sĩ mới</h2>
             <form className="add-doctor-form" onSubmit={handleAddDoctorSubmit} style={{maxWidth: 500, margin: '0 auto'}}>
               <div className="form-group">
                 <label>Họ tên</label>
@@ -1189,7 +1191,7 @@ const Admin = () => {
                 <label>Ảnh (URL)</label>
                 <input name="Image" value={addDoctorForm.Image} onChange={handleAddDoctorChange} />
               </div>
-              <button type="submit" className="admin-action-btn" style={{marginTop: 16}}>Thêm bác sĩ</button>
+              <button type="submit" className="manager-action-btn" style={{marginTop: 16}}>Thêm bác sĩ</button>
               {addDoctorMsg && <div style={{marginTop: 12, color: addDoctorMsg.includes('thành công') ? '#27ae60' : '#e74c3c'}}>{addDoctorMsg}</div>}
               {addedDoctor && addDoctorMsg.includes('thành công') && (
                 <div style={{marginTop: 32}}>
@@ -1224,8 +1226,8 @@ const Admin = () => {
           </div>
         )}
         {selectedTab === 'updatedoctor' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Cập nhật thông tin bác sĩ</h2>
+                  <div className="manager-content">
+          <h2 className="manager-table-title">Cập nhật thông tin bác sĩ</h2>
             <form className="add-doctor-form" onSubmit={handleUpdateDoctorSubmit} style={{maxWidth: 500, margin: '0 auto'}}>
               <div className="form-group">
                 <label>ID bác sĩ</label>
@@ -1263,7 +1265,7 @@ const Admin = () => {
                 <label>Ảnh (URL)</label>
                 <input name="Image" value={updateDoctorForm.Image} onChange={handleUpdateDoctorChange} />
               </div>
-              <button type="submit" className="admin-action-btn" style={{marginTop: 16}}>Cập nhật bác sĩ</button>
+              <button type="submit" className="manager-action-btn" style={{marginTop: 16}}>Cập nhật bác sĩ</button>
               {updateDoctorMsg && <div style={{marginTop: 12, color: updateDoctorMsg.includes('thành công') ? '#27ae60' : '#e74c3c'}}>{updateDoctorMsg}</div>}
               {updatedDoctor && updateDoctorMsg.includes('thành công') && (
                 <div style={{marginTop: 32}}>
@@ -1298,8 +1300,8 @@ const Admin = () => {
           </div>
         )}
         {selectedTab === 'addschedule' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Thêm lịch làm việc bác sĩ</h2>
+                  <div className="manager-content">
+          <h2 className="manager-table-title">Thêm lịch làm việc bác sĩ</h2>
             <form className="add-doctor-form" onSubmit={handleAddScheduleSubmit} style={{maxWidth: 500, margin: '0 auto'}}>
               <div className="form-group">
                 <label>DoctorID</label>
@@ -1327,7 +1329,7 @@ const Admin = () => {
                 <label>DateWork</label>
                 <input name="DateWork" value={addScheduleForm.DateWork} onChange={handleAddScheduleChange} required type="datetime-local" />
               </div>
-              <button type="submit" className="admin-action-btn" style={{marginTop: 16}}>Thêm lịch</button>
+              <button type="submit" className="manager-action-btn" style={{marginTop: 16}}>Thêm lịch</button>
               {addScheduleMsg && <div style={{marginTop: 12, color: addScheduleMsg.includes('thành công') ? '#27ae60' : '#e74c3c'}}>{addScheduleMsg}</div>}
             </form>
             {addedSchedule && addScheduleMsg.includes('thành công') && (
@@ -1354,8 +1356,8 @@ const Admin = () => {
           </div>
         )}
         {selectedTab === 'addarv' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Thêm ARV Protocol</h2>
+                  <div className="manager-content">
+          <h2 className="manager-table-title">Thêm ARV Protocol</h2>
             <form className="add-doctor-form" onSubmit={handleAddARVSubmit} style={{maxWidth: 500, margin: '0 auto'}}>
               <div className="form-group">
                 <label>ARVCode</label>
@@ -1377,7 +1379,7 @@ const Admin = () => {
                 <label>ForGroup</label>
                 <input name="ForGroup" value={addARVForm.ForGroup} onChange={handleAddARVChange} required />
               </div>
-              <button type="submit" className="admin-action-btn" style={{marginTop: 16}}>Thêm ARV</button>
+              <button type="submit" className="manager-action-btn" style={{marginTop: 16}}>Thêm ARV</button>
               {addARVMsg && <div style={{marginTop: 12, color: addARVMsg.includes('thành công') ? '#27ae60' : '#e74c3c'}}>{addARVMsg}</div>}
             </form>
             {addedARV && addARVMsg.includes('thành công') && (
@@ -1408,9 +1410,9 @@ const Admin = () => {
           </div>
         )}
         {selectedTab === 'allarvprotocols' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Danh sách tất cả các phác đồ ARV</h2>
-            <table className="admin-appointments-table">
+                  <div className="manager-content">
+          <h2 className="manager-table-title">Danh sách tất cả các phác đồ ARV</h2>
+          <table className="manager-appointments-table">
               <thead>
                 <tr>
                   <th>ARVID</th>
@@ -1437,7 +1439,7 @@ const Admin = () => {
                           e.stopPropagation(); // Prevent row click event
                           handleUpdateARV(arv);
                         }} 
-                        className="admin-action-btn" 
+                        className="manager-action-btn" 
                         style={{
                           backgroundColor: '#3498db', 
                           padding: '6px 12px', 
@@ -1722,8 +1724,8 @@ const Admin = () => {
           </div>
         )}
         {selectedTab === 'addstaff' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Thêm nhân viên</h2>
+                  <div className="manager-content">
+          <h2 className="manager-table-title">Thêm nhân viên</h2>
             <form className="add-doctor-form" onSubmit={handleAddStaffSubmit} style={{maxWidth: 500, margin: '0 auto'}}>
               <div className="form-group">
                 <label>Họ tên</label>
@@ -1745,7 +1747,7 @@ const Admin = () => {
                 <label>Ảnh (URL)</label>
                 <input name="Image" value={addStaffForm.Image} onChange={handleAddStaffChange} />
               </div>
-              <button type="submit" className="admin-action-btn" style={{marginTop: 16}}>Thêm nhân viên</button>
+              <button type="submit" className="manager-action-btn" style={{marginTop: 16}}>Thêm nhân viên</button>
               {addStaffMsg && <div style={{marginTop: 12, color: addStaffMsg.includes('thành công') ? '#27ae60' : '#e74c3c'}}>{addStaffMsg}</div>}
             </form>
             {addedStaff && addStaffMsg.includes('thành công') && (
@@ -1774,9 +1776,9 @@ const Admin = () => {
           </div>
         )}
         {selectedTab === 'allstaff' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Danh sách tất cả các nhân viên</h2>
-            <table className="admin-appointments-table">
+                  <div className="manager-content">
+          <h2 className="manager-table-title">Danh sách tất cả các nhân viên</h2>
+          <table className="manager-appointments-table">
               <thead>
                 <tr>
                   <th>UserID</th>
@@ -1804,7 +1806,7 @@ const Admin = () => {
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <button 
                           onClick={() => handleUpdateStaff(staff)} 
-                          className="admin-action-btn" 
+                          className="manager-action-btn" 
                           style={{
                             backgroundColor: '#3498db', 
                             padding: '6px 12px', 
@@ -1822,7 +1824,7 @@ const Admin = () => {
                         </button>
                         <button 
                           onClick={() => handleDeleteStaff(staff)} 
-                          className="admin-action-btn" 
+                          className="manager-action-btn" 
                           style={{
                             backgroundColor: '#e74c3c', 
                             padding: '6px 12px', 
@@ -2110,9 +2112,9 @@ const Admin = () => {
         
       
         {selectedTab === 'alldoctors' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Danh sách tất cả bác sĩ</h2>
-            <table className="admin-appointments-table">
+                  <div className="manager-content">
+          <h2 className="manager-table-title">Danh sách tất cả bác sĩ</h2>
+          <table className="manager-appointments-table">
               <thead>
                 <tr>
                   <th>DoctorId</th>
@@ -2143,7 +2145,7 @@ const Admin = () => {
                     <td>
                       <button 
                         onClick={() => handleUpdateDoctor(doctor)} 
-                        className="admin-action-btn" 
+                        className="manager-action-btn" 
                         style={{backgroundColor: '#4a90e2', fontSize: '12px', padding: '4px 8px'}}
                       >
                         <i className="fas fa-edit"></i> Cập nhật
@@ -2158,10 +2160,10 @@ const Admin = () => {
           </div>
         )}
         {selectedTab === 'doctorschedule' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Lịch khám của bác sĩ</h2>
+          <div className="manager-content">
+            <h2 className="manager-table-title">Lịch khám của bác sĩ</h2>
             {deleteMsg && <div style={{color: deleteMsg.includes('thành công') ? '#27ae60' : '#e74c3c', marginBottom: 12}}>{deleteMsg}</div>}
-            <table className="admin-appointments-table">
+            <table className="manager-appointments-table">
               <thead>
                 <tr>
                   <th>ScheduleID</th>
@@ -2182,7 +2184,7 @@ const Admin = () => {
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <button 
                           onClick={() => handleUpdateSchedule(sch)} 
-                          className="admin-action-btn" 
+                          className="manager-action-btn" 
                           style={{
                             backgroundColor: '#3498db', 
                             padding: '6px 12px', 
@@ -2198,7 +2200,7 @@ const Admin = () => {
                           <i className="fas fa-edit"></i> Cập nhật
                         </button>
                         <button 
-                          className="admin-action-btn" 
+                          className="manager-action-btn" 
                           style={{
                             background:'#e74c3c',
                             padding: '6px 12px', 
@@ -2234,8 +2236,8 @@ const Admin = () => {
                     <b>SlotID:</b> {scheduleToDelete?.SlotID}<br/>
                     <b>DateWork:</b> {scheduleToDelete?.DateWork}
                   </div>
-                  <button className="admin-action-btn" style={{background:'#red', marginRight:8}} onClick={confirmDeleteSchedule}>Xóa</button>
-                  <button className="admin-action-btn" onClick={cancelDeleteSchedule}>Hủy</button>
+                  <button className="manager-action-btn" style={{background:'#red', marginRight:8}} onClick={confirmDeleteSchedule}>Xóa</button>
+                  <button className="manager-action-btn" onClick={cancelDeleteSchedule}>Hủy</button>
                 </div>
               </div>
             )}
@@ -2519,8 +2521,8 @@ const Admin = () => {
           <div className="popup-content">
             <h3>Xác nhận đăng xuất</h3>
             <p>Bạn có chắc chắn muốn đăng xuất không?</p>
-            <button className="admin-action-btn" style={{background:'#e74c3c', marginRight:8}} onClick={confirmLogout}>Đăng xuất</button>
-            <button className="admin-action-btn" onClick={cancelLogout}>Hủy</button>
+            <button className="manager-action-btn" style={{background:'#e74c3c', marginRight:8}} onClick={confirmLogout}>Đăng xuất</button>
+            <button className="manager-action-btn" onClick={cancelLogout}>Hủy</button>
           </div>
         </div>
       )}
@@ -2528,4 +2530,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default Manager;
