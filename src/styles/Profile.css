@@ -1532,57 +1532,255 @@
 .medication-popup-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
 }
 
 .medication-popup-content {
-  background: white;
-  border-radius: 16px;
-  padding: 30px;
-  width: 90%;
-  max-width: 520px;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 20px;
+  padding: 0;
+  width: 1200px;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 25px rgba(0, 0, 0, 0.2);
   position: relative;
-  animation: fadeIn 0.3s ease-in-out;
-  font-family: "Segoe UI", sans-serif;
+  animation: medicationPopupSlideIn 0.4s ease-out;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+  border: 1px solid #e3f2fd;
+}
+
+@keyframes medicationPopupSlideIn {
+  from {
+    transform: translateY(-30px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
 
 .medication-popup-close {
   position: absolute;
   right: 20px;
-  top: 16px;
-  background: none;
+  top: 20px;
+  background: rgba(255, 255, 255, 0.9);
   border: none;
-  font-size: 24px;
+  font-size: 28px;
   cursor: pointer;
-  color: #555;
+  color: #666;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.medication-popup-close:hover {
+  background: #ff4757;
+  color: white;
+  transform: scale(1.1);
 }
 
 .medication-title {
-  font-size: 20px;
-  font-weight: bold;
-  color: #1976d2;
-  margin-bottom: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 25px 30px 20px 30px;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  border-radius: 20px 20px 0 0;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.medication-title span {
+  color: #fff;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-left: 8px;
+  font-size: 18px;
+}
+
+.medication-popup-body {
+  padding: 30px;
+  background: white;
 }
 
 .medication-section {
-  margin-top: 18px;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.medication-section:hover {
+  background: #f1f3f4;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .medication-section strong {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   color: #2c3e50;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.medication-section p {
+  margin: 0;
+  color: #34495e;
+  font-size: 20px;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.medication-section ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.medication-section li {
+  color: #34495e;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 4px;
+  font-weight: 500;
 }
 
 .medication-error {
-  margin-top: 16px;
+  text-align: center;
+  padding: 30px;
   color: #e74c3c;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 16px;
+  background: #fdf2f2;
+  border-radius: 12px;
+  border: 2px dashed #fecaca;
+}
+
+.medication-loading {
+  text-align: center;
+  padding: 40px 30px;
+  color: #667eea;
+  font-weight: 500;
+  font-size: 16px;
+  background: #f0f4ff;
+  border-radius: 12px;
+  border: 2px dashed #c7d2fe;
+}
+
+.medication-loading::before {
+  content: "⏳";
+  display: block;
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+/* Responsive design for medication popup */
+@media (max-width: 768px) {
+  .medication-popup-content {
+    max-width: 95%;
+    margin: 10px;
+    max-height: 90vh;
+  }
+  
+  .medication-title {
+    padding: 20px 20px 15px 20px;
+    font-size: 20px;
+  }
+  
+  .medication-title span {
+    display: block;
+    margin: 8px 0 0 0;
+    font-size: 16px;
+  }
+  
+  .medication-popup-body {
+    padding: 20px;
+  }
+  
+  .medication-section {
+    padding: 15px;
+    margin-bottom: 16px;
+  }
+  
+  .medication-section strong {
+    font-size: 14px;
+  }
+  
+  .medication-section p,
+  .medication-section li {
+    font-size: 14px;
+  }
+  
+  .medication-popup-close {
+    right: 15px;
+    top: 15px;
+    width: 35px;
+    height: 35px;
+    font-size: 24px;
+  }
+}
+
+/* Special styling for different medication sections */
+.medication-section:nth-child(odd) {
+  border-left-color: #667eea;
+}
+
+.medication-section:nth-child(even) {
+  border-left-color: #764ba2;
+}
+
+.medication-section:nth-child(3n) {
+  border-left-color: #f093fb;
+}
+
+.medication-section:nth-child(4n) {
+  border-left-color: #4facfe;
+}
+
+/* Animation for section appearance */
+.medication-section {
+  animation: sectionFadeIn 0.5s ease-out;
+  animation-fill-mode: both;
+}
+
+.medication-section:nth-child(1) { animation-delay: 0.1s; }
+.medication-section:nth-child(2) { animation-delay: 0.2s; }
+.medication-section:nth-child(3) { animation-delay: 0.3s; }
+.medication-section:nth-child(4) { animation-delay: 0.4s; }
+.medication-section:nth-child(5) { animation-delay: 0.5s; }
+.medication-section:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes sectionFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
