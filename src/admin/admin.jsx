@@ -8,12 +8,9 @@ import { getAllDoctorWorkSchedules } from '../api/auth';
 import {  addDoctor } from '../api/auth';
 import { updateDoctor } from '../api/auth';
 import {addDoctorWorkSchedule, updateDoctorWorkSchedule} from '../api/auth';
-import {addARVProtocol} from '../api/auth';
-import { capnhatARVProtocol } from '../api/auth';
 import { addStaff } from '../api/auth';
 import { updateStaff } from '../api/auth';
 import { deleteDoctorWorkScheduleadmin } from '../api/auth';
-import { getAllARVProtocol} from '../api/auth';
 import { getAllStaff } from '../api/auth';
 import { xoastaff } from '../api/auth';
 import { laytatcaquanly } from '../api/auth';
@@ -21,7 +18,6 @@ import { themManager } from '../api/auth';
 import { layManagerById } from '../api/auth';
 import { capnhatManager } from '../api/auth';
 import { xoaManager } from '../api/auth';
-import { getDashBoardData } from '../api/auth';
 const Admin = () => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
@@ -56,25 +52,7 @@ const Admin = () => {
   const [addDoctorMsg, setAddDoctorMsg] = useState('');
   const [addedDoctor, setAddedDoctor] = useState(null);
 
-  const [selectedTab, setSelectedTab] = useState('dashboard');
-  
-  // Dashboard states
-  const [dashboardData, setDashboardData] = useState({
-    TotalUsers: 0,
-    UsersRole: {
-      R001: 0,
-      R002: 0,
-      R003: 0,
-      R004: 0,
-      R005: 0
-    },
-    TotalDoctors: 0,
-    TotalPatients: 0,
-    TotalLabTests: 0,
-    TotalTreatmentPlans: 0,
-    TotalPrescriptions: 0
-  });
-  const [dashboardLoading, setDashboardLoading] = useState(false);
+  const [selectedTab, setSelectedTab] = useState('adddoctor');
   
   const [updateDoctorId, setUpdateDoctorId] = useState('');
   const [updateDoctorForm, setUpdateDoctorForm] = useState({
@@ -106,28 +84,6 @@ const Admin = () => {
   });
   const [updateScheduleMsg, setUpdateScheduleMsg] = useState('');
   const [updatedSchedule, setUpdatedSchedule] = useState(null);
-
-  const [addARVForm, setAddARVForm] = useState({
-    ARVCode: '',
-    ARVName: '',
-    Description: '',
-    AgeRange: '',
-    ForGroup: ''
-  });
-  const [addARVMsg, setAddARVMsg] = useState('');
-  const [addedARV, setAddedARV] = useState(null);
-
-  const [updateARVForm, setUpdateARVForm] = useState({
-    ARVID: '',
-    ARVCode: '',
-    ARVName: '',
-    Description: '',
-    AgeRange: '',
-    ForGroup: ''
-  });
-  const [updateARVMsg, setUpdateARVMsg] = useState('');
-  const [updatedARV, setUpdatedARV] = useState(null);
-  const [showARVUpdateModal, setShowARVUpdateModal] = useState(false);
 
   const [addStaffForm, setAddStaffForm] = useState({
     Fullname: '',
@@ -165,7 +121,6 @@ const Admin = () => {
   const [deleteMsg, setDeleteMsg] = useState('');
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [doctorsList, setDoctorsList] = useState([]);
-  const [arvProtocolsList, setArvProtocolsList] = useState([]);
   const [staffList, setStaffList] = useState([]);
   const [managersList, setManagersList] = useState([]);
   
@@ -341,69 +296,6 @@ const Admin = () => {
     } catch (err) {
       setUpdateScheduleMsg('Cập nhật lịch làm việc thất bại!');
       setUpdatedSchedule(null);
-    }
-  };
-
-  const handleAddARVChange = (e) => {
-    const { name, value } = e.target;
-    setAddARVForm(prev => ({ ...prev, [name]: value }));
-  };
-  const handleAddARVSubmit = async (e) => {
-    e.preventDefault();
-    setAddARVMsg('');
-    try {
-      await addARVProtocol(addARVForm);
-      setAddARVMsg('Thêm ARV thành công!');
-      setAddedARV({ ...addARVForm });
-      setAddARVForm({ ARVCode: '', ARVName: '', Description: '', AgeRange: '', ForGroup: '' });
-      // Refresh dashboard data
-      fetchDashboardData();
-    } catch (err) {
-      setAddARVMsg('Thêm ARV thất bại!');
-      setAddedARV(null);
-    }
-  };
-
-  const handleUpdateARVChange = (e) => {
-    const { name, value } = e.target;
-    setUpdateARVForm(prev => ({ ...prev, [name]: value }));
-  };
-  const handleUpdateARVSubmit = async (e) => {
-    e.preventDefault();
-    setUpdateARVMsg('');
-    try {
-      await capnhatARVProtocol(updateARVForm);
-      setUpdateARVMsg('Cập nhật ARV thành công!');
-      setUpdatedARV({ ...updateARVForm });
-      
-      // Refresh danh sách ARV nếu đang ở tab danh sách
-      if (selectedTab === 'allarvprotocols') {
-        fetchARVProtocolsList();
-      }
-      
-      // Hiển thị thông báo toàn trang
-      const successNotification = document.createElement('div');
-      successNotification.className = 'global-success-notification';
-      successNotification.innerHTML = `
-        <i class="fas fa-check-circle"></i>
-        Đã cập nhật phác đồ ARV <strong>${updateARVForm.ARVName}</strong> thành công
-      `;
-      document.body.appendChild(successNotification);
-      
-      // Xóa thông báo sau 3 giây
-      setTimeout(() => {
-        successNotification.style.opacity = '0';
-        setTimeout(() => document.body.removeChild(successNotification), 300);
-      }, 3000);
-      
-      // Đóng modal sau 1.5 giây
-      setTimeout(() => {
-        setShowARVUpdateModal(false);
-      }, 1500);
-      
-    } catch (err) {
-      setUpdateARVMsg('Cập nhật ARV thất bại!');
-      setUpdatedARV(null);
     }
   };
 
@@ -635,16 +527,6 @@ const Admin = () => {
     }
   };
 
-  // Lấy danh sách ARV protocols
-  const fetchARVProtocolsList = async () => {
-    try {
-      const res = await getAllARVProtocol();
-      setArvProtocolsList(res);
-    } catch (err) {
-      setArvProtocolsList([]);
-    }
-  };
-
   // Lấy danh sách nhân viên
   const fetchStaffList = async () => {
     try {
@@ -666,47 +548,13 @@ const Admin = () => {
     }
   };
 
-  // Lấy dữ liệu dashboard
-  const fetchDashboardData = async () => {
-    setDashboardLoading(true);
-    try {
-      const res = await getDashBoardData();
-      setDashboardData(res);
-    } catch (err) {
-      console.error("Lỗi khi lấy dữ liệu dashboard:", err);
-      setDashboardData({
-        TotalUsers: 0,
-        UsersRole: {
-          R001: 0,
-          R002: 0,
-          R003: 0,
-          R004: 0,
-          R005: 0
-        },
-        TotalDoctors: 0,
-        TotalPatients: 0,
-        TotalLabTests: 0,
-        TotalTreatmentPlans: 0,
-        TotalPrescriptions: 0
-      });
-    } finally {
-      setDashboardLoading(false);
-    }
-  };
-
   // Khi chọn tab, load danh sách
   useEffect(() => {
-    if (selectedTab === 'dashboard') {
-      fetchDashboardData();
-    }
     if (selectedTab === 'doctorschedule') {
       fetchDoctorSchedules();
     }
     if (selectedTab === 'addschedule' || selectedTab === 'alldoctors') {
       fetchDoctorsList();
-    }
-    if (selectedTab === 'allarvprotocols') {
-      fetchARVProtocolsList();
     }
     if (selectedTab === 'allstaff') {
       fetchStaffList();
@@ -742,8 +590,6 @@ const Admin = () => {
       setShowDeletePopup(false);
       setScheduleToDelete(null);
       fetchDoctorSchedules();
-      // Refresh dashboard data
-      fetchDashboardData();
     } catch (err) {
       setDeleteMsg('Xóa lịch thất bại!');
     }
@@ -835,19 +681,6 @@ const Admin = () => {
     setShowManagerUpdateModal(true);
   };
   
-  // Hàm xử lý cập nhật ARV từ danh sách
-  const handleUpdateARV = (arv) => {
-    setUpdateARVForm({
-      ARVID: arv.ARVID || '',
-      ARVCode: arv.ARVCode || '',
-      ARVName: arv.ARVName || '',
-      Description: arv.Description || '',
-      AgeRange: arv.AgeRange || '',
-      ForGroup: arv.ForGroup || ''
-    });
-    setShowARVUpdateModal(true);
-  };
-  
   // Hàm xử lý cập nhật bác sĩ từ danh sách
   const handleUpdateDoctor = (doctor) => {
     setUpdateDoctorId(doctor.DoctorId);
@@ -923,10 +756,6 @@ const Admin = () => {
           </button>
         </div>
         <ul className="admin-sidebar-menu">
-          <li className={selectedTab === 'dashboard' ? 'active' : ''} onClick={() => setSelectedTab('dashboard')}>
-            <i className="fas fa-tachometer-alt"></i>
-            <span>Dashboard</span>
-          </li>
           <li className={selectedTab === 'adddoctor' ? 'active' : ''} onClick={() => setSelectedTab('adddoctor')}>
             <i className="fas fa-user-md"></i>
             <span>Thêm bác sĩ</span>
@@ -942,14 +771,6 @@ const Admin = () => {
           <li className={selectedTab === 'addschedule' ? 'active' : ''} onClick={() => setSelectedTab('addschedule')}>
             <i className="fas fa-calendar-plus"></i>
             <span>Thêm lịch làm việc</span>
-          </li>
-          <li className={selectedTab === 'addarv' ? 'active' : ''} onClick={() => setSelectedTab('addarv')}>
-            <i className="fas fa-pills"></i>
-            <span>Thêm ARV</span>
-          </li>
-          <li className={selectedTab === 'allarvprotocols' ? 'active' : ''} onClick={() => setSelectedTab('allarvprotocols')}>
-            <i className="fas fa-list-alt"></i>
-            <span>Danh sách tất cả các phác đồ ARV</span>
           </li>
           <li className={selectedTab === 'addstaff' ? 'active' : ''} onClick={() => setSelectedTab('addstaff')}>
             <i className="fas fa-user-plus"></i>
@@ -971,203 +792,6 @@ const Admin = () => {
         </ul>
       </aside>
       <main className="admin-main">
-        {selectedTab === 'dashboard' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">
-              <i className="fas fa-tachometer-alt"></i>
-              Dashboard - Tổng quan hệ thống
-            </h2>
-            
-            {dashboardLoading ? (
-              <div className="dashboard-loading">
-                <i className="fas fa-spinner fa-spin"></i>
-                <span>Đang tải dữ liệu...</span>
-              </div>
-            ) : (
-              <div className="dashboard-container">
-                {/* Main Stats Cards */}
-                <div className="dashboard-stats-grid">
-                  <div className="dashboard-card stats-card primary">
-                    <div className="card-icon">
-                      <i className="fas fa-users"></i>
-                    </div>
-                    <div className="card-content">
-                      <h3>{dashboardData.TotalUsers}</h3>
-                      <p>Tổng người dùng</p>
-                    </div>
-                  </div>
-                  
-                  <div className="dashboard-card stats-card success">
-                    <div className="card-icon">
-                      <i className="fas fa-user-md"></i>
-                    </div>
-                    <div className="card-content">
-                      <h3>{dashboardData.TotalDoctors}</h3>
-                      <p>Tổng bác sĩ</p>
-                    </div>
-                  </div>
-                  
-                  <div className="dashboard-card stats-card info">
-                    <div className="card-icon">
-                      <i className="fas fa-procedures"></i>
-                    </div>
-                    <div className="card-content">
-                      <h3>{dashboardData.TotalPatients}</h3>
-                      <p>Tổng bệnh nhân</p>
-                    </div>
-                  </div>
-                  
-                  <div className="dashboard-card stats-card warning">
-                    <div className="card-icon">
-                      <i className="fas fa-flask"></i>
-                    </div>
-                    <div className="card-content">
-                      <h3>{dashboardData.TotalLabTests}</h3>
-                      <p>Tổng xét nghiệm</p>
-                    </div>
-                  </div>
-                  
-                  <div className="dashboard-card stats-card secondary">
-                    <div className="card-icon">
-                      <i className="fas fa-clipboard-list"></i>
-                    </div>
-                    <div className="card-content">
-                      <h3>{dashboardData.TotalTreatmentPlans}</h3>
-                      <p>Kế hoạch điều trị</p>
-                    </div>
-                  </div>
-                  
-                  <div className="dashboard-card stats-card danger">
-                    <div className="card-icon">
-                      <i className="fas fa-prescription-bottle"></i>
-                    </div>
-                    <div className="card-content">
-                      <h3>{dashboardData.TotalPrescriptions}</h3>
-                      <p>Toa thuốc</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* User Roles Breakdown */}
-                <div className="dashboard-section">
-                  <h3 className="section-title">
-                    <i className="fas fa-user-tag"></i>
-                    Phân bố người dùng theo vai trò
-                  </h3>
-                  <div className="roles-grid">
-                    <div className="role-card admin">
-                      <div className="role-icon">
-                        <i className="fas fa-user-shield"></i>
-                      </div>
-                      <div className="role-info">
-                        <h4>{dashboardData.UsersByRole?.R001 || 10}</h4>
-                        <p>Quản trị viên</p>
-                      </div>
-                    </div>
-                    
-                    <div className="role-card manager">
-                      <div className="role-icon">
-                        <i className="fas fa-user-tie"></i>
-                      </div>
-                      <div className="role-info">
-                        <h4>{dashboardData.UsersByRole?.R002 || 0}</h4>
-                        <p>Quản lý</p>
-                      </div>
-                    </div>
-                    
-                    <div className="role-card patient">
-                      <div className="role-icon">
-                        <i className="fas fa-user-injured"></i>
-                      </div>
-                      <div className="role-info">
-                        <h4>{dashboardData.UsersByRole?.R003 || 0}</h4>
-                        <p>Bác sĩ</p>
-                      </div>
-                    </div>
-                    
-                    <div className="role-card staff">
-                      <div className="role-icon">
-                        <i className="fas fa-user-nurse"></i>
-                      </div>
-                      <div className="role-info">
-                        <h4>{dashboardData.UsersByRole?.R004 || 0}</h4>
-                        <p>Nhân viên</p>
-                      </div>
-                    </div>
-                    
-                    <div className="role-card doctor">
-                      <div className="role-icon">
-                        <i className="fas fa-user-md"></i>
-                      </div>
-                      <div className="role-info">
-                        <h4>{dashboardData.UsersByRole?.R005 || 0}</h4>
-                        <p>Bệnh Nhân </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="dashboard-section">
-                  <h3 className="section-title">
-                    <i className="fas fa-bolt"></i>
-                    Thao tác nhanh
-                  </h3>
-                  <div className="quick-actions">
-                    <button 
-                      className="quick-action-btn primary"
-                      onClick={() => setSelectedTab('adddoctor')}
-                    >
-                      <i className="fas fa-user-md"></i>
-                      <span>Thêm bác sĩ</span>
-                    </button>
-                    
-                    <button 
-                      className="quick-action-btn success"
-                      onClick={() => setSelectedTab('addstaff')}
-                    >
-                      <i className="fas fa-user-plus"></i>
-                      <span>Thêm nhân viên</span>
-                    </button>
-                    
-                    <button 
-                      className="quick-action-btn info"
-                      onClick={() => setSelectedTab('addmanager')}
-                    >
-                      <i className="fas fa-user-tie"></i>
-                      <span>Thêm quản lý</span>
-                    </button>
-                    
-                    <button 
-                      className="quick-action-btn warning"
-                      onClick={() => setSelectedTab('addschedule')}
-                    >
-                      <i className="fas fa-calendar-plus"></i>
-                      <span>Thêm lịch làm việc</span>
-                    </button>
-                    
-                    <button 
-                      className="quick-action-btn secondary"
-                      onClick={() => setSelectedTab('addarv')}
-                    >
-                      <i className="fas fa-pills"></i>
-                      <span>Thêm ARV</span>
-                    </button>
-                    
-                    <button 
-                      className="quick-action-btn refresh"
-                      onClick={fetchDashboardData}
-                    >
-                      <i className="fas fa-sync-alt"></i>
-                      <span>Làm mới dữ liệu</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-        
         {selectedTab === 'adddoctor' && (
           <div className="admin-content">
             <h2 className="admin-table-title">Thêm bác sĩ mới</h2>
@@ -1363,374 +987,6 @@ const Admin = () => {
                     </tr>
                   </tbody>
                 </table>
-              </div>
-            )}
-          </div>
-        )}
-        {selectedTab === 'addarv' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Thêm ARV Protocol</h2>
-            <form className="add-doctor-form" onSubmit={handleAddARVSubmit} style={{maxWidth: 500, margin: '0 auto'}}>
-              <div className="form-group">
-                <label>ARVCode</label>
-                <input name="ARVCode" value={addARVForm.ARVCode} onChange={handleAddARVChange} required />
-              </div>
-              <div className="form-group">
-                <label>ARVName</label>
-                <input name="ARVName" value={addARVForm.ARVName} onChange={handleAddARVChange} required />
-              </div>
-              <div className="form-group">
-                <label>Description</label>
-                <input name="Description" value={addARVForm.Description} onChange={handleAddARVChange} required />
-              </div>
-              <div className="form-group">
-                <label>AgeRange</label>
-                <input name="AgeRange" value={addARVForm.AgeRange} onChange={handleAddARVChange} required />
-              </div>
-              <div className="form-group">
-                <label>ForGroup</label>
-                <input name="ForGroup" value={addARVForm.ForGroup} onChange={handleAddARVChange} required />
-              </div>
-              <button type="submit" className="admin-action-btn" style={{marginTop: 16}}>Thêm ARV</button>
-              {addARVMsg && <div style={{marginTop: 12, color: addARVMsg.includes('thành công') ? '#27ae60' : '#e74c3c'}}>{addARVMsg}</div>}
-            </form>
-            {addedARV && addARVMsg.includes('thành công') && (
-              <div style={{marginTop: 32}}>
-                <h3>Thông tin ARV vừa thêm</h3>
-                <table className="admin-appointments-table">
-                  <thead>
-                    <tr>
-                      <th>ARVCode</th>
-                      <th>ARVName</th>
-                      <th>Description</th>
-                      <th>AgeRange</th>
-                      <th>ForGroup</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{addedARV.ARVCode}</td>
-                      <td>{addedARV.ARVName}</td>
-                      <td>{addedARV.Description}</td>
-                      <td>{addedARV.AgeRange}</td>
-                      <td>{addedARV.ForGroup}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
-        {selectedTab === 'allarvprotocols' && (
-          <div className="admin-content">
-            <h2 className="admin-table-title">Danh sách tất cả các phác đồ ARV</h2>
-            <table className="admin-appointments-table">
-              <thead>
-                <tr>
-                  <th>ARVID</th>
-                  <th>ARVCode</th>
-                  <th>ARVName</th>
-                  <th>Description</th>
-                  <th>AgeRange</th>
-                  <th>ForGroup</th>
-                  <th>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                {arvProtocolsList && arvProtocolsList.length > 0 ? arvProtocolsList.map(arv => (
-                  <tr key={arv.ARVID} style={{cursor: 'pointer'}} onClick={() => handleUpdateARV(arv)}>
-                    <td>{arv.ARVID}</td>
-                    <td>{arv.ARVCode}</td>
-                    <td>{arv.ARVName}</td>
-                    <td>{arv.Description}</td>
-                    <td>{arv.AgeRange}</td>
-                    <td>{arv.ForGroup}</td>
-                    <td>
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent row click event
-                          handleUpdateARV(arv);
-                        }} 
-                        className="admin-action-btn" 
-                        style={{
-                          backgroundColor: '#3498db', 
-                          padding: '6px 12px', 
-                          fontSize: '14px', 
-                          borderRadius: '6px',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '5px',
-                          boxShadow: '0 2px 5px rgba(52, 152, 219, 0.2)',
-                          transition: 'all 0.2s ease'
-                        }}
-                        title="Cập nhật thông tin phác đồ ARV này"
-                      >
-                        <i className="fas fa-edit"></i> Cập nhật
-                      </button>
-                    </td>
-                  </tr>
-                )) : (
-                  <tr><td colSpan={6} style={{textAlign:'center'}}>Không có dữ liệu</td></tr>
-                )}
-              </tbody>
-            </table>
-            
-            {/* Popup cập nhật thông tin ARV */}
-            {showARVUpdateModal && (
-              <div className="delete-popup-overlay" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
-                <div className="delete-popup" style={{ 
-                  width: '600px',
-                  maxWidth: '90%',
-                  backgroundColor: '#fff',
-                  borderRadius: '8px',
-                  boxShadow: '0 5px 20px rgba(0,0,0,0.2)',
-                  padding: '25px'
-                }}>
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center',
-                    borderBottom: '2px solid #3498db',
-                    paddingBottom: '15px',
-                    marginBottom: '20px'
-                  }}>
-                    <h3 style={{ 
-                      margin: '0', 
-                      color: '#2c3e50',
-                      fontWeight: '700',
-                      fontSize: '1.5rem',
-                      display: 'flex',
-                      alignItems: 'center'
-                    }}>
-                      <i className="fas fa-capsules" style={{ marginRight: '10px', color: '#3498db' }}></i>
-                      Cập nhật thông tin phác đồ ARV
-                    </h3>
-                    <button 
-                      onClick={() => setShowARVUpdateModal(false)} 
-                      style={{ 
-                        background: 'none',
-                        border: 'none',
-                        fontSize: '1.5rem',
-                        cursor: 'pointer',
-                        color: '#7f8c8d'
-                      }}
-                      title="Đóng"
-                    >
-                      <i className="fas fa-times"></i>
-                    </button>
-                  </div>
-                  
-                  <form onSubmit={handleUpdateARVSubmit}>
-                    <div style={{ marginBottom: '15px' }}>
-                      <label style={{ 
-                        display: 'block', 
-                        fontWeight: '600',
-                        marginBottom: '8px',
-                        color: '#2c3e50'
-                      }}>
-                        <i className="fas fa-fingerprint" style={{ marginRight: '8px', color: '#3498db' }}></i>
-                        Mã ARV (ARVID):
-                      </label>
-                      <input 
-                        type="text" 
-                        name="ARVID"
-                        value={updateARVForm.ARVID}
-                        readOnly
-                        style={{
-                          width: '100%',
-                          padding: '10px',
-                          borderRadius: '4px',
-                          border: '1px solid #ddd',
-                          backgroundColor: '#f0f0f0',
-                          fontWeight: '600',
-                          color: '#555'
-                        }}
-                      />
-                    </div>
-                    
-                    <div style={{ marginBottom: '15px' }}>
-                      <label style={{ 
-                        display: 'block', 
-                        fontWeight: '600',
-                        marginBottom: '8px',
-                        color: '#2c3e50'
-                      }}>
-                        <i className="fas fa-code" style={{ marginRight: '8px', color: '#3498db' }}></i>
-                        Mã ARVCode:
-                      </label>
-                      <input 
-                        type="text" 
-                        name="ARVCode"
-                        value={updateARVForm.ARVCode}
-                        onChange={handleUpdateARVChange}
-                        required
-                        style={{
-                          width: '100%',
-                          padding: '10px',
-                          borderRadius: '4px',
-                          border: '1px solid #ddd'
-                        }}
-                      />
-                    </div>
-                    
-                    <div style={{ marginBottom: '15px' }}>
-                      <label style={{ 
-                        display: 'block', 
-                        fontWeight: '600',
-                        marginBottom: '8px',
-                        color: '#2c3e50'
-                      }}>
-                        <i className="fas fa-prescription-bottle-alt" style={{ marginRight: '8px', color: '#3498db' }}></i>
-                        Tên ARV:
-                      </label>
-                      <input 
-                        type="text" 
-                        name="ARVName"
-                        value={updateARVForm.ARVName}
-                        onChange={handleUpdateARVChange}
-                        required
-                        style={{
-                          width: '100%',
-                          padding: '10px',
-                          borderRadius: '4px',
-                          border: '1px solid #ddd'
-                        }}
-                      />
-                    </div>
-                    
-                    <div style={{ marginBottom: '15px' }}>
-                      <label style={{ 
-                        display: 'block', 
-                        fontWeight: '600',
-                        marginBottom: '8px',
-                        color: '#2c3e50'
-                      }}>
-                        <i className="fas fa-align-left" style={{ marginRight: '8px', color: '#3498db' }}></i>
-                        Mô tả:
-                      </label>
-                      <textarea 
-                        name="Description"
-                        value={updateARVForm.Description}
-                        onChange={handleUpdateARVChange}
-                        style={{
-                          width: '100%',
-                          padding: '10px',
-                          borderRadius: '4px',
-                          border: '1px solid #ddd',
-                          minHeight: '80px'
-                        }}
-                      />
-                    </div>
-                    
-                    <div style={{ marginBottom: '15px' }}>
-                      <label style={{ 
-                        display: 'block', 
-                        fontWeight: '600',
-                        marginBottom: '8px',
-                        color: '#2c3e50'
-                      }}>
-                        <i className="fas fa-baby-carriage" style={{ marginRight: '8px', color: '#3498db' }}></i>
-                        Độ tuổi (AgeRange):
-                      </label>
-                      <input 
-                        type="text" 
-                        name="AgeRange"
-                        value={updateARVForm.AgeRange}
-                        onChange={handleUpdateARVChange}
-                        style={{
-                          width: '100%',
-                          padding: '10px',
-                          borderRadius: '4px',
-                          border: '1px solid #ddd'
-                        }}
-                      />
-                    </div>
-                    
-                    <div style={{ marginBottom: '20px' }}>
-                      <label style={{ 
-                        display: 'block', 
-                        fontWeight: '600',
-                        marginBottom: '8px',
-                        color: '#2c3e50'
-                      }}>
-                        <i className="fas fa-users" style={{ marginRight: '8px', color: '#3498db' }}></i>
-                        Nhóm đối tượng (ForGroup):
-                      </label>
-                      <input 
-                        type="text" 
-                        name="ForGroup"
-                        value={updateARVForm.ForGroup}
-                        onChange={handleUpdateARVChange}
-                        style={{
-                          width: '100%',
-                          padding: '10px',
-                          borderRadius: '4px',
-                          border: '1px solid #ddd'
-                        }}
-                      />
-                    </div>
-                    
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      gap: '15px',
-                      marginTop: '25px',
-                      borderTop: '1px solid #eee',
-                      paddingTop: '20px'
-                    }}>
-                      <button 
-                        type="button"
-                        onClick={() => setShowARVUpdateModal(false)}
-                        style={{
-                          padding: '10px 20px',
-                          borderRadius: '6px',
-                          border: 'none',
-                          backgroundColor: '#e74c3c',
-                          color: '#fff',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center'
-                        }}
-                      >
-                        <i className="fas fa-times" style={{ marginRight: '8px' }}></i>
-                        Hủy bỏ
-                      </button>
-                      <button 
-                        type="submit"
-                        style={{
-                          padding: '10px 20px',
-                          borderRadius: '6px',
-                          border: 'none',
-                          backgroundColor: '#2ecc71',
-                          color: '#fff',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center'
-                        }}
-                      >
-                        <i className="fas fa-save" style={{ marginRight: '8px' }}></i>
-                        Lưu thay đổi
-                      </button>
-                    </div>
-                    
-                    {updateARVMsg && (
-                      <div style={{
-                        marginTop: '15px',
-                        padding: '10px',
-                        borderRadius: '4px',
-                        backgroundColor: updateARVMsg.includes('thành công') ? '#d4edda' : '#f8d7da',
-                        color: updateARVMsg.includes('thành công') ? '#155724' : '#721c24',
-                        textAlign: 'center',
-                        fontWeight: '500'
-                      }}>
-                        <i className={updateARVMsg.includes('thành công') ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'} style={{ marginRight: '8px' }}></i>
-                        {updateARVMsg}
-                      </div>
-                    )}
-                  </form>
-                </div>
               </div>
             )}
           </div>

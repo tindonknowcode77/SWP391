@@ -414,7 +414,12 @@ export const addLabTest = (data) => {
     headers: { 'Content-Type': 'application/json' }
   });
 };
-
+// Dặt lịch xét nghiệm
+export const datxetnghiem =(data) =>{
+  return axiosClient.post('/LabTest/LabTest', data,{
+    headers: {'Content-Type': 'application/json'}
+  })
+}
 // Cập nhật xét nghiệm
 export const updateLabTest = (labTestId, data) => {
   return axiosClient.put(`/LabTest/UpdateLabTest/${labTestId}`, data, {
@@ -429,6 +434,11 @@ export const deleteLabTest = (labTestId) => {
 
 export const getLabTestsByPatient = (patientId) => {
   return axiosClient.get(`/LabTest/LabTestsByPatient/${patientId}`);
+};
+
+// Lấy danh sách đặt lịch xét nghiệm của staff
+export const getLabTestBookings = () => {
+  return axiosClient.get('/LabTest/Staff/LabtestBookings');
 };
 
 export const quenmatkhau = (data) => {

@@ -1218,7 +1218,7 @@ export default function ExaminationSchedule() {
                   <div className="form-group">
                     <label>Dịch vụ cần khám:</label>
                     <div className="services-checkbox-group">
-                      <div className="checkbox-item">
+                      {/* <div className="checkbox-item">
                         <input
                           type="checkbox"
                           id="service-hivtest"
@@ -1227,7 +1227,7 @@ export default function ExaminationSchedule() {
                           onChange={handleServiceChange}
                         />
                         <label htmlFor="service-hivtest">Xét nghiệm HIV</label>
-                      </div>
+                      </div> */}
                       <div className="checkbox-item">
                         <input
                           type="checkbox"

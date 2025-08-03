@@ -1,13 +1,102 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../styles/HIVTesting.css";
 import Navbar from '../components/Navbar';
+import { datxetnghiem, datlichkham } from '../api/auth';
 
 const HIVTesting = () => {
   const [activeIndex, setActiveIndex] = useState(null);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [bookingData, setBookingData] = useState({
+    PatientID: '',
+    BookingType: 'Xét nghiệm',
+    BookDate: '',
+    Note: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [patientInfo, setPatientInfo] = useState(null);
+  const [isLoadingPatient, setIsLoadingPatient] = useState(false);
+
+  // Lấy thông tin bệnh nhân khi component mount
+  useEffect(() => {
+    const fetchPatientInfo = async () => {
+      setIsLoadingPatient(true);
+      try {
+        const response = await datlichkham();
+        if (response && response.length > 0) {
+          // Lấy thông tin bệnh nhân từ appointment đầu tiên
+          const firstAppointment = response[0];
+          const patient = {
+            PatientID: firstAppointment.PatientID || firstAppointment.patientId,
+            PatientFullname: firstAppointment?.Patient?.User?.Fullname
+
+          };
+          setPatientInfo(patient);
+          
+          // Tự động điền PatientFullname vào form để hiển thị, nhưng sẽ gửi PatientID khi submit
+          setBookingData(prev => ({
+            ...prev,
+            PatientID: patient.PatientID || ''
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching patient info:', error);
+      } finally {
+        setIsLoadingPatient(false);
+      }
+    };
+
+    fetchPatientInfo();
+  }, []);
 
   const toggleFAQ = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
+  };
+
+  const handleBookingClick = () => {
+    // Tự động điền thông tin khi mở modal
+    if (patientInfo) {
+      setBookingData(prev => ({
+        ...prev,
+        PatientID: patientInfo.PatientID || ''
+      }));
+    }
+    setShowBookingModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowBookingModal(false);
+    // Reset form nhưng giữ lại tên bệnh nhân
+    setBookingData({
+      PatientID: patientInfo ? patientInfo.PatientID : '',
+      BookingType: 'Xét nghiệm',
+      BookDate: '',
+      Note: ''
+    });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setBookingData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmitBooking = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      await datxetnghiem(bookingData);
+      alert('Đặt lịch xét nghiệm thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.');
+      handleCloseModal();
+    } catch (error) {
+      alert('Đặt lịch thất bại. Vui lòng thử lại sau.');
+      console.error('Error booking test:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const faqData = [
@@ -42,9 +131,9 @@ const HIVTesting = () => {
           <div className="cta-box-header">
             <h3>Bạn muốn xét nghiệm HIV?</h3>
             <p>Hãy đến với chúng tôi để được tư vấn và xét nghiệm bảo mật, chính xác</p>
-            <Link to="/hospital/lich-kham" className="cta-btn-header">
+            <button onClick={handleBookingClick} className="cta-btn-header">
               <i className="fas fa-calendar-check"></i> Đặt lịch xét nghiệm ngay
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -256,6 +345,219 @@ const HIVTesting = () => {
             </div>
           </section>
         </div>
+
+        {/* Booking Modal */}
+        {showBookingModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000
+          }}>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              padding: '30px',
+              maxWidth: '500px',
+              width: '90%',
+              maxHeight: '80vh',
+              overflowY: 'auto',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)'
+            }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '20px',
+                borderBottom: '2px solid #f0f0f0',
+                paddingBottom: '15px'
+              }}>
+                <h3 style={{
+                  margin: 0,
+                  color: '#2c5aa0',
+                  fontSize: '24px',
+                  fontWeight: '600'
+                }}>
+                  Đặt lịch xét nghiệm HIV
+                </h3>
+                <button
+                  onClick={handleCloseModal}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '24px',
+                    cursor: 'pointer',
+                    color: '#666',
+                    padding: '5px'
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmitBooking}>
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontWeight: '500',
+                    color: '#333',
+                    fontSize: '16px'
+                  }}>
+                    Họ và Tên : <span style={{ color: '#e74c3c' }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="PatientID"
+                    value={bookingData.PatientID}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Nhập họ và tên"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #ddd',
+                      borderRadius: '8px',
+                      fontSize: '16px',
+                      transition: 'border-color 0.3s',
+                      backgroundColor: 'white'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontWeight: '500',
+                    color: '#333',
+                    fontSize: '16px'
+                  }}>
+                    Loại dịch vụ:
+                  </label>
+                  <input
+                    type="text"
+                    name="BookingType"
+                    value={bookingData.BookingType}
+                    onChange={handleInputChange}
+                    readOnly
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #ddd',
+                      borderRadius: '8px',
+                      fontSize: '16px',
+                      backgroundColor: '#f8f9fa'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontWeight: '500',
+                    color: '#333',
+                    fontSize: '16px'
+                  }}>
+                    Ngày giờ mong muốn: <span style={{ color: '#e74c3c' }}>*</span>
+                  </label>
+                  <input
+                    type="datetime-local"
+                    name="BookDate"
+                    value={bookingData.BookDate}
+                    onChange={handleInputChange}
+                    required
+                    min={new Date().toISOString().slice(0, 16)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #ddd',
+                      borderRadius: '8px',
+                      fontSize: '16px',
+                      transition: 'border-color 0.3s'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '25px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontWeight: '500',
+                    color: '#333',
+                    fontSize: '16px'
+                  }}>
+                    Ghi chú:
+                  </label>
+                  <textarea
+                    name="Note"
+                    value={bookingData.Note}
+                    onChange={handleInputChange}
+                    placeholder="Nhập ghi chú (nếu có)"
+                    rows={3}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #ddd',
+                      borderRadius: '8px',
+                      fontSize: '16px',
+                      resize: 'vertical',
+                      transition: 'border-color 0.3s'
+                    }}
+                  />
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  gap: '15px',
+                  justifyContent: 'flex-end'
+                }}>
+                  <button
+                    type="button"
+                    onClick={handleCloseModal}
+                    style={{
+                      backgroundColor: '#6c757d',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '12px 24px',
+                      fontSize: '16px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.3s'
+                    }}
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    style={{
+                      backgroundColor: isSubmitting ? '#ccc' : '#2c5aa0',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '12px 24px',
+                      fontSize: '16px',
+                      fontWeight: '500',
+                      cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                      transition: 'background-color 0.3s'
+                    }}
+                  >
+                    {isSubmitting ? 'Đang xử lý...' : 'Đặt lịch'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
