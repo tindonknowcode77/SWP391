@@ -645,7 +645,7 @@ const HIVTesting = () => {
                 animation: 'fadeInUp 0.5s ease-out 0.6s both'
               }}>
                 Lịch xét nghiệm HIV của bạn đã được đặt thành công. 
-                Chúng tôi sẽ liên hệ với bạn sớm nhất để xác nhận lịch hẹn.
+                
               </p>
 
               {/* Action Buttons */}
