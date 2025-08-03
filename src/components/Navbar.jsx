@@ -87,6 +87,9 @@ const Navbar = () => {
             <li className={isActive('/hospital/bac-si') ? 'active' : ''}>
               <Link to="/hospital/bac-si" onClick={closeMenu}>Đội ngũ bác sĩ</Link>
             </li>
+            <li className={isActive('/hospital/dich-vu/xet-nghiem') ? 'active' : ''}>
+              <Link to="/hospital/dich-vu/xet-nghiem" onClick={closeMenu}>Đặt lịch xét nghiệm</Link>
+            </li>
             <li className={isActive('/hospital/lich-kham') ? 'active' : ''}>
               <Link to="/hospital/lich-kham" onClick={closeMenu}>Đặt lịch khám</Link>
             </li>
