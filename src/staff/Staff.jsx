@@ -66,6 +66,9 @@ const Staff = () => {
   const [statusFilterCancelled, setStatusFilterCancelled] = useState('Tất cả');
   const [statusFilterCompleted, setStatusFilterCompleted] = useState('Tất cả');
   const [showStatusDropdown, setShowStatusDropdown] = useState('');
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showUpdateSuccessPopup, setShowUpdateSuccessPopup] = useState(false);
+  const [showDeleteSuccessPopup, setShowDeleteSuccessPopup] = useState(false);
   const dropdownRef = useRef();
 
   const statusOptions = ['Tất cả', 'Đang chờ', 'Đã xác nhận', 'Thành công', 'Đã hủy'];
@@ -236,21 +239,8 @@ const Staff = () => {
         setShowDeleteLabTestModal(false);
         setDeletingLabTestId(null);
         
-        // Show success message
-        alert('Xóa xét nghiệm thành công!');
-        
-        // Refresh lab tests data
-        setLoadingLabTests(true);
-        setErrorLabTests(null);
-        getAllLabTests()
-          .then((data) => {
-            setLabTests(Array.isArray(data) ? data : (data?.data || []));
-            setLoadingLabTests(false);
-          })
-          .catch((err) => {
-            setErrorLabTests('Không thể tải danh sách xét nghiệm');
-            setLoadingLabTests(false);
-          });
+        // Show success popup instead of alert
+        setShowDeleteSuccessPopup(true);
       } catch (e) {
         alert('Xóa xét nghiệm thất bại!');
         setShowDeleteLabTestModal(false);
@@ -287,21 +277,8 @@ const Staff = () => {
         setUpdatingLabTest(null);
         setUpdateFormData({});
         
-        // Show success message
-        alert('Cập nhật xét nghiệm thành công!');
-        
-        // Refresh lab tests data
-        setLoadingLabTests(true);
-        setErrorLabTests(null);
-        getAllLabTests()
-          .then((data) => {
-            setLabTests(Array.isArray(data) ? data : (data?.data || []));
-            setLoadingLabTests(false);
-          })
-          .catch((err) => {
-            setErrorLabTests('Không thể tải danh sách xét nghiệm');
-            setLoadingLabTests(false);
-          });
+        // Show success popup instead of alert
+        setShowUpdateSuccessPopup(true);
       } catch (e) {
         alert('Cập nhật xét nghiệm thất bại!');
       }
@@ -359,8 +336,8 @@ const Staff = () => {
         Description: ''
       });
       
-      // Show success message
-      alert('Thêm xét nghiệm thành công!');
+      // Show success popup instead of alert
+      setShowSuccessPopup(true);
     } catch (e) {
       alert('Thêm xét nghiệm thất bại!');
     }
@@ -379,6 +356,56 @@ const Staff = () => {
       Status: '',
       Description: ''
     });
+  };
+
+  const handleSuccessPopupClose = () => {
+    setShowSuccessPopup(false);
+    // Refresh lab test bookings data
+    if (selected === 'labtestbookings') {
+      setLoadingLabTestBookings(true);
+      setErrorLabTestBookings(null);
+      getLabTestBookings()
+        .then((data) => {
+          setLabTestBookings(Array.isArray(data) ? data : (data?.data || []));
+          setLoadingLabTestBookings(false);
+        })
+        .catch((err) => {
+          setErrorLabTestBookings('Không thể tải danh sách lịch xét nghiệm');
+          setLoadingLabTestBookings(false);
+        });
+    }
+  };
+
+  const handleUpdateSuccessPopupClose = () => {
+    setShowUpdateSuccessPopup(false);
+    // Refresh lab tests data
+    setLoadingLabTests(true);
+    setErrorLabTests(null);
+    getAllLabTests()
+      .then((data) => {
+        setLabTests(Array.isArray(data) ? data : (data?.data || []));
+        setLoadingLabTests(false);
+      })
+      .catch((err) => {
+        setErrorLabTests('Không thể tải danh sách xét nghiệm');
+        setLoadingLabTests(false);
+      });
+  };
+
+  const handleDeleteSuccessPopupClose = () => {
+    setShowDeleteSuccessPopup(false);
+    // Refresh lab tests data
+    setLoadingLabTests(true);
+    setErrorLabTests(null);
+    getAllLabTests()
+      .then((data) => {
+        setLabTests(Array.isArray(data) ? data : (data?.data || []));
+        setLoadingLabTests(false);
+      })
+      .catch((err) => {
+        setErrorLabTests('Không thể tải danh sách xét nghiệm');
+        setLoadingLabTests(false);
+      });
   };
 
   return (
@@ -1347,6 +1374,480 @@ const Staff = () => {
           </div>
         </div>
       )}
+
+      {/* Success Popup for Lab Test */}
+      {showSuccessPopup && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1001,
+          animation: 'fadeIn 0.3s ease-out'
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '16px',
+            padding: '40px',
+            maxWidth: '450px',
+            width: '90%',
+            textAlign: 'center',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+            animation: 'slideUp 0.4s ease-out',
+            position: 'relative'
+          }}>
+            {/* Success Icon */}
+            <div style={{
+              width: '80px',
+              height: '80px',
+              backgroundColor: '#52c41a',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+              animation: 'scaleIn 0.6s ease-out 0.2s both'
+            }}>
+              <i className="fas fa-check" style={{
+                fontSize: '40px',
+                color: 'white'
+              }}></i>
+            </div>
+
+            {/* Success Message */}
+            <h2 style={{
+              color: '#1f2937',
+              fontSize: '24px',
+              fontWeight: '700',
+              marginBottom: '12px',
+              animation: 'fadeInUp 0.5s ease-out 0.4s both'
+            }}>
+              Thêm xét nghiệm thành công!
+            </h2>
+            
+            <p style={{
+              color: '#6b7280',
+              fontSize: '16px',
+              lineHeight: '1.6',
+              marginBottom: '30px',
+              animation: 'fadeInUp 0.5s ease-out 0.6s both'
+            }}>
+              Lab test đã được thêm vào hệ thống thành công. 
+              Thông tin xét nghiệm sẽ được cập nhật trong danh sách.
+            </p>
+
+            {/* Action Button */}
+            <div style={{
+              animation: 'fadeInUp 0.5s ease-out 0.8s both'
+            }}>
+              <button
+                onClick={handleSuccessPopupClose}
+                style={{
+                  backgroundColor: '#52c41a',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '12px 28px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(82, 196, 26, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#389e0d';
+                  e.target.style.transform = 'translateY(-1px)';
+                  e.target.style.boxShadow = '0 6px 16px rgba(82, 196, 26, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = '#52c41a';
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(82, 196, 26, 0.3)';
+                }}
+              >
+                <i className="fas fa-check-circle" style={{ marginRight: '8px' }}></i>
+                Hoàn tất
+              </button>
+            </div>
+
+            {/* Decorative Elements */}
+            <div style={{
+              position: 'absolute',
+              top: '-10px',
+              right: '-10px',
+              width: '40px',
+              height: '40px',
+              backgroundColor: '#b7eb8f',
+              borderRadius: '50%',
+              opacity: '0.8',
+              animation: 'float 3s ease-in-out infinite'
+            }}></div>
+            
+            <div style={{
+              position: 'absolute',
+              bottom: '-15px',
+              left: '-15px',
+              width: '60px',
+              height: '60px',
+              backgroundColor: '#d9f7be',
+              borderRadius: '50%',
+              opacity: '0.6',
+              animation: 'float 3s ease-in-out infinite 1.5s'
+            }}></div>
+
+            {/* Lab Test Icon */}
+            <div style={{
+              position: 'absolute',
+              top: '15px',
+              left: '15px',
+              fontSize: '20px',
+              color: '#52c41a',
+              opacity: '0.7',
+              animation: 'pulse 2s ease-in-out infinite'
+            }}>
+              <i className="fas fa-flask"></i>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Update Success Popup for Lab Test */}
+      {showUpdateSuccessPopup && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1001,
+          animation: 'fadeIn 0.3s ease-out'
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '16px',
+            padding: '40px',
+            maxWidth: '450px',
+            width: '90%',
+            textAlign: 'center',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+            animation: 'slideUp 0.4s ease-out',
+            position: 'relative'
+          }}>
+            {/* Success Icon */}
+            <div style={{
+              width: '80px',
+              height: '80px',
+              backgroundColor: '#1890ff',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+              animation: 'scaleIn 0.6s ease-out 0.2s both'
+            }}>
+              <i className="fas fa-edit" style={{
+                fontSize: '40px',
+                color: 'white'
+              }}></i>
+            </div>
+
+            {/* Success Message */}
+            <h2 style={{
+              color: '#1f2937',
+              fontSize: '24px',
+              fontWeight: '700',
+              marginBottom: '12px',
+              animation: 'fadeInUp 0.5s ease-out 0.4s both'
+            }}>
+              Cập nhật thành công!
+            </h2>
+            
+            <p style={{
+              color: '#6b7280',
+              fontSize: '16px',
+              lineHeight: '1.6',
+              marginBottom: '30px',
+              animation: 'fadeInUp 0.5s ease-out 0.6s both'
+            }}>
+              Thông tin xét nghiệm đã được cập nhật thành công. 
+              Dữ liệu mới sẽ được hiển thị trong danh sách.
+            </p>
+
+            {/* Action Button */}
+            <div style={{
+              animation: 'fadeInUp 0.5s ease-out 0.8s both'
+            }}>
+              <button
+                onClick={handleUpdateSuccessPopupClose}
+                style={{
+                  backgroundColor: '#1890ff',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '12px 28px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(24, 144, 255, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#096dd9';
+                  e.target.style.transform = 'translateY(-1px)';
+                  e.target.style.boxShadow = '0 6px 16px rgba(24, 144, 255, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = '#1890ff';
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.3)';
+                }}
+              >
+                <i className="fas fa-sync-alt" style={{ marginRight: '8px' }}></i>
+                Hoàn tất
+              </button>
+            </div>
+
+            {/* Decorative Elements */}
+            <div style={{
+              position: 'absolute',
+              top: '-10px',
+              right: '-10px',
+              width: '40px',
+              height: '40px',
+              backgroundColor: '#91d5ff',
+              borderRadius: '50%',
+              opacity: '0.8',
+              animation: 'float 3s ease-in-out infinite'
+            }}></div>
+            
+            <div style={{
+              position: 'absolute',
+              bottom: '-15px',
+              left: '-15px',
+              width: '60px',
+              height: '60px',
+              backgroundColor: '#d6f7ff',
+              borderRadius: '50%',
+              opacity: '0.6',
+              animation: 'float 3s ease-in-out infinite 1.5s'
+            }}></div>
+
+            {/* Update Icon */}
+            <div style={{
+              position: 'absolute',
+              top: '15px',
+              left: '15px',
+              fontSize: '20px',
+              color: '#1890ff',
+              opacity: '0.7',
+              animation: 'pulse 2s ease-in-out infinite'
+            }}>
+              <i className="fas fa-clipboard-check"></i>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Success Popup for Lab Test */}
+      {showDeleteSuccessPopup && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1001,
+          animation: 'fadeIn 0.3s ease-out'
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '16px',
+            padding: '40px',
+            maxWidth: '450px',
+            width: '90%',
+            textAlign: 'center',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+            animation: 'slideUp 0.4s ease-out',
+            position: 'relative'
+          }}>
+            {/* Success Icon */}
+            <div style={{
+              width: '80px',
+              height: '80px',
+              backgroundColor: '#ff4d4f',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+              animation: 'scaleIn 0.6s ease-out 0.2s both'
+            }}>
+              <i className="fas fa-trash" style={{
+                fontSize: '40px',
+                color: 'white'
+              }}></i>
+            </div>
+
+            {/* Success Message */}
+            <h2 style={{
+              color: '#1f2937',
+              fontSize: '24px',
+              fontWeight: '700',
+              marginBottom: '12px',
+              animation: 'fadeInUp 0.5s ease-out 0.4s both'
+            }}>
+              Xóa thành công!
+            </h2>
+            
+            <p style={{
+              color: '#6b7280',
+              fontSize: '16px',
+              lineHeight: '1.6',
+              marginBottom: '30px',
+              animation: 'fadeInUp 0.5s ease-out 0.6s both'
+            }}>
+              Xét nghiệm đã được xóa khỏi hệ thống thành công. 
+              Danh sách sẽ được cập nhật ngay lập tức.
+            </p>
+
+            {/* Action Button */}
+            <div style={{
+              animation: 'fadeInUp 0.5s ease-out 0.8s both'
+            }}>
+              <button
+                onClick={handleDeleteSuccessPopupClose}
+                style={{
+                  backgroundColor: '#ff4d4f',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '12px 28px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(255, 77, 79, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#d32029';
+                  e.target.style.transform = 'translateY(-1px)';
+                  e.target.style.boxShadow = '0 6px 16px rgba(255, 77, 79, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = '#ff4d4f';
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(255, 77, 79, 0.3)';
+                }}
+              >
+                <i className="fas fa-check-circle" style={{ marginRight: '8px' }}></i>
+                Hoàn tất
+              </button>
+            </div>
+
+            {/* Decorative Elements */}
+            <div style={{
+              position: 'absolute',
+              top: '-10px',
+              right: '-10px',
+              width: '40px',
+              height: '40px',
+              backgroundColor: '#ffadd2',
+              borderRadius: '50%',
+              opacity: '0.8',
+              animation: 'float 3s ease-in-out infinite'
+            }}></div>
+            
+            <div style={{
+              position: 'absolute',
+              bottom: '-15px',
+              left: '-15px',
+              width: '60px',
+              height: '60px',
+              backgroundColor: '#ffe7e7',
+              borderRadius: '50%',
+              opacity: '0.6',
+              animation: 'float 3s ease-in-out infinite 1.5s'
+            }}></div>
+
+            {/* Delete Icon */}
+            <div style={{
+              position: 'absolute',
+              top: '15px',
+              left: '15px',
+              fontSize: '20px',
+              color: '#ff4d4f',
+              opacity: '0.7',
+              animation: 'pulse 2s ease-in-out infinite'
+            }}>
+              <i className="fas fa-times-circle"></i>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CSS Animations */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+          from { 
+            opacity: 0; 
+            transform: translateY(30px) scale(0.9); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0) scale(1); 
+          }
+        }
+        
+        @keyframes scaleIn {
+          from { 
+            opacity: 0; 
+            transform: scale(0); 
+          }
+          to { 
+            opacity: 1; 
+            transform: scale(1); 
+          }
+        }
+        
+        @keyframes fadeInUp {
+          from { 
+            opacity: 0; 
+            transform: translateY(20px); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0); 
+          }
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 0.7; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.1); }
+        }
+      `}</style>
     </div>
   );
 };

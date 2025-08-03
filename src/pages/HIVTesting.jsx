@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/HIVTesting.css";
 import Navbar from '../components/Navbar';
-import { datxetnghiem, datlichkham } from '../api/auth';
+import { datxetnghiem, pantient } from '../api/auth';
+import { useAuth } from '../context/AuthContext';
 
 const HIVTesting = () => {
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [bookingData, setBookingData] = useState({
@@ -16,24 +19,26 @@ const HIVTesting = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [patientInfo, setPatientInfo] = useState(null);
   const [isLoadingPatient, setIsLoadingPatient] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Lấy thông tin bệnh nhân khi component mount
   useEffect(() => {
     const fetchPatientInfo = async () => {
+      if (!currentUser?.id) return;
+      
       setIsLoadingPatient(true);
       try {
-        const response = await datlichkham();
-        if (response && response.length > 0) {
-          // Lấy thông tin bệnh nhân từ appointment đầu tiên
-          const firstAppointment = response[0];
+        const response = await pantient(currentUser.id);
+        console.log('Patient info response:', response);
+        
+        if (response) {
           const patient = {
-            PatientID: firstAppointment.PatientID || firstAppointment.patientId,
-            PatientFullname: firstAppointment?.Patient?.User?.Fullname
-
+            PatientID: response.PatientId || response.PatientID,
+            PatientFullname: response.Fullname || response.PatientFullname || currentUser.fullname
           };
           setPatientInfo(patient);
           
-          // Tự động điền PatientFullname vào form để hiển thị, nhưng sẽ gửi PatientID khi submit
+          // Tự động điền PatientID vào form
           setBookingData(prev => ({
             ...prev,
             PatientID: patient.PatientID || ''
@@ -47,7 +52,7 @@ const HIVTesting = () => {
     };
 
     fetchPatientInfo();
-  }, []);
+  }, [currentUser]);
 
   const toggleFAQ = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
@@ -89,14 +94,20 @@ const HIVTesting = () => {
     
     try {
       await datxetnghiem(bookingData);
-      alert('Đặt lịch xét nghiệm thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.');
       handleCloseModal();
+      setShowSuccessModal(true);
     } catch (error) {
       alert('Đặt lịch thất bại. Vui lòng thử lại sau.');
       console.error('Error booking test:', error);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleSuccessModalClose = () => {
+    setShowSuccessModal(false);
+    // Chuyển hướng đến trang Profile với tab appointments
+    navigate('/profile', { state: { tab: 'appointments' } });
   };
 
   const faqData = [
@@ -414,21 +425,33 @@ const HIVTesting = () => {
                   </label>
                   <input
                     type="text"
-                    name="PatientID"
-                    value={bookingData.PatientID}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Nhập họ và tên"
+                    value={patientInfo?.PatientFullname || ''}
+                    readOnly
+                    placeholder="Tên bệnh nhân"
                     style={{
                       width: '100%',
                       padding: '12px 16px',
                       border: '2px solid #ddd',
                       borderRadius: '8px',
                       fontSize: '16px',
-                      transition: 'border-color 0.3s',
-                      backgroundColor: 'white'
+                      backgroundColor: '#f8f9fa'
                     }}
                   />
+                  <input
+                    type="hidden"
+                    name="PatientID"
+                    value={bookingData.PatientID}
+                  />
+                  {patientInfo && (
+                    <p style={{
+                      margin: '8px 0 0 0',
+                      fontSize: '14px',
+                      color: '#666',
+                      fontStyle: 'italic'
+                    }}>
+                      Mã bệnh nhân: {patientInfo.PatientID}
+                    </p>
+                  )}
                 </div>
 
                 <div style={{ marginBottom: '20px' }}>
@@ -558,6 +581,183 @@ const HIVTesting = () => {
             </div>
           </div>
         )}
+
+        {/* Success Modal */}
+        {showSuccessModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1001,
+            animation: 'fadeIn 0.3s ease-out'
+          }}>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '16px',
+              padding: '40px',
+              maxWidth: '450px',
+              width: '90%',
+              textAlign: 'center',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+              animation: 'slideUp 0.4s ease-out',
+              position: 'relative'
+            }}>
+              {/* Success Icon */}
+              <div style={{
+                width: '80px',
+                height: '80px',
+                backgroundColor: '#10b981',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 20px',
+                animation: 'scaleIn 0.6s ease-out 0.2s both'
+              }}>
+                <i className="fas fa-check" style={{
+                  fontSize: '40px',
+                  color: 'white'
+                }}></i>
+              </div>
+
+              {/* Success Message */}
+              <h2 style={{
+                color: '#1f2937',
+                fontSize: '24px',
+                fontWeight: '700',
+                marginBottom: '12px',
+                animation: 'fadeInUp 0.5s ease-out 0.4s both'
+              }}>
+                Đặt lịch thành công!
+              </h2>
+              
+              <p style={{
+                color: '#6b7280',
+                fontSize: '16px',
+                lineHeight: '1.6',
+                marginBottom: '30px',
+                animation: 'fadeInUp 0.5s ease-out 0.6s both'
+              }}>
+                Lịch xét nghiệm HIV của bạn đã được đặt thành công. 
+                Chúng tôi sẽ liên hệ với bạn sớm nhất để xác nhận lịch hẹn.
+              </p>
+
+              {/* Action Buttons */}
+              <div style={{
+                display: 'flex',
+                gap: '12px',
+                justifyContent: 'center',
+                animation: 'fadeInUp 0.5s ease-out 0.8s both'
+              }}>
+                <button
+                  onClick={handleSuccessModalClose}
+                  style={{
+                    backgroundColor: '#2c5aa0',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '12px 28px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 12px rgba(44, 90, 160, 0.3)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#1e40af';
+                    e.target.style.transform = 'translateY(-1px)';
+                    e.target.style.boxShadow = '0 6px 16px rgba(44, 90, 160, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = '#2c5aa0';
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 12px rgba(44, 90, 160, 0.3)';
+                  }}
+                >
+                  <i className="fas fa-calendar-alt" style={{ marginRight: '8px' }}></i>
+                  Xem lịch hẹn
+                </button>
+              </div>
+
+              {/* Decorative Elements */}
+              <div style={{
+                position: 'absolute',
+                top: '-10px',
+                right: '-10px',
+                width: '40px',
+                height: '40px',
+                backgroundColor: '#fef3c7',
+                borderRadius: '50%',
+                opacity: '0.8',
+                animation: 'float 3s ease-in-out infinite'
+              }}></div>
+              
+              <div style={{
+                position: 'absolute',
+                bottom: '-15px',
+                left: '-15px',
+                width: '60px',
+                height: '60px',
+                backgroundColor: '#dbeafe',
+                borderRadius: '50%',
+                opacity: '0.6',
+                animation: 'float 3s ease-in-out infinite 1.5s'
+              }}></div>
+            </div>
+          </div>
+        )}
+
+        {/* Add CSS animations */}
+        <style jsx>{`
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          
+          @keyframes slideUp {
+            from { 
+              opacity: 0; 
+              transform: translateY(30px) scale(0.9); 
+            }
+            to { 
+              opacity: 1; 
+              transform: translateY(0) scale(1); 
+            }
+          }
+          
+          @keyframes scaleIn {
+            from { 
+              opacity: 0; 
+              transform: scale(0); 
+            }
+            to { 
+              opacity: 1; 
+              transform: scale(1); 
+            }
+          }
+          
+          @keyframes fadeInUp {
+            from { 
+              opacity: 0; 
+              transform: translateY(20px); 
+            }
+            to { 
+              opacity: 1; 
+              transform: translateY(0); 
+            }
+          }
+          
+          @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+          }
+        `}</style>
       </div>
     </>
   );
