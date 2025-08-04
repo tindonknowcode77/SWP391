@@ -230,23 +230,87 @@ const Admin = () => {
   const handleAddScheduleChange = (e) => {
     const { name, value } = e.target;
     setAddScheduleForm(prev => ({ ...prev, [name]: value }));
+    
+    // Xóa thông báo cũ khi người dùng thay đổi dữ liệu
+    if (addScheduleMsg) {
+      setAddScheduleMsg('');
+    }
+    if (addedSchedule) {
+      setAddedSchedule(null);
+    }
   };
   const handleAddScheduleSubmit = async (e) => {
     e.preventDefault();
     setAddScheduleMsg('');
+    setAddedSchedule(null);
+    
     try {
-      await addDoctorWorkSchedule({
+      const response = await addDoctorWorkSchedule({
         ...addScheduleForm,
         DateWork: new Date(addScheduleForm.DateWork).toISOString()
       });
+      
+      console.log('Add schedule response:', response);
+      
+      // Hiển thị thông báo thành công và thông tin lịch vừa thêm
       setAddScheduleMsg('Thêm lịch làm việc thành công!');
-      setAddedSchedule({ ...addScheduleForm });
+      setAddedSchedule({ 
+        ...addScheduleForm,
+        DateWork: new Date(addScheduleForm.DateWork).toLocaleDateString('vi-VN')
+      });
+      
+      // Reset form
       setAddScheduleForm({ DoctorID: '', SlotID: '', DateWork: '' });
-      // Refresh dashboard data
-      fetchDashboardData();
+      
+      // Refresh danh sách lịch làm việc nếu đang ở tab đó
+      if (selectedTab === 'doctorschedule') {
+        try {
+          await fetchDoctorSchedules();
+        } catch (refreshErr) {
+          console.log('Không thể refresh danh sách lịch làm việc:', refreshErr);
+        }
+      }
+      
     } catch (err) {
-      setAddScheduleMsg('Thêm lịch làm việc thất bại!');
-      setAddedSchedule(null);
+      console.error('Error adding schedule:', err);
+      
+      // Kiểm tra nếu server trả về thành công nhưng có format khác
+      if (err.response && 
+          (err.response.status === 200 || 
+           err.response.status === 201 || 
+           err.response.status === 204)) {
+        // Thực tế thành công
+        setAddScheduleMsg('Thêm lịch làm việc thành công!');
+        setAddedSchedule({ 
+          ...addScheduleForm,
+          DateWork: new Date(addScheduleForm.DateWork).toLocaleDateString('vi-VN')
+        });
+        setAddScheduleForm({ DoctorID: '', SlotID: '', DateWork: '' });
+        
+        if (selectedTab === 'doctorschedule') {
+          try {
+            await fetchDoctorSchedules();
+          } catch (refreshErr) {
+            console.log('Không thể refresh danh sách lịch làm việc:', refreshErr);
+          }
+        }
+      } else {
+        // Thực sự lỗi
+        let errorMsg = 'Thêm lịch làm việc thất bại!';
+        
+        if (err.response?.data?.message) {
+          errorMsg = err.response.data.message;
+        } else if (err.response?.status === 400) {
+          errorMsg = 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại thông tin!';
+        } else if (err.response?.status === 409) {
+          errorMsg = 'Lịch làm việc này đã tồn tại. Vui lòng chọn thời gian khác!';
+        } else if (err.response?.status === 500) {
+          errorMsg = 'Lỗi server. Vui lòng thử lại sau!';
+        }
+        
+        setAddScheduleMsg(errorMsg);
+        setAddedSchedule(null);
+      }
     }
   };
   const handleUpdateScheduleChange = (e) => {
@@ -963,30 +1027,68 @@ const Admin = () => {
               </div>
               <div className="form-group">
                 <label>DateWork</label>
-                <input name="DateWork" value={addScheduleForm.DateWork} onChange={handleAddScheduleChange} required type="datetime-local" />
+                <input name="DateWork" value={addScheduleForm.DateWork} onChange={handleAddScheduleChange} required type="date" />
               </div>
               <button type="submit" className="admin-action-btn" style={{marginTop: 16}}>Thêm lịch</button>
               {addScheduleMsg && <div style={{marginTop: 12, color: addScheduleMsg.includes('thành công') ? '#27ae60' : '#e74c3c'}}>{addScheduleMsg}</div>}
             </form>
             {addedSchedule && addScheduleMsg.includes('thành công') && (
               <div style={{marginTop: 32}}>
-                <h3>Thông tin lịch vừa thêm</h3>
-                <table className="admin-appointments-table">
-                  <thead>
-                    <tr>
-                      <th>DoctorID</th>
-                      <th>SlotID</th>
-                      <th>DateWork</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{addedSchedule.DoctorID}</td>
-                      <td>{addedSchedule.SlotID}</td>
-                      <td>{addedSchedule.DateWork}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <h3 style={{color: '#27ae60', display: 'flex', alignItems: 'center'}}>
+                  <i className="fas fa-check-circle" style={{marginRight: '10px'}}></i>
+                  Thông tin lịch vừa thêm
+                </h3>
+                <div style={{
+                  backgroundColor: '#f8f9fa',
+                  border: '2px solid #27ae60',
+                  borderRadius: '8px',
+                  padding: '20px',
+                  marginTop: '15px'
+                }}>
+                  <table className="admin-appointments-table" style={{margin: 0}}>
+                    <thead>
+                      <tr>
+                        <th>Mã bác sĩ</th>
+                        <th>Tên bác sĩ</th>
+                        <th>Khung giờ</th>
+                        <th>Ngày làm việc</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>{addedSchedule.DoctorID}</td>
+                        <td>
+                          {doctorsList.find(doc => doc.DoctorId === addedSchedule.DoctorID)?.Fullname || 'Không tìm thấy'}
+                        </td>
+                        <td>
+                          {(() => {
+                            const slotNames = {
+                              'SL000001': 'Slot 1 ',
+                              'SL000002': 'Slot 2 ',
+                              'SL000003': 'Slot 3 ',
+                              'SL000004': 'Slot 4 ',
+                              'SL000005': 'Slot 5 '
+                            };
+                            return slotNames[addedSchedule.SlotID] || addedSchedule.SlotID;
+                          })()}
+                        </td>
+                        <td>{addedSchedule.DateWork}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div style={{
+                    marginTop: '15px',
+                    padding: '10px',
+                    backgroundColor: '#d4edda',
+                    borderRadius: '5px',
+                    color: '#155724',
+                    textAlign: 'center',
+                    fontWeight: '600'
+                  }}>
+                    <i className="fas fa-calendar-check" style={{marginRight: '8px'}}></i>
+                    Lịch làm việc đã được thêm thành công vào hệ thống!
+                  </div>
+                </div>
               </div>
             )}
           </div>
