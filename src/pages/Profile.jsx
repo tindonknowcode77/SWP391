@@ -811,7 +811,7 @@ const Profile = () => {
             {activeTab === 'appointments' && (
               <div className="appointment-list">
                 <div className="section-info">
-                  <p>Danh sách các lịch hẹn đã đặt của quý khách tại phòng khám , quý khách vui lòng nhấn <span style={{color: 'green'}}>Check-in</span> để xác nhận với Bác Sĩ .</p>
+                  <p>Danh sách các lịch hẹn đã đặt của quý khách tại phòng khám. Đối với <strong>lịch khám bệnh</strong>, quý khách vui lòng nhấn <span style={{color: 'green'}}>Check-in</span> để xác nhận với Bác Sĩ. <em>Lịch xét nghiệm không cần check-in.</em></p>
                 </div>
                 {appointmentsLoading ? (
                   <div>Đang tải...</div>
@@ -866,10 +866,12 @@ const Profile = () => {
                                   : 'status-badge-2'
                               }>
                                 {item.Status || ''}
-                                {/* Nút Check-in chỉ hiện ở trạng thái "Thành công" */}
+                                {/* Nút Check-in chỉ hiện ở trạng thái "Thành công" và không phải "Xét nghiệm" */}
                                 {isTodayOrNear(item.BookDate) && 
                                  item.Status && 
-                                 item.Status.trim().toLowerCase() === 'thành công' && (
+                                 item.Status.trim().toLowerCase() === 'thành công' &&
+                                 item.BookingType && 
+                                 item.BookingType.trim().toLowerCase() !== 'xét nghiệm' && (
                                   <button
                                     style={{
                                       marginLeft: 8,
