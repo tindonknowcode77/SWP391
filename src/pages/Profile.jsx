@@ -293,12 +293,12 @@ const Profile = () => {
 
   // Cái này để navigate qua activeTab bên phần Profile nha
   useEffect(() => {
-    if (location.state?.tab && location.state.tab !== activeTab) {
+    if (location.state?.tab) {
       setActiveTab(location.state.tab);
-     
+      // Clear location state để tránh conflict khi user chuyển tab thủ công
       window.history.replaceState({}, document.title);
     }
-  }, [location.state, activeTab]);
+  }, [location.state?.tab]); // Chỉ depend vào location.state.tab, không depend vào activeTab
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
